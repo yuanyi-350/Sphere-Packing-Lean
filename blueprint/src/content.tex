@@ -6,19 +6,10 @@
 % the current file can be a simple sequence of \input. Otherwise It
 % can start with a \section or \chapter for instance.
 
-% TODO: CONVERT ALL SPELLINGS TO AMERICAN! DON'T STANDARDISE: STANDARDIZE!
-
 \begin{abstract}
-  This blueprint consists of an adaptation of Maryna Viazovska's Fields Medal-winning paper proving that no packing of unit balls in Euclidean space $\R^8$ has density greater than that of the $E_8$-lattice packing.
-  \ifplastex
-  % web
-  You can view the contents of the current version of this page in PDF form \href{https://thefundamentaltheor3m.github.io/Sphere-Packing-Lean/blueprint.pdf}{here}.
-  \else
-  % print
-  We recommend that you look at \href{https://thefundamentaltheor3m.github.io/Sphere-Packing-Lean/blueprint/index.html}{this webpage} for the latest version.
-  \fi \\
+  This blueprint consists of an adaptation of Maryna Viazovska's Fields Medal-winning paper proving that no packing of unit balls in Euclidean space $\R^8$ has density greater than that of the $E_8$-lattice packing, together with a blueprint for the analogous optimality result in dimension $24$ (the Leech lattice).
 
-  This formalisation project was kickstarted at EPFL by Maryna Viazovska and Sidharth Hariharan, and the contents of this blueprint were originally written by Maryna Viazovska on the suggestion of Kevin Buzzard. It is being updated and restructured by those involved in the formalisation effort, namely, Sidharth Hariharan, Gareth Ma, Seewoo Lee and Christopher Birkbeck. Those involved in the effort express their sincere gratitude to Kevin Buzzard, Utensil Song, Bhavik Mehta, Patrick Massot, Yaël Dillies, and everyone in the Lean Community for their support.
+  This formalisation project was kickstarted at EPFL by Maryna Viazovska and Sidharth Hariharan in March 2024 (see the original \href{https://github.com/thefundamentaltheor3m/Sphere-Packing-Lean}{Sphere-Packing-Lean} repository). The present repository builds on that project: using the existing blueprint and codebase, the autoformalization agent Gauss completed the dimension $8$ development, and then formalized dimension $24$ optimality and periodic uniqueness, updating the blueprint along the way.
   \end{abstract}
 
 \tableofcontents
@@ -87,6 +78,13 @@
 
 \input{subsections/modform-ineq}
 
+\pagebreak
+\section{Sphere packing in dimension $24$}
+\input{subsections/dim24-main}
+\input{subsections/dim24-plusone}
+\input{subsections/dim24-minusone}
+\input{subsections/dim24-proof}
+
 \begin{thebibliography}{20}
 % \bibitem{Abramowitz} {\sc M. Abramowitz, I. Stegun}, \emph{ Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical Tables}, Applied Mathematics Series 55 (10 ed.), New York, USA: United States Department of Commerce, National Bureau of Standards; Dover Publications, 1964.
 
@@ -154,6 +152,9 @@ positive dimension}, Annals of Math. (2) 39 (1938),  pp. 433--462.
 
 \bibitem{Via2017} {\sc Maryna S. Viazovska}, {\em The sphere packing problem in dimension 8	},
 Pages 991--1015 from Volume 185 (2017), Issue 3.
+
+\bibitem{CKMRV24} {\sc H. Cohn, A. Kumar, S. D.\ Miller, D. Radchenko, M. Viazovska}, \emph{The sphere packing problem in dimension 24},
+Pages 1017--1033 from Volume 185 (2017), Issue 3.
 
 \bibitem{1-2-3} {\sc D. Zagier}, {\em Elliptic Modular Forms and Their Applications}, In:  The 1-2-3 of Modular Forms, (K. Ranestad, ed.) Norway, Springer Universitext, 2008.
 

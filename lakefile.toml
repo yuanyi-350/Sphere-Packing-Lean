@@ -1,21 +1,22 @@
-name = "SpherePacking"
+name           = "SpherePacking"
 defaultTargets = ["SpherePacking"]
 
 [leanOptions]
-pp.unicode.fun = true
-autoImplicit = false
-relaxedAutoImplicit = false
+pp.unicode.fun            = true
+autoImplicit              = false
+relaxedAutoImplicit       = false
 linter.mathlibStandardSet = true
-linter.flexible = false
+linter.style.longLine     = false # disabled because of long import lines
+linter.style.longFile     = 1500
 
 [[require]]
 name = "mathlib"
-git = "https://github.com/leanprover-community/mathlib4.git"
-rev = "v4.27.0"
+git  = "https://github.com/leanprover-community/mathlib4.git"
+rev  = "v4.28.0"
 
 [[require]]
 name = "checkdecls"
-git = "https://github.com/PatrickMassot/checkdecls.git"
+git  = "https://github.com/PatrickMassot/checkdecls.git"
 
 [[lean_lib]]
 name = "SpherePacking"

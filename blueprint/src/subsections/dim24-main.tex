@@ -1,0 +1,89 @@
+This section follows the strategy of \cite{ElkiesCohn} and the explicit construction of \cite{Via2017}, as developed for dimension $24$ in \cite{CKMRV24}.
+We reuse the general definitions of sphere packings and density from \cref{sec:sphere-packings} and \cref{sec:packings-density}, and the Cohn--Elkies linear programming bound from \cref{thm:Cohn-Elkies-general}.
+
+\subsection{Main result in dimension $24$}
+
+\begin{theorem}[Cohn--Kumar--Miller--Radchenko--Viazovska]\label{thm:MainTheorem-d24}\uses{thm:SpherePackingConstant_eq_leech_density,thm:leech-unique-optimal-periodic}\lean{SpherePacking.Dim24.MainTheorem}\leanok
+  The Leech lattice achieves the optimal sphere packing density in $\R^{24}$, and it is the only periodic packing in $\R^{24}$ with that density, up to scaling and isometries.
+\end{theorem}
+\begin{proof}\leanok
+  Optimality is exactly \cref{thm:SpherePackingConstant_eq_leech_density}.
+  Uniqueness among periodic packings is \cref{thm:leech-unique-optimal-periodic}.
+\end{proof}
+
+\subsection{The Leech lattice packing and its density}
+
+\begin{definition}\label{def:leech-lattice}\lean{SpherePacking.Dim24.LeechLattice,SpherePacking.Dim24.leech_fundamentalDomain_volume,SpherePacking.Dim24.leech_norm_lower_bound}\leanok
+  Let $\Lambda_{24} \subset \R^{24}$ denote the Leech lattice, normalized so that it is unimodular (covolume $1$) and its shortest nonzero vectors have norm $2$.
+\end{definition}
+
+\begin{definition}\label{def:LeechPacking}\uses{def:leech-lattice}\lean{SpherePacking.Dim24.LeechPacking}\leanok
+  The \emph{Leech lattice sphere packing} is the lattice packing in $\R^{24}$ with centers $\Lambda_{24}$ and separation radius $2$ (equivalently, spheres of radius $1$).
+\end{definition}
+
+\begin{lemma}\label{lem:LeechPacking-density}\uses{def:LeechPacking,def:leech-lattice,theorem:psp-density}\lean{SpherePacking.Dim24.LeechPacking_density}\leanok
+  The density of the Leech lattice packing is
+  \[
+    \Delta_{\Lambda_{24}} = \Vol{B_{24}(0,1)} = \frac{\pi^{12}}{12!}.
+  \]
+\end{lemma}
+\begin{proof}\leanok
+  By \cref{theorem:psp-density}, a lattice packing has density $\Vol{B_d(0,r/2)}/\Vol{\R^d/\Lambda}$.
+  Here $d=24$, $r=2$, and $\Vol{\R^{24}/\Lambda_{24}}=1$ by \cref{def:leech-lattice}, so the density is $\Vol{B_{24}(0,1)}=\pi^{12}/12!$.
+\end{proof}
+
+\subsection{Linear programming reduction}
+
+\begin{theorem}\label{thm:LP-d24}\uses{thm:Cohn-Elkies-general,def:SpherePacking.scale_density}\lean{LinearProgrammingBound}\leanok
+  Suppose $f:\R^{24}\to\R$ is a Schwartz function with $f(0)=\widehat f(0)=1$, $\widehat f(y)\ge 0$ for all $y\in\R^{24}$, and $f(x)\le 0$ for $\|x\|\ge 2$.
+  Then every sphere packing in $\R^{24}$ has density at most $\pi^{12}/12!$.
+\end{theorem}
+\begin{proof}\leanok
+  This is the Cohn--Elkies bound \cref{thm:Cohn-Elkies-general} after scaling to convert the cutoff radius $2$ to the normalized cutoff radius $1$ (and using \cref{def:SpherePacking.scale_density} to identify densities under scaling).
+\end{proof}
+
+\begin{theorem}\label{thm:SpherePackingConstant_eq_leech_density}\uses{thm:magic-function-d24,lem:LeechPacking-density}\lean{SpherePacking.Dim24.SpherePackingConstant_eq_leech_density}\leanok
+  The optimal sphere packing density in $\R^{24}$ equals the Leech lattice density:
+  \[
+    \Delta_{24} = \Delta_{\Lambda_{24}} = \frac{\pi^{12}}{12!}.
+  \]
+\end{theorem}
+\begin{proof}\leanok
+  By \cref{thm:magic-function-d24}, we have $\Delta_{24}\le \pi^{12}/12!$.
+  By \cref{lem:LeechPacking-density}, $\Delta_{\Lambda_{24}}=\pi^{12}/12!$.
+  Since $\Lambda_{24}$ is a sphere packing in $\R^{24}$, we have $\Delta_{\Lambda_{24}}\le \Delta_{24}$.
+  Therefore, all three quantities are equal.
+\end{proof}
+
+\begin{remark}
+  The proof of \cref{thm:MainTheorem-d24} therefore splits into two parts: proving \cref{thm:SpherePackingConstant_eq_leech_density} by constructing such an $f$ with cutoff radius $2$, and proving uniqueness among periodic packings using the additional root structure (as in Section~8 of \cite{ElkiesCohn}).
+\end{remark}
+
+\subsection{Uniqueness among optimal periodic packings}
+
+\begin{definition}\label{def:leech-distance-spectrum}\lean{SpherePacking.Dim24.HasLeechDistanceSpectrum}\leanok
+  Let $S$ be a periodic sphere packing in $\R^{24}$. We say that $S$ has the \emph{Leech distance spectrum}
+  if, for any distinct centers $x,y$ of $S$, the squared distance $\|x-y\|^2$ is of the form $2k$ with
+  $k\ge 2$.
+\end{definition}
+
+\begin{theorem}\label{thm:optimal-implies-leech-distance-spectrum}\uses{def:leech-distance-spectrum,lem:LeechPacking-density}\lean{SpherePacking.Dim24.optimal_periodic_has_leech_distance_spectrum,SpherePacking.Dim24.optimal_periodic_has_leech_distance_spectrum_normalized}\leanok
+  Let $S$ be a periodic sphere packing in $\R^{24}$ with the Leech density.
+  Then there exists a scaling of $S$ whose separation is $2$ and which has the Leech distance spectrum.
+\end{theorem}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{theorem}\label{thm:leech-rigidity-normalized}\uses{thm:optimal-implies-leech-distance-spectrum,def:LeechPacking}\lean{SpherePacking.Dim24.Uniqueness.RigidityClassify.CE.leech_rigidity_normalized}\leanok
+  Let $S$ be a periodic sphere packing in $\R^{24}$ with separation $2$ and the Leech density.
+  Then $S$ is isometric to the Leech lattice packing.
+\end{theorem}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{theorem}\label{thm:leech-unique-optimal-periodic}\uses{thm:optimal-implies-leech-distance-spectrum,def:LeechPacking}\lean{SpherePacking.Dim24.Uniqueness.RigidityClassify.CE.leech_unique_optimal_periodic}\leanok
+  If $S$ is a periodic sphere packing in $\R^{24}$ with the Leech density, then $S$ is scaled-isometric to
+  the Leech lattice packing.
+\end{theorem}
+\begin{proof}\leanok
+\end{proof}

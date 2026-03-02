@@ -1,0 +1,80 @@
+\subsection{Construction of the optimal auxiliary function}
+
+\begin{definition}\label{def:f-d24}\uses{def:a-d24,def:b-d24}\lean{SpherePacking.Dim24.f,SpherePacking.Dim24.fRadial,SpherePacking.Dim24.scaledF}\leanok
+  Define
+  \[
+    f(r) := -\frac{\pi i}{113218560}\,a(r)-\frac{i}{262080\pi}\,b(r).
+  \]
+\end{definition}
+
+\begin{lemma}\label{lem:f-basic-d24}\uses{def:f-d24,lem:plusone-d24,lem:minusone-d24,lem:a-zeros-values-d24,lem:b-zeros-values-d24}\lean{SpherePacking.Dim24.f_zero,SpherePacking.Dim24.fourier_f_zero,SpherePacking.Dim24.f_real,SpherePacking.Dim24.f_real_fourier,SpherePacking.Dim24.fRadial_sqrtTwo,SpherePacking.Dim24.fRadial_hasDerivAt_sqrtTwo,SpherePacking.Dim24.fRadial_two,SpherePacking.Dim24.fRadial_hasDerivAt_two,SpherePacking.Dim24.fhatRadial_sqrtTwo,SpherePacking.Dim24.fhatRadial_hasDerivAt_sqrtTwo,SpherePacking.Dim24.fhatRadial_two}\leanok
+  The function $f$ is a radial Schwartz function $\R^{24}\to\R$ with $f(0)=\widehat f(0)=1$.
+  Moreover, $f$ and $\widehat f$ have roots at all radii $\sqrt{2k}$ for integers $k\ge 2$; these roots are double except for the root of $f$ at $2$.
+\end{lemma}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{definition}\label{def:A-d24}\uses{def:varphi-d24,def:psiI-d24}\lean{SpherePacking.Dim24.AKernel}\leanok
+  Define, for $t>0$,
+  \[
+    A(t):=\frac{\pi}{28304640}\,t^{10}\varphi(i/t)-\frac{1}{65520\pi}\,\psi_I(it).
+  \]
+\end{definition}
+
+\begin{definition}\label{def:B-d24}\uses{def:varphi-d24,def:psiI-d24}\lean{SpherePacking.Dim24.BKernel}\leanok
+  Define, for $t>0$,
+  \[
+    B(t):=\frac{\pi}{28304640}\,t^{10}\varphi(i/t)+\frac{1}{65520\pi}\,\psi_I(it).
+  \]
+\end{definition}
+
+\begin{lemma}\label{lem:f-integral-d24}\uses{def:f-d24,def:A-d24,def:B-d24}\lean{SpherePacking.Dim24.LaplaceTmp.f_eq_laplace_A,SpherePacking.Dim24.LaplaceTmp.fourier_f_eq_laplace_B}\leanok
+  For $r>2$,
+  \[
+    f(r)=\sin\!\left(\frac{\pi r^2}{2}\right)^{\!2}\int_{0}^{\infty}A(t)e^{-\pi r^2 t}\,dt
+    \qquad\text{and}\qquad
+    \widehat f(r)=\sin\!\left(\frac{\pi r^2}{2}\right)^{\!2}\int_{0}^{\infty}B(t)e^{-\pi r^2 t}\,dt.
+  \]
+\end{lemma}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{lemma}\label{lem:varphi-neg-d24}\uses{def:varphi-d24}\lean{SpherePacking.Dim24.varphi_imagAxis_neg}\leanok
+  For all $t>0$, we have $\varphi(it)<0$.
+\end{lemma}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{lemma}\label{lem:B-nonneg-d24}\uses{def:varphi-d24,def:psiS-psiT-d24}\lean{SpherePacking.Dim24.ineq2_imagAxis}\leanok
+  For all $t>0$, we have
+  \[
+    \varphi(it)-\frac{432}{\pi^2}\psi_S(it)>0.
+  \]
+\end{lemma}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{lemma}\label{lem:B-leadingterms-d24}\uses{def:B-d24}\lean{SpherePacking.Dim24.B_leadingterms_bound}\leanok
+  For all $t\ge 1$,
+  \[
+    B(t)>\frac{1}{39}t e^{2\pi t}-\frac{10}{117\pi}e^{2\pi t}.
+  \]
+\end{lemma}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{theorem}\label{thm:magic-function-d24}\uses{thm:LP-d24,def:f-d24,lem:f-basic-d24,lem:f-integral-d24,lem:varphi-neg-d24,lem:B-nonneg-d24,lem:B-leadingterms-d24,lem:LeechPacking-density}\lean{SpherePacking.Dim24.SpherePackingConstant_le_leech_density}\leanok
+  The function $f$ satisfies the hypotheses of \cref{thm:LP-d24}, and therefore $\Delta_{24}\le \pi^{12}/12!$.
+  In particular, the Leech lattice packing is optimal.
+\end{theorem}
+\begin{proof}\leanok
+  Using \cref{lem:f-integral-d24}, the inequality $f(r)\le 0$ for $r\ge 2$ reduces to showing $A(t)\le 0$, which follows from $\psi_S(it)\le 0$ (by its theta-function expression) and \cref{lem:varphi-neg-d24}.
+  Similarly, $\widehat f(r)\ge 0$ for $r>\sqrt2$ reduces to $B(t)\ge 0$, which is \cref{lem:B-nonneg-d24}.
+  The remaining range $0<r<\sqrt2$ is handled by subtracting the leading asymptotic terms of $B(t)$ for $t\ge 1$, and \cref{lem:B-leadingterms-d24} supplies the required inequality.
+  The linear programming bound \cref{thm:LP-d24} then yields $\Delta_{24}\le \pi^{12}/12!$, matching \cref{lem:LeechPacking-density}.
+\end{proof}
+
+\begin{remark}
+  The proofs of \cref{lem:varphi-neg-d24}, \cref{lem:B-nonneg-d24}, and \cref{lem:B-leadingterms-d24} in \cite{CKMRV24} are computer-assisted (via truncations of $q$-series and Sturm's theorem).
+  The uniqueness of the optimal \emph{periodic} packing follows from the additional information about the roots of $f$ (namely, that there are no roots $r>2$ other than the radii $\sqrt{2k}$ with $k\ge 2$), as in Section~8 of \cite{ElkiesCohn}.
+\end{remark}

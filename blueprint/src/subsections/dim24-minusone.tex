@@ -1,0 +1,49 @@
+\subsection{The $-1$ eigenfunction in $\R^{24}$}
+
+We now build a radial Schwartz eigenfunction with eigenvalue $-1$, using modular forms for $\Gamma(2)$.
+Our theta function notation matches \cref{def:th00-th01-th10}: we write $\Theta_{00}=\Theta_3$, $\Theta_{01}=\Theta_4$, and $\Theta_{10}=\Theta_2$.
+
+\begin{definition}\label{def:psiI-d24}\uses{def:th00-th01-th10,lemma:disc-E4E6}\lean{SpherePacking.Dim24.ψI}\leanok
+  Define
+  \begin{equation}\label{eq:d24-psiIdef}
+    \psi_I(z) := \frac{7 \Theta_{01}(z)^{20} \Theta_{10}(z)^8 + 7 \Theta_{01}(z)^{24} \Theta_{10}(z)^4 + 2 \Theta_{01}(z)^{28}}{\Delta(z)^2},
+  \end{equation}
+  a weakly holomorphic modular form of weight $-10$ for $\Gamma(2)$.
+\end{definition}
+
+\begin{definition}\label{def:psiS-psiT-d24}\uses{def:psiI-d24,def:slash-operator,def:Gamma-generators}\lean{SpherePacking.Dim24.ψS,SpherePacking.Dim24.ψT}\leanok
+  Define
+  \[
+    \psi_S := \psi_I|_{-10}S,\qquad \psi_T := \psi_I|_{-10}T.
+  \]
+\end{definition}
+
+\begin{lemma}\label{lem:psi-relations-d24}\uses{def:psiS-psiT-d24,lemma:theta-transform-S-T,lemma:jacobi-identity}\lean{SpherePacking.Dim24.ψS_add_ψT_eq_ψI,SpherePacking.Dim24.ψT_S_action}\leanok
+  We have $\psi_I=\psi_S+\psi_T$, and $\psi_T|_{-10}S=-\psi_T$.
+\end{lemma}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{definition}\label{def:b-d24}\uses{def:psiI-d24}\lean{SpherePacking.Dim24.b,SpherePacking.Dim24.bRadial}\leanok
+  For $r>2$, define
+  \begin{equation}\label{eq:d24-bdef}
+    b(r) := -4\sin\!\left(\frac{\pi r^2}{2}\right)^{\!2}\int_{0}^{i\infty}\psi_I(z)e^{\pi i r^2 z}\,dz.
+  \end{equation}
+\end{definition}
+
+\begin{lemma}\label{lem:minusone-d24}\uses{def:b-d24,lem:psi-relations-d24}\lean{SpherePacking.Dim24.eig_b}\leanok
+  The function $r\mapsto b(r)$ analytically continues to a holomorphic function on a neighborhood of $\R$.
+  Its restriction to $\R$ is a Schwartz function and a radial eigenfunction of the Fourier transform in $\R^{24}$ with eigenvalue $-1$.
+\end{lemma}
+\begin{proof}\leanok.
+\end{proof}
+
+\begin{lemma}\label{lem:b-zeros-values-d24}\uses{def:b-d24,lem:minusone-d24}\lean{SpherePacking.Dim24.b_mapsTo_pureImag,SpherePacking.Dim24.b_zero_of_norm_sq_eq_two_mul,SpherePacking.Dim24.bRadial_hasDerivAt_zero_of_two_lt,SpherePacking.Dim24.bRadial_zero,SpherePacking.Dim24.bRadial_sqrtTwo,SpherePacking.Dim24.bRadial_hasDerivAt_sqrtTwo,SpherePacking.Dim24.bRadial_two,SpherePacking.Dim24.bRadial_hasDerivAt_two}\leanok
+  The function $b$ maps $\R$ to $i\R$, and it has a double zero at $r=\sqrt{2k}$ for each integer $k>2$.
+  Moreover,
+  \[
+    b(0)=b(\sqrt2)=b(2)=0,\quad b'(\sqrt2)=928\,i\pi\sqrt2,\quad b'(2)=-8\pi i.
+  \]
+\end{lemma}
+\begin{proof}\leanok.
+\end{proof}

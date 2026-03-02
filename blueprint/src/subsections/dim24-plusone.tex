@@ -1,0 +1,44 @@
+\subsection{The $+1$ eigenfunction in $\R^{24}$}
+
+We define a weakly holomorphic quasimodular form (weight $-8$, depth $2$) and use it to build a radial Schwartz eigenfunction of the $24$-dimensional Fourier transform with eigenvalue $+1$.
+
+\begin{definition}\label{def:varphi-d24}\uses{def:Ek,def:E2,lemma:disc-E4E6}\lean{SpherePacking.Dim24.varphi}\leanok
+  Define the quasimodular form $\varphi$ on the upper half-plane by
+  \begin{equation}\label{eq:d24-phidef}
+  \varphi(z)
+  := \frac{\big(25E_4(z)^4 - 49E_6(z)^2E_4(z)\big) + 48E_6(z)E_4(z)^2E_2(z) + \big({-49}E_4(z)^3 + 25E_6(z)^2\big)E_2(z)^2}{\Delta(z)^2}.
+  \end{equation}
+\end{definition}
+
+\begin{lemma}\label{lem:varphi-quasimodular-d24}\uses{def:varphi-d24,lemma:E2-transform-S,lemma:disc-cuspform,lemma:Ek-is-modular-form}\lean{SpherePacking.Dim24.varphi_S_transform}\leanok
+  There exist meromorphic modular forms $\varphi_1,\varphi_2$ on $\Gamma_1=\mathrm{SL}_2(\Z)$ such that
+  \begin{equation}\label{eq:d24-quasimodular}
+    z^8\,\varphi\!\left(-\frac{1}{z}\right)=\varphi(z)+\frac{\varphi_1(z)}{z}+\frac{\varphi_2(z)}{z^2}.
+  \end{equation}
+\end{lemma}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{definition}\label{def:a-d24}\uses{def:varphi-d24}\lean{SpherePacking.Dim24.a,SpherePacking.Dim24.aRadial}\leanok
+  For $r>2$, define
+  \begin{equation}\label{eq:d24-adef}
+    a(r) := -4\sin\!\left(\frac{\pi r^2}{2}\right)^{\!2}\int_{0}^{i\infty}\varphi\!\left(-\frac{1}{z}\right)z^{10}e^{\pi i r^2 z}\,dz.
+  \end{equation}
+\end{definition}
+
+\begin{lemma}\label{lem:plusone-d24}\uses{def:a-d24,lem:varphi-quasimodular-d24}\lean{SpherePacking.Dim24.eig_a}\leanok
+  The function $r\mapsto a(r)$ analytically continues to a holomorphic function on a neighborhood of $\R$.
+  Its restriction to $\R$ is a Schwartz function and a radial eigenfunction of the Fourier transform in $\R^{24}$ with eigenvalue $+1$.
+\end{lemma}
+\begin{proof}\leanok
+\end{proof}
+
+\begin{lemma}\label{lem:a-zeros-values-d24}\uses{def:a-d24,lem:plusone-d24}\lean{SpherePacking.Dim24.a_mapsTo_pureImag,SpherePacking.Dim24.ZerosAux.a_zero_of_norm_sq_eq_two_mul,SpherePacking.Dim24.ZerosAux.aRadial_hasDerivAt_zero_of_two_lt,SpherePacking.Dim24.aRadial_zero,SpherePacking.Dim24.aRadial_sqrtTwo,SpherePacking.Dim24.aRadial_hasDerivAt_sqrtTwo,SpherePacking.Dim24.aRadial_two,SpherePacking.Dim24.aRadial_hasDerivAt_two}\leanok
+  The function $a$ maps $\R$ to $i\R$, and it has a double zero at $r=\sqrt{2k}$ for each integer $k>2$.
+  Moreover,
+  \[
+    a(0)=\frac{113218560\,i}{\pi},\quad a(\sqrt2)=\frac{725760\,i}{\pi},\quad a'(\sqrt2)=\frac{-4437504\sqrt2\,i}{\pi},\quad a(2)=0,\quad a'(2)=\frac{-3456\,i}{\pi}.
+  \]
+\end{lemma}
+\begin{proof}\leanok
+\end{proof}
