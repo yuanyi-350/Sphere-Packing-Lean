@@ -1,5 +1,4 @@
-module
-public import SpherePacking.Dim8.ScaledMagic
+import SpherePacking.Dim8.ScaledMagic
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.RealValued
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.SignConditions
 import SpherePacking.ForMathlib.FourierLinearEquiv
