@@ -136,10 +136,12 @@ public lemma qExpansion_coeff_two_thetaSeries_eq_thetaCoeff
       have hint0 :
           (∫ u : ℝ in (0 : ℝ)..1, Complex.exp (A * (u : ℂ))) = (1 : ℂ) := by
         simp [A, hk0]
+        exact one_smul ℂ (1 : ℂ)
       have :
           (∫ u : ℝ in (0 : ℝ)..1, Complex.exp (A * ((u : ℂ) + Complex.I))) = (1 : ℂ) := by
         rw [exp_mul_add_I_split (A := A)]
         simp [A, hk0]
+        exact one_smul ℂ (1 : ℂ)
       simpa [hrewrite_z, hzS] using this
     · have hk : k ≠ 0 := by
         intro hk0
