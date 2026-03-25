@@ -45,13 +45,10 @@ public lemma fourier_I₁_eq_curveIntegral (w : ℝ²⁴) :
       RealIntegrals.I₁' (‖x‖ ^ 2) =
         ∫ t in Ioc (0 : ℝ) 1, (I : ℂ) * Φ₁' (‖x‖ ^ 2) (z₁line t) := by
     rw [I₁'_eq_curveIntegral_segment (r := ‖x‖ ^ 2)]
-    rw [curveIntegral_segment (ω := scalarOneForm (Φ₁' (‖x‖ ^ 2))) (-1 : ℂ) ((-1 : ℂ) + I)]
-    rw [intervalIntegral.integral_of_le
-      (μ := (volume : Measure ℝ)) (a := (0 : ℝ)) (b := 1) (by norm_num)]
-    have hdir : (((-1 : ℂ) + I) - (-1 : ℂ)) = (I : ℂ) :=
-      SpherePacking.Contour.dir_z₁line
-    simp [scalarOneForm_apply, z₁line, hdir,
-      SpherePacking.Contour.lineMap_z₁line]
+    simpa [SpherePacking.Contour.dir_z₁line] using
+      (SpherePacking.Integration.integral_dir_mul_restrict_Ioc01_eq_curveIntegral_segment
+        (F := Φ₁' (‖x‖ ^ 2)) (a := (-1 : ℂ)) (b := (-1 : ℂ) + I) (zline := z₁line)
+        SpherePacking.Contour.lineMap_z₁line).symm
   have hmul :
       (fun x : ℝ²⁴ ↦
           cexp (↑(-2 * (π * ⟪x, w⟫)) * I) *
@@ -120,11 +117,10 @@ public lemma fourier_I₂_eq_curveIntegral (w : ℝ²⁴) :
       RealIntegrals.I₂' (‖x‖ ^ 2) =
         ∫ t in Ioc (0 : ℝ) 1, Φ₁' (‖x‖ ^ 2) (z₂line t) := by
     rw [I₂'_eq_curveIntegral_segment (r := ‖x‖ ^ 2)]
-    rw [curveIntegral_segment (ω := scalarOneForm (Φ₁' (‖x‖ ^ 2))) ((-1 : ℂ) + I) I]
-    rw [intervalIntegral.integral_of_le
-      (μ := (volume : Measure ℝ)) (a := (0 : ℝ)) (b := 1) (by norm_num)]
-    have hdir : (I - ((-1 : ℂ) + I)) = (1 : ℂ) := SpherePacking.Contour.dir_z₂line
-    simp [scalarOneForm_apply, z₂line, hdir, SpherePacking.Contour.lineMap_z₂line]
+    simpa [SpherePacking.Contour.dir_z₂line, one_mul] using
+      (SpherePacking.Integration.integral_dir_mul_restrict_Ioc01_eq_curveIntegral_segment
+        (F := Φ₁' (‖x‖ ^ 2)) (a := (-1 : ℂ) + I) (b := I) (zline := z₂line)
+        SpherePacking.Contour.lineMap_z₂line).symm
   have hmul :
       (fun x : ℝ²⁴ ↦
           cexp (↑(-2 * (π * ⟪x, w⟫)) * I) *
