@@ -89,9 +89,17 @@ private lemma I₃'_eq_exp_mul_I₁' :
       show z₃' t = z₁' t + 2 by simp [h1, h3]; ring,
       show z₁' t + 1 = I * t by simp [h1],
       mul_add, Complex.exp_add, mul_comm, mul_left_comm, mul_assoc]
-  simpa
-      [RealIntegrals.I₃', Φ₃, Φ₃', RealIntegrals.I₁', Φ₁, Φ₁', mul_comm, mul_left_comm, mul_assoc]
-    using intervalIntegral.integral_congr (a := 0) (b := 1) hEqOn
+  calc
+    RealIntegrals.I₃' x = ∫ t in (0 : ℝ)..1, cexp (2 * π * I * x) *
+        (I * φ₀'' (-1 / (z₁' t + 1)) * (z₁' t + 1) ^ 2 * cexp (π * I * x * z₁' t)) := by
+      simpa [RealIntegrals.I₃', Φ₃, Φ₃', mul_comm, mul_left_comm, mul_assoc] using
+        intervalIntegral.integral_congr (a := 0) (b := 1) hEqOn
+    _ = cexp (2 * π * I * x) * ∫ t in (0 : ℝ)..1,
+        I * φ₀'' (-1 / (z₁' t + 1)) * (z₁' t + 1) ^ 2 * cexp (π * I * x * z₁' t) := by
+      exact intervalIntegral.integral_const_mul (a := 0) (b := 1) (r := cexp (2 * π * I * x))
+        (f := fun t => I * φ₀'' (-1 / (z₁' t + 1)) * (z₁' t + 1) ^ 2 * cexp (π * I * x * z₁' t))
+    _ = cexp (2 * π * I * x) * RealIntegrals.I₁' x := by
+      simp [RealIntegrals.I₁', Φ₁, Φ₁', mul_comm, mul_left_comm, mul_assoc]
 
 theorem I₃'_smooth' : ContDiff ℝ ∞ RealIntegrals.I₃' := by
   simpa [I₃'_eq_exp_mul_I₁'] using (contDiff_const.mul ofRealCLM.contDiff).cexp.mul I₁'_smooth'
@@ -109,7 +117,7 @@ private lemma I₅'_eq_mul_exp_mul_I₁' :
       RealIntegrals.I₁' x = ∫ t in (0 : ℝ)..1, f t * cexp (-π * I * x) := by
         simpa [f, mul_assoc, mul_left_comm, mul_comm] using (I₁'_eq (r := x))
       _ = (∫ t in (0 : ℝ)..1, f t) * cexp (-π * I * x) := by
-        simp [intervalIntegral.integral_mul_const]
+        exact intervalIntegral.integral_mul_const (a := 0) (b := 1) (r := cexp (-π * I * x)) f
   have hI5 : RealIntegrals.I₅' x = (-2 : ℂ) * ∫ t in (0 : ℝ)..1, f t := by
     simpa [f, mul_assoc, mul_left_comm, mul_comm] using (I₅'_eq (r := x))
   have hexp : cexp (π * I * x) * cexp (-(π * I * x)) = 1 := by
@@ -497,37 +505,49 @@ The prime indicates that this is a radial profile in the variable `r = ‖x‖^2
 @[simp]
 public lemma I₁'_apply_of_nonneg (r : ℝ) (hr : 0 ≤ r) :
     (I₁' : ℝ → ℂ) r = MagicFunction.a.RealIntegrals.I₁' r := by
-  simp [I₁', SchwartzMap.instFunLike, RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
+  change RadialSchwartz.cutoffC r * MagicFunction.a.RealIntegrals.I₁' r =
+    MagicFunction.a.RealIntegrals.I₁' r
+  simp [RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
 
 /-- On `r ≥ 0`, the cutoff is `1`, so `I₂'` agrees with `RealIntegrals.I₂'`. -/
 @[simp]
 public lemma I₂'_apply_of_nonneg (r : ℝ) (hr : 0 ≤ r) :
     (I₂' : ℝ → ℂ) r = MagicFunction.a.RealIntegrals.I₂' r := by
-  simp [I₂', SchwartzMap.instFunLike, RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
+  change RadialSchwartz.cutoffC r * MagicFunction.a.RealIntegrals.I₂' r =
+    MagicFunction.a.RealIntegrals.I₂' r
+  simp [RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
 
 /-- On `r ≥ 0`, the cutoff is `1`, so `I₃'` agrees with `RealIntegrals.I₃'`. -/
 @[simp]
 public lemma I₃'_apply_of_nonneg (r : ℝ) (hr : 0 ≤ r) :
     (I₃' : ℝ → ℂ) r = MagicFunction.a.RealIntegrals.I₃' r := by
-  simp [I₃', SchwartzMap.instFunLike, RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
+  change RadialSchwartz.cutoffC r * MagicFunction.a.RealIntegrals.I₃' r =
+    MagicFunction.a.RealIntegrals.I₃' r
+  simp [RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
 
 /-- On `r ≥ 0`, the cutoff is `1`, so `I₄'` agrees with `RealIntegrals.I₄'`. -/
 @[simp]
 public lemma I₄'_apply_of_nonneg (r : ℝ) (hr : 0 ≤ r) :
     (I₄' : ℝ → ℂ) r = MagicFunction.a.RealIntegrals.I₄' r := by
-  simp [I₄', SchwartzMap.instFunLike, RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
+  change RadialSchwartz.cutoffC r * MagicFunction.a.RealIntegrals.I₄' r =
+    MagicFunction.a.RealIntegrals.I₄' r
+  simp [RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
 
 /-- On `r ≥ 0`, the cutoff is `1`, so `I₅'` agrees with `RealIntegrals.I₅'`. -/
 @[simp]
 public lemma I₅'_apply_of_nonneg (r : ℝ) (hr : 0 ≤ r) :
     (I₅' : ℝ → ℂ) r = MagicFunction.a.RealIntegrals.I₅' r := by
-  simp [I₅', SchwartzMap.instFunLike, RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
+  change RadialSchwartz.cutoffC r * MagicFunction.a.RealIntegrals.I₅' r =
+    MagicFunction.a.RealIntegrals.I₅' r
+  simp [RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
 
 /-- On `r ≥ 0`, the cutoff is `1`, so `I₆'` agrees with `RealIntegrals.I₆'`. -/
 @[simp]
 public lemma I₆'_apply_of_nonneg (r : ℝ) (hr : 0 ≤ r) :
     (I₆' : ℝ → ℂ) r = MagicFunction.a.RealIntegrals.I₆' r := by
-  simp [I₆', SchwartzMap.instFunLike, RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
+  change RadialSchwartz.cutoffC r * MagicFunction.a.RealIntegrals.I₆' r =
+    MagicFunction.a.RealIntegrals.I₆' r
+  simp [RadialSchwartz.cutoffC_eq_one_of_nonneg hr]
 
 end MagicFunction.a.SchwartzIntegrals
 namespace MagicFunction.FourierEigenfunctions
