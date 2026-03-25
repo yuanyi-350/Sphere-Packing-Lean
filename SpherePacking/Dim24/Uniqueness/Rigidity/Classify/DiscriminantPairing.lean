@@ -100,7 +100,7 @@ public lemma dualLatticePair_apply (L : Submodule ℤ ℝ²⁴) (x y : DualLatti
     Submodule.liftQ (p := latticeInDual L) (dualLatticePair L x) (rightVanishes x)
   have discPairRight_mk (x y : DualLattice L) :
       discPairRight x (Submodule.Quotient.mk y) = dualLatticePair L x y := by
-    simp [discPairRight]
+    rfl
   let liftRight : DualLattice L →ₗ[ℤ] DiscriminantGroup L →ₗ[ℤ] 𝕋 :=
     { toFun := fun x => discPairRight x
       map_add' := by
@@ -156,7 +156,7 @@ public lemma discPair_mk_mk (L : Submodule ℤ ℝ²⁴) (x y : DualLattice L) :
     discPair (L := L) (Submodule.Quotient.mk x) (Submodule.Quotient.mk y) =
       dualLatticePair L x y := by
   -- Expand `discPair` and use the `liftQ` computation rule twice.
-  simp [discPair]
+  rfl
 
 private theorem orbitCoset_pair_eq_zero (S : PeriodicSpherePacking 24)
     (hSpec : HasLeechDistanceSpectrum S) (hDens : S.density = LeechPacking.density)
