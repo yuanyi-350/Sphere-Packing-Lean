@@ -53,6 +53,10 @@ lemma I₄'_eq_integral_g_Ioo (x : ℝ) :
     DifferentiationUnderIntegral.g, Φ₄', Φ₃',
     intervalIntegral_eq_integral_uIoc, zero_le_one, uIoc_of_le, integral_Ioc_eq_integral_Ioo,
     mul_assoc, mul_left_comm, mul_comm]
+  exact
+    (one_smul ℝ
+      (∫ t in Ioo (0 : ℝ) 1,
+        -(cexp (I * (↑x * (↑π * z₄' t))) * (φ₀'' (-1 / (z₄' t - 1)) * (z₄' t - 1) ^ 2)) ∂volume))
 
 lemma coeff_norm_le (t : ℝ) : ‖coeff t‖ ≤ 2 * π := by
   simpa [coeff, mul_assoc] using (norm_mul_pi_I_le_two_pi (z := z₄' t) (hz := norm_z₄'_le_two t))
