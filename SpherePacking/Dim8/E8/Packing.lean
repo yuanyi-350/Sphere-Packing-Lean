@@ -27,8 +27,13 @@ open InnerProductSpace RCLike
 public lemma E8_norm_eq_sqrt_even
     (v : Fin 8 → ℝ) (hv : v ∈ Submodule.E8 ℝ) :
     ∃ n : ℤ, Even n ∧ n = ‖WithLp.toLp 2 v‖ ^ 2 := by
-  rw [← real_inner_self_eq_norm_sq, EuclideanSpace.inner_toLp_toLp, star_trivial]
-  exact E8_integral_self _ hv
+  obtain ⟨n, hn, hn'⟩ := E8_integral_self v hv
+  refine ⟨n, hn, ?_⟩
+  calc
+    (n : ℝ) = v ⬝ᵥ v := hn'
+    _ = ‖WithLp.toLp 2 v‖ ^ 2 := by
+      change v ⬝ᵥ star v = ‖WithLp.toLp 2 v‖ ^ 2; rw [← EuclideanSpace.inner_toLp_toLp]
+      exact real_inner_self_eq_norm_sq (WithLp.toLp 2 v)
 
 lemma E8_norm_lower_bound (v : Fin 8 → ℝ) (hv : v ∈ Submodule.E8 ℝ) :
     v = 0 ∨ √2 ≤ ‖WithLp.toLp 2 v‖ := by
@@ -55,7 +60,9 @@ public instance instDiscreteE8Lattice : DiscreteTopology E8Lattice := by
   suffices v = 0 by simpa using congrArg (WithLp.toLp 2) this
   refine (E8_norm_lower_bound v hv).resolve_right ?_
   have hx1 : ‖WithLp.toLp 2 v‖ < (1 : ℝ) := by
-    simpa [dist_zero_right, AddSubgroupClass.coe_norm] using hx'
+    have hx1' : dist (WithLp.toLp 2 v) 0 < (1 : ℝ) := by
+      simpa [Subtype.dist_eq] using hx'
+    simpa [dist_zero_right] using hx1'
   exact not_le_of_gt (hx1.trans Real.one_lt_sqrt_two)
 
 lemma span_E8_eq_top : Submodule.span ℝ (Submodule.E8 ℝ : Set (Fin 8 → ℝ)) = ⊤ := by
@@ -121,9 +128,10 @@ open scoped Real
     have hne : a' ≠ b' := by
       contrapose! hab
       simp [hab]
-    simp only [dist_eq_norm, AddSubgroupClass.coe_norm, AddSubgroupClass.coe_sub]
     have hne' : a' - b' ≠ 0 := sub_ne_zero.mpr hne
-    convert (E8_norm_lower_bound _ hsub).resolve_left hne' using 2
+    change √2 ≤ ‖(WithLp.linearEquiv 2 ℤ (Fin 8 → ℝ)).symm a' -
+      (WithLp.linearEquiv 2 ℤ (Fin 8 → ℝ)).symm b'‖
+    simpa using (E8_norm_lower_bound _ hsub).resolve_left hne'
   lattice_action x y := add_mem
 
 lemma E8Packing_numReps : E8Packing.numReps = 1 :=
