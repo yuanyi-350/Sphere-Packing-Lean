@@ -165,7 +165,22 @@ public lemma Bfun_two : Bfun (2 : ℝ) = (-464 : ℂ) := by
           exact hInt.trans this
         assumption
       -- Put together (factor out the constants).
-      simp_all
+      rw [hsplit]
+      let c0 : ℂ := (2 : ℂ) * cexp (2 * Real.pi * (T : ℂ))
+      change ∫ x in (0 : ℝ)..1, c0 * cexp (-2 * Real.pi * Complex.I * (x : ℂ)) = 0
+      have hconstmul :
+          ∫ x in (0 : ℝ)..1, c0 * cexp (-2 * Real.pi * Complex.I * (x : ℂ)) =
+            c0 * ∫ x in (0 : ℝ)..1, cexp (-2 * Real.pi * Complex.I * (x : ℂ)) := by
+        exact
+          (intervalIntegral.integral_const_mul (μ := MeasureTheory.volume) (a := (0 : ℝ)) (b := (1 : ℝ))
+            (r := c0) (f := fun x : ℝ => cexp (-2 * Real.pi * Complex.I * (x : ℂ))))
+      calc
+        ∫ x in (0 : ℝ)..1, c0 * cexp (-2 * Real.pi * Complex.I * (x : ℂ)) =
+            c0 * ∫ x in (0 : ℝ)..1, cexp (-2 * Real.pi * Complex.I * (x : ℂ)) := hconstmul
+        _ = 0 := by
+          have hint' : ∫ x in (0 : ℝ)..1, cexp (-(2 * Real.pi * Complex.I * (x : ℂ))) = 0 := by
+            simpa using hint
+          simp [hint', c0]
     -- Rewrite `TopEdge(2,T)` as `∫ hTfun`.
     have hInt : TopEdge (2 : ℝ) T = ∫ x in (0 : ℝ)..1, hTfun x := by
       -- Pointwise: `ψI * expU 2 = hTfun + 2/qHalf^2`.
@@ -319,7 +334,9 @@ public lemma Bfun_two : Bfun (2 : ℝ) = (-464 : ℂ) := by
         intervalIntegral.integral_sub (μ := MeasureTheory.volume) (a := (0 : ℝ)) (b := (1 : ℝ))
           (f := hTfun) (g := fun _ : ℝ => (-464 : ℂ)) hIntH hIntC
       have hconst : (∫ x in (0 : ℝ)..1, (-464 : ℂ)) = (-464 : ℂ) := by
-        simp [intervalIntegral.integral_const]
+        rw [intervalIntegral.integral_const]
+        norm_num
+        exact one_smul ℝ (-464 : ℂ)
       simpa [hInt, hconst, sub_eq_add_neg, add_assoc] using hsub.symm
     have hnorm :
         ‖∫ x in (0 : ℝ)..1, (hTfun x - (-464 : ℂ))‖ ≤ (ε / 2) * |(1 : ℝ) - 0| :=
