@@ -86,15 +86,16 @@ public lemma coeff_pderiv (i : Var) (p : Poly) (d : Var →₀ ℕ) :
 
 /-- Multiply by `X i`, shifting degree `k ↦ k+1`. -/
 @[expose] public noncomputable def mulXPk (k : ℕ) (i : Var) : Pk k →ₗ[ℝ] Pk (k + 1) :=
-  LinearMap.codRestrict (Pk (k + 1))
-    ((LinearMap.mul ℝ Poly (X i)).comp (Submodule.subtype (Pk k))) (by
-      intro p
+  { toFun := fun p => ⟨(X i : Poly) * p.1, by
       have hp : (p.1 : Poly).IsHomogeneous k :=
         (MvPolynomial.mem_homogeneousSubmodule (σ := Var) (R := ℝ) k (p := (p.1 : Poly))).1 p.2
       have hx : (X i : Poly).IsHomogeneous 1 := MvPolynomial.isHomogeneous_X (R := ℝ) i
       have hmul : ((X i : Poly) * (p.1 : Poly)).IsHomogeneous (k + 1) := by
         simpa [Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using (hx.mul hp)
-      assumption)
+      exact (MvPolynomial.mem_homogeneousSubmodule (σ := Var) (R := ℝ) (k + 1)
+        (p := (X i : Poly) * (p.1 : Poly))).2 hmul⟩
+    map_add' := by intro p q; ext d; simp [mul_add]
+    map_smul' := by intro r p; ext d; simp }
 
 /-- Partial derivative `∂ᵢ`, shifting degree `k+1 ↦ k`. -/
 @[expose] public noncomputable def pderivPk (k : ℕ) (i : Var) : Pk (k + 1) →ₗ[ℝ] Pk k :=
