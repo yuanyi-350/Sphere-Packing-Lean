@@ -32,11 +32,8 @@ public theorem finsetAvg_eq_sphereAvg_of_degree_zero_step
       (p.1 : MvPolynomial (Fin 24) ℝ) ∈
         MvPolynomial.homogeneousSubmodule (Fin 24) ℝ 0 := by
     simpa [Fischer.Pk] using p.2
-  have hmem1 :
-      (p.1 : MvPolynomial (Fin 24) ℝ) ∈
-        (1 : Submodule ℝ (MvPolynomial (Fin 24) ℝ)) := by
-    simpa [MvPolynomial.homogeneousSubmodule_zero] using hmem0
-  rcases (Submodule.mem_one.mp hmem1) with ⟨a, ha⟩
+  rw [MvPolynomial.homogeneousSubmodule_zero] at hmem0
+  rcases (Submodule.mem_one.mp hmem0) with ⟨a, ha⟩
   have heval_const :
       (fun x : ℝ²⁴ => evalPk24 (k := 0) (y := x) p) = fun _ : ℝ²⁴ => a := by
     funext x
