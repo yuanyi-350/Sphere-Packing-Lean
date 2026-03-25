@@ -44,13 +44,10 @@ public theorem mem_Harm_of_degree_one_step
         MvPolynomial.pderiv i (p.1 : MvPolynomial (Fin 24) ℝ) ∈
           MvPolynomial.homogeneousSubmodule (Fin 24) ℝ 0 :=
       hhom0
-    have hmem1 :
-        (MvPolynomial.pderiv i (p.1 : MvPolynomial (Fin 24) ℝ)) ∈
-          (1 : Submodule ℝ (MvPolynomial (Fin 24) ℝ)) := by
-      simpa [MvPolynomial.homogeneousSubmodule_zero] using hmem0
-    rcases (Submodule.mem_one.mp hmem1) with ⟨a, ha⟩
+    rw [MvPolynomial.homogeneousSubmodule_zero] at hmem0
+    rcases (Submodule.mem_one.mp hmem0) with ⟨a, ha⟩
     simp [ha.symm, MvPolynomial.algebraMap_eq]
-  simp [hterm]
+  simpa using Finset.sum_eq_zero (fun i _ => hterm i)
 
 end
 
