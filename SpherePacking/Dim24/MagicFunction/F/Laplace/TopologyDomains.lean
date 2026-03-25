@@ -113,11 +113,18 @@ public lemma domainPosNeTwo_isPreconnected : IsPreconnected domainPosNeTwo := by
         have ht0 : 0 ≤ t := ht.1
         have hw_re : 0 < (AffineMap.lineMap z (z + 1) t).re := by
           have hre : (AffineMap.lineMap z (z + 1) t).re = z.re + t := by
-            simp [AffineMap.lineMap_apply, Complex.add_re, sub_eq_add_neg, add_left_comm, add_comm]
+            have hz' : z + 1 -ᵥ z = (1 : ℂ) := by simp
+            rw [AffineMap.lineMap_apply, hz']
+            change (t • (1 : ℂ) + z).re = z.re + t
+            simp [Complex.add_re]
+            ring
           have hpos : 0 < z.re + t := add_pos_of_pos_of_nonneg hzRe ht0
           simpa [hre] using hpos
         have hw_im : (AffineMap.lineMap z (z + 1) t).im = z.im := by
-          simp [AffineMap.lineMap_apply, Complex.add_im, sub_eq_add_neg, add_left_comm, add_comm]
+          have hz' : z + 1 -ᵥ z = (1 : ℂ) := by simp
+          rw [AffineMap.lineMap_apply, hz']
+          change (t • (1 : ℂ) + z).im = z.im
+          simp [Complex.add_im]
         have hw_ne : AffineMap.lineMap z (z + 1) t ≠ (2 : ℂ) := by
           intro hEq
           have : (AffineMap.lineMap z (z + 1) t).im = (2 : ℂ).im := congrArg Complex.im hEq
@@ -132,13 +139,17 @@ public lemma domainPosNeTwo_isPreconnected : IsPreconnected domainPosNeTwo := by
       rw [segment_eq_image_lineMap] at hw
       rcases hw with ⟨t, ht, rfl⟩
       have hz0re : 0 < z0.re := by simpa [domainPosNeTwo, rightHalfPlane] using hz0_mem.1
+      have hre_z0 : (AffineMap.lineMap z0 z1 t).re = z0.re := by
+        rw [AffineMap.lineMap_apply]
+        change (t • (z1 - z0) + z0).re = z0.re
+        simp [Complex.add_re, z1, sub_eq_add_neg]
       have hw_re : 0 < (AffineMap.lineMap z0 z1 t).re := by
-        simpa [z1, AffineMap.lineMap_apply, Complex.add_re, Complex.smul_re] using hz0re
+        simpa [hre_z0] using hz0re
       have hw_ne : AffineMap.lineMap z0 z1 t ≠ (2 : ℂ) := by
         intro hEq
         have hre : (AffineMap.lineMap z0 z1 t).re = (2 : ℂ).re := congrArg Complex.re hEq
         have hz0re2 : z0.re = 2 := by
-          simpa [z1, AffineMap.lineMap_apply, Complex.add_re, Complex.smul_re] using hre
+          simpa [hre_z0] using hre
         have hz0im_nonneg : 0 ≤ z0.im := by
           by_cases h : z.re = 2 ∧ z.im < 0
           · have hz0eq : z0 = z + 1 := by simp [z0, h]
@@ -151,7 +162,9 @@ public lemma domainPosNeTwo_isPreconnected : IsPreconnected domainPosNeTwo := by
             have : 0 ≤ z.im := le_of_not_gt this
             simpa [hz0eq] using this
         have hw_im : (AffineMap.lineMap z0 z1 t).im = (1 - t) * z0.im + t := by
-          simp [z1, AffineMap.lineMap_apply, sub_eq_add_neg]
+          rw [AffineMap.lineMap_apply]
+          change (t • (z1 - z0) + z0).im = (1 - t) * z0.im + t
+          simp [Complex.add_im, z1, sub_eq_add_neg]
           ring
         have ht0 : 0 ≤ t := ht.1
         have h1t0 : 0 ≤ 1 - t := by linarith [ht.2]
@@ -193,11 +206,15 @@ public lemma domainPosNeTwo_isPreconnected : IsPreconnected domainPosNeTwo := by
             add_pos_of_nonneg_of_pos this (mul_pos htpos hbaseRe)
           have hre :
               (AffineMap.lineMap z1 base t).re = (1 - t) * z1.re + t * base.re := by
-            simp [AffineMap.lineMap_apply, sub_eq_add_neg]
+            rw [AffineMap.lineMap_apply]
+            change (t • (base - z1) + z1).re = (1 - t) * z1.re + t * base.re
+            simp [Complex.add_re, sub_eq_add_neg]
             ring
           simpa [hre] using hpos
       have hw_im : (AffineMap.lineMap z1 base t).im = 1 := by
-        simp [AffineMap.lineMap_apply, z1, base, sub_eq_add_neg]
+        rw [AffineMap.lineMap_apply]
+        change (t • (base - z1) + z1).im = 1
+        simp [Complex.add_im, sub_eq_add_neg, z1, base]
       have hw_ne : AffineMap.lineMap z1 base t ≠ (2 : ℂ) := by
         intro hEq
         have : (AffineMap.lineMap z1 base t).im = (2 : ℂ).im := congrArg Complex.im hEq
