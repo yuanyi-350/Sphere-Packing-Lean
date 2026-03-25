@@ -77,6 +77,9 @@ lemma integral_cexp_neg_two_pi_mul_I :
     have hmul : ((-2 : ℂ) * (Real.pi : ℂ)) ≠ 0 := mul_ne_zero h2 hpi
     dsimp [c]
     exact mul_ne_zero hmul Complex.I_ne_zero
+  letI : ContinuousSMul ℝ ℂ := ⟨by
+    simpa [smul_eq_mul, Complex.ofReal_mul] using
+      (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd⟩
   have hderiv :
       ∀ x ∈ Set.uIcc (0 : ℝ) 1,
         HasDerivAt (fun t : ℝ => cexp (c * (t : ℂ)) / c) (cexp (c * (x : ℂ))) x := by
@@ -157,13 +160,14 @@ lemma integral_const_div_q (c₁ : ℂ) (m : ℝ) :
           c₁ * (SpecialValuesVarphi₁Limits.q ((x : ℂ) + m * Complex.I))⁻¹) := by
           simp [div_eq_mul_inv]
     _ = c₁ * ∫ x : ℝ in (0 : ℝ)..1, (SpecialValuesVarphi₁Limits.q ((x : ℂ) + m * Complex.I))⁻¹ := by
-          simp [intervalIntegral.integral_const_mul]
+          exact intervalIntegral.integral_const_mul c₁ _
     _ = c₁ * ∫ x : ℝ in (0 : ℝ)..1,
           cexp ((2 * (π : ℂ)) * (m : ℂ)) * cexp ((-2 * (π : ℂ) * Complex.I) * (x : ℂ)) := by
           simp [hq]
     _ = c₁ * (cexp ((2 * (π : ℂ)) * (m : ℂ)) *
           ∫ x : ℝ in (0 : ℝ)..1, cexp ((-2 * (π : ℂ) * Complex.I) * (x : ℂ))) := by
-          simp [intervalIntegral.integral_const_mul, mul_assoc]
+          congr 1
+          exact intervalIntegral.integral_const_mul _ _
     _ = c₁ * (cexp ((2 * (π : ℂ)) * (m : ℂ)) * (0 : ℂ)) := by
           rw [hInt]
     _ = 0 := by
@@ -182,7 +186,9 @@ lemma tendsto_top_varphi₁'_zero :
   have hBall :
       {z : ℍ | ‖Dim24.varphi₁ z - c₁ / SpecialValuesVarphi₁Limits.q (z : ℂ) - c₀‖ < ε / 2} ∈
         atImInfty :=
-    (SpecialValuesVarphi₁Limits.tendsto_varphi₁_sub_const_div_q (Metric.ball_mem_nhds _ hε2))
+    by
+      simpa [c₁, c₀, Metric.ball, dist_eq_norm] using
+        (SpecialValuesVarphi₁Limits.tendsto_varphi₁_sub_const_div_q (Metric.ball_mem_nhds _ hε2))
   rcases (UpperHalfPlane.atImInfty_mem _).1 hBall with ⟨A, hA⟩
   refine ⟨max A 1, ?_⟩
   intro m hm
@@ -274,7 +280,16 @@ lemma tendsto_top_varphi₁'_zero :
     have hsub'' :
         (∫ x : ℝ in (0 : ℝ)..1, vLine x - pole x) - c₀ =
           ∫ x : ℝ in (0 : ℝ)..1, (vLine x - pole x - c₀) := by
-      simpa [sub_eq_add_neg, add_assoc] using hsub'.symm
+      calc
+        (∫ x : ℝ in (0 : ℝ)..1, vLine x - pole x) - c₀
+            = (∫ x : ℝ in (0 : ℝ)..1, vLine x - pole x) - ∫ x : ℝ in (0 : ℝ)..1, c₀ := by
+              have hconst : c₀ = ∫ x : ℝ in (0 : ℝ)..1, c₀ := by
+                rw [intervalIntegral.integral_const]
+                rw [show (1 - 0 : ℝ) = 1 by norm_num]
+                exact (one_smul ℝ c₀).symm
+              exact congrArg (fun z : ℂ => (∫ x : ℝ in (0 : ℝ)..1, vLine x - pole x) - z) hconst
+        _ = ∫ x : ℝ in (0 : ℝ)..1, (vLine x - pole x - c₀) := by
+              simpa [sub_eq_add_neg, add_assoc] using hsub'.symm
     -- Replace the `∫(varphi₁' - pole)` term by `∫ varphi₁'` using `hPole`.
     have hPole0 : (∫ x : ℝ in (0 : ℝ)..1, pole x) = (0 : ℂ) := by
       simpa [pole] using hPole
@@ -341,8 +356,9 @@ lemma tendsto_top_varphi₁'_mul_expU_two :
   have hBall :
       {z : ℍ | ‖Dim24.varphi₁ z * SpecialValuesVarphi₁Limits.q (z : ℂ)
             - ((725760 : ℂ) * Complex.I / (π : ℂ))‖ < ε / 2} ∈ atImInfty :=
-    (SpecialValuesVarphi₁Limits.tendsto_varphi₁_mul_q
-      (Metric.ball_mem_nhds _ hε2))
+    by
+      simpa [Metric.ball, dist_eq_norm] using
+        (SpecialValuesVarphi₁Limits.tendsto_varphi₁_mul_q (Metric.ball_mem_nhds _ hε2))
   rcases (UpperHalfPlane.atImInfty_mem _).1 hBall with ⟨A, hA⟩
   refine ⟨max A 1, ?_⟩
   intro m hm
@@ -370,7 +386,10 @@ lemma tendsto_top_varphi₁'_mul_expU_two :
           Dim24.varphi₁ zH * SpecialValuesVarphi₁Limits.q (zH : ℂ) := by
       simp [SpecialValuesAux.varphi₁', SpecialValuesAux.expU, SpecialValuesVarphi₁Limits.q, zH, hm0,
         mul_assoc, mul_left_comm, mul_comm]
-    lia
+    have : ‖SpecialValuesAux.varphi₁' ((x : ℂ) + m * Complex.I) *
+        SpecialValuesAux.expU (2 : ℝ) ((x : ℂ) + m * Complex.I) - ((725760 : ℂ) * Complex.I / (π : ℂ))‖ < ε / 2 := by
+      simpa [hEq, zH] using hmem
+    exact le_of_lt this
   -- Rewrite the difference of integrals as the integral of the difference.
   have hInt :
       IntervalIntegrable
@@ -398,7 +417,24 @@ lemma tendsto_top_varphi₁'_mul_expU_two :
           SpecialValuesAux.varphi₁' ((x : ℂ) + m * Complex.I) *
             SpecialValuesAux.expU (2 : ℝ) ((x : ℂ) + m * Complex.I))
         (g := fun _x : ℝ => ((725760 : ℂ) * Complex.I / (π : ℂ))) hInt hIntConst).symm
-    simpa using h
+    have hconst : (∫ x : ℝ in (0 : ℝ)..1, ((725760 : ℂ) * Complex.I / (π : ℂ))) =
+        ((725760 : ℂ) * Complex.I / (π : ℂ)) := by
+      rw [intervalIntegral.integral_const]
+      norm_num
+      exact one_smul ℝ (((725760 : ℂ) * Complex.I / (π : ℂ)))
+    calc
+      (∫ x : ℝ in (0 : ℝ)..1,
+            SpecialValuesAux.varphi₁' ((x : ℂ) + m * Complex.I) *
+              SpecialValuesAux.expU (2 : ℝ) ((x : ℂ) + m * Complex.I)) - ((725760 : ℂ) * Complex.I / (π : ℂ))
+          = (∫ x : ℝ in (0 : ℝ)..1,
+              SpecialValuesAux.varphi₁' ((x : ℂ) + m * Complex.I) *
+                SpecialValuesAux.expU (2 : ℝ) ((x : ℂ) + m * Complex.I)) -
+              ∫ x : ℝ in (0 : ℝ)..1, ((725760 : ℂ) * Complex.I / (π : ℂ)) := by
+                rw [hconst]
+      _ = ∫ x : ℝ in (0 : ℝ)..1,
+            (SpecialValuesAux.varphi₁' ((x : ℂ) + m * Complex.I) *
+                SpecialValuesAux.expU (2 : ℝ) ((x : ℂ) + m * Complex.I) -
+              ((725760 : ℂ) * Complex.I / (π : ℂ))) := h
   have hdist :
       dist
           (∫ x : ℝ in (0 : ℝ)..1,
@@ -419,11 +455,11 @@ lemma tendsto_top_varphi₁'_mul_expU_two :
               ((725760 : ℂ) * Complex.I / (π : ℂ)))‖ ≤ ε / 2 := by
       simpa using hnorm
     have :
-        ‖(∫ x : ℝ in (0 : ℝ)..1,
-              SpecialValuesAux.varphi₁' ((x : ℂ) + m * Complex.I) *
-                SpecialValuesAux.expU (2 : ℝ) ((x : ℂ) + m * Complex.I)) -
-            ((725760 : ℂ) * Complex.I / (π : ℂ))‖ ≤ ε / 2 := by
-      simpa [hsub] using hnorm'
+        dist (∫ x : ℝ in (0 : ℝ)..1,
+            SpecialValuesAux.varphi₁' ((x : ℂ) + m * Complex.I) *
+              SpecialValuesAux.expU (2 : ℝ) ((x : ℂ) + m * Complex.I))
+          ((725760 : ℂ) * Complex.I / (π : ℂ)) ≤ ε / 2 := by
+      simpa [dist_eq_norm, hsub] using hnorm'
     exact lt_of_le_of_lt this (half_lt_self hε)
   simpa [Metric.ball, dist_eq_norm] using hdist
 
