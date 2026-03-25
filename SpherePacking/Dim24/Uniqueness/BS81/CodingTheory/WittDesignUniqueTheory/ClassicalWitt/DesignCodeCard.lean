@@ -460,8 +460,8 @@ public theorem codeFromSteinerSystem_ncard_eq_two_pow_12 (S : SteinerSystem 24 8
     exact Module.finrank_fin_fun (ZMod 2)
   have hWfin : Module.finrank (ZMod 2) W = 12 := by
     have horth :=
-      LinearMap.BilinForm.finrank_orthogonal (B := Bdot) (K := ZMod 2) (V := Word)
-        hBnondeg hBref W
+        LinearMap.BilinForm.finrank_orthogonal (B := Bdot) (K := ZMod 2) (V := Word)
+        hBnondeg W
     have hle0 : Module.finrank (ZMod 2) W ≤ Module.finrank (ZMod 2) Word :=
       Submodule.finrank_le (s := W)
     have hle : Module.finrank (ZMod 2) W ≤ 24 := by simpa [hV] using hle0
