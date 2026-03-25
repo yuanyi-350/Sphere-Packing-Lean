@@ -55,7 +55,14 @@ lemma continuousAt_Vseg (u0 : ℝ) : ContinuousAt Vseg u0 := by
               ∫ t in (0 : ℝ)..1,
                 (Complex.I : ℂ) * RealIntegrals.ComplexIntegrands.Φ₅' u ((t : ℂ) * Complex.I) := by
         simp [RealIntegrals.RealIntegrands.Φ₅, hparam]
-      simpa [Vseg, intervalIntegral.integral_const_mul, mul_assoc] using this
+      calc
+        ∫ t in (0 : ℝ)..1, RealIntegrals.RealIntegrands.Φ₅ u t
+            = ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * RealIntegrals.ComplexIntegrands.Φ₅' u ((t : ℂ) * Complex.I) := this
+        _ 
+            = (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, RealIntegrals.ComplexIntegrands.Φ₅' u ((t : ℂ) * Complex.I) := by
+              exact intervalIntegral.integral_const_mul (Complex.I : ℂ)
+                (fun t : ℝ => RealIntegrals.ComplexIntegrands.Φ₅' u ((t : ℂ) * Complex.I))
+        _ = (Complex.I : ℂ) * Vseg u := by simp [Vseg]
     simp [RealIntegrals.I₅', hmain, mul_assoc]
   set c : ℂ := ((-2 : ℂ) * (Complex.I : ℂ))⁻¹
   have hVsegEq : Vseg = fun u : ℝ => c * RealIntegrals.I₅' u := by
@@ -122,7 +129,9 @@ lemma exists_bound_norm_varphi₁_mul_q_resToImagAxis_Ici_one :
     Function.tendsto_resToImagAxis_atImInfty (F := f) (l := l) hf
   have hEv :
       ∀ᶠ t : ℝ in atTop, ‖f.resToImagAxis t - l‖ < 1 :=
-    hfAxis.eventually (Metric.ball_mem_nhds _ (by norm_num : (0 : ℝ) < 1))
+    by
+      simpa [Metric.mem_ball, dist_eq_norm] using
+        hfAxis.eventually (Metric.ball_mem_nhds _ (by norm_num : (0 : ℝ) < 1))
   rcases (eventually_atTop.1 hEv) with ⟨A0, hA0⟩
   let A : ℝ := max A0 1
   have hA1 : 1 ≤ A := le_max_right _ _
@@ -165,7 +174,9 @@ lemma exists_bound_norm_varphi₂Residual_resToImagAxis_Ici_one :
     Function.tendsto_resToImagAxis_atImInfty (F := varphi₂Residual) (l := l) hf
   have hEv :
       ∀ᶠ t : ℝ in atTop, ‖(varphi₂Residual).resToImagAxis t - l‖ < 1 :=
-    hfAxis.eventually (Metric.ball_mem_nhds _ (by norm_num : (0 : ℝ) < 1))
+    by
+      simpa [Metric.mem_ball, dist_eq_norm] using
+        hfAxis.eventually (Metric.ball_mem_nhds _ (by norm_num : (0 : ℝ) < 1))
   rcases (eventually_atTop.1 hEv) with ⟨A0, hA0⟩
   let A : ℝ := max A0 1
   have hA1 : 1 ≤ A := le_max_right _ _
@@ -656,7 +667,15 @@ lemma tendsto_slope_aProfile_four_const :
 
 /-- `aProfile` has derivative `(-864) * I / π` at `u = 4`. -/
 public theorem aProfile_hasDerivAt_four :
-    HasDerivAt aProfile ((-864 : ℂ) * Complex.I / (π : ℂ)) (4 : ℝ) := by
+    @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+      (by
+        letI : NormSMulClass ℝ ℂ := NormedSpace.toNormSMulClass
+        letI : IsBoundedSMul ℝ ℂ := NormSMulClass.toIsBoundedSMul
+        exact IsBoundedSMul.continuousSMul)
+      aProfile ((-864 : ℂ) * Complex.I / (π : ℂ)) (4 : ℝ) := by
+  letI : NormSMulClass ℝ ℂ := NormedSpace.toNormSMulClass
+  letI : IsBoundedSMul ℝ ℂ := NormSMulClass.toIsBoundedSMul
+  letI : ContinuousSMul ℝ ℂ := IsBoundedSMul.continuousSMul
   have hdiff : DifferentiableAt ℝ aProfile (4 : ℝ) :=
     differentiableAt_aProfile_of_lt (x := (4 : ℝ)) (by norm_num)
   have hderiv : HasDerivAt aProfile (deriv aProfile (4 : ℝ)) (4 : ℝ) := hdiff.hasDerivAt
