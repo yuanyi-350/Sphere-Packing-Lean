@@ -48,7 +48,10 @@ public lemma z₆'_eq_neg_conj (t : ℝ) : z₆' t = -conj (z₆' t) := by
 /-- Complex conjugation commutes with interval integrals. -/
 public lemma conj_intervalIntegral {f : ℝ → ℂ} {a b : ℝ} :
     conj (∫ t in a..b, f t) = ∫ t in a..b, conj (f t) := by
-  simp [intervalIntegral, integral_conj, map_sub]
+  rw [intervalIntegral, intervalIntegral, map_sub]
+  congr
+  · simpa using (integral_conj (μ := MeasureTheory.volume.restrict (Set.Ioc a b)) (f := f)).symm
+  · simpa using (integral_conj (μ := MeasureTheory.volume.restrict (Set.Ioc b a)) (f := f)).symm
 
 /-- The involution of `ℍ` given by `z ↦ -conj z`. -/
 @[expose]
