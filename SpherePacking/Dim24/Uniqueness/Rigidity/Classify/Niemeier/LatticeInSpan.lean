@@ -60,9 +60,11 @@ public instance instDiscreteTopology_latticeInSpanR [DiscreteTopology L] :
 
 /-- If `L` is discrete, then `latticeInSpanR L` is a `ℤ`-lattice in `spanR L`. -/
 public instance instIsZLattice_latticeInSpanR [DiscreteTopology L] :
-    IsZLattice ℝ (latticeInSpanR (L := L)) := by
+    @IsZLattice ℝ _ _ _ _ (latticeInSpanR (L := L))
+      (instDiscreteTopology_latticeInSpanR (L := L)) := by
   -- Show `span ℝ (latticeInSpanR : Set (spanR L)) = ⊤` by comparing its image in `ℝ²⁴`.
-  refine ⟨?_⟩
+  refine @IsZLattice.mk ℝ _ _ _ _ (latticeInSpanR (L := L))
+    (instDiscreteTopology_latticeInSpanR (L := L)) ?_
   -- Let `W := spanR L` and `LW := latticeInSpanR L`.
   let W : Submodule ℝ ℝ²⁴ := spanR (L := L)
   let LW : Submodule ℤ W := latticeInSpanR (L := L)
