@@ -140,7 +140,7 @@ theorem cuspfunc_lim_coef {k : ℤ} {F : Type u_1} [inst : FunLike F ℍ ℂ] (n
   simpa [hcusp] using hft
 
 theorem summable_zero_pow {G} [NormedField G] (f : ℕ → G) : Summable (fun m ↦ f m * 0 ^ m) := by
-  refine summable_of_finite_support ((Set.finite_singleton (0 : ℕ)).subset ?_)
+  refine summable_of_hasFiniteSupport ((Set.finite_singleton (0 : ℕ)).subset ?_)
   intro m hm
   cases m with
   | zero => simp
@@ -509,18 +509,20 @@ public theorem E4E6_coeff_zero_eq_zero :
     rw [@DirectSum.of_mul_of]
     rfl
   rw [hds, hd6]
-  rw [← Nat.cast_one (R := ℝ)]
-  rw [qExpansion_mul_coeff, qExpansion_mul_coeff, qExpansion_mul_coeff, PowerSeries.coeff_mul,
-    PowerSeries.coeff_mul,]
-  simp only [Finset.antidiagonal_zero, Prod.mk_zero_zero, Finset.sum_singleton, Prod.fst_zero,
-    Prod.snd_zero]
-  rw [Nat.cast_one]
-  simp_rw [E4_q_exp_zero, E6_q_exp_zero]
-  rw [PowerSeries.coeff_mul]
-  simp only [Finset.antidiagonal_zero, Prod.mk_zero_zero, Finset.sum_singleton, Prod.fst_zero,
-    Prod.snd_zero, one_mul, mul_one]
-  rw [E4_q_exp_zero]
-  simp
+  have h43 : (PowerSeries.coeff 0) (qExpansion 1 ⇑(E₄.mul (E₄.mul E₄))) = (PowerSeries.coeff 0) (qExpansion 1 ⇑E₄ * qExpansion 1 ⇑(E₄.mul E₄)) := by simpa using congrArg (PowerSeries.coeff 0) (qExpansion_mul_coeff 1 (f := E₄) (g := E₄.mul E₄))
+  have h62 : (PowerSeries.coeff 0) (qExpansion 1 ⇑(E₆.mul E₆)) = (PowerSeries.coeff 0) (qExpansion 1 ⇑E₆ * qExpansion 1 ⇑E₆) := by simpa using congrArg (PowerSeries.coeff 0) (qExpansion_mul_coeff 1 (f := E₆) (g := E₆))
+  have h42 : (PowerSeries.coeff 0) (qExpansion 1 ⇑(E₄.mul E₄)) = (PowerSeries.coeff 0) (qExpansion 1 ⇑E₄ * qExpansion 1 ⇑E₄) := by simpa using congrArg (PowerSeries.coeff 0) (qExpansion_mul_coeff 1 (f := E₄) (g := E₄))
+  calc
+    (PowerSeries.coeff 0) (qExpansion 1 ⇑(E₄.mul (E₄.mul E₄))) - (PowerSeries.coeff 0) (qExpansion 1 ⇑(E₆.mul E₆))
+        = (PowerSeries.coeff 0) (qExpansion 1 ⇑E₄ * qExpansion 1 ⇑(E₄.mul E₄)) - (PowerSeries.coeff 0) (qExpansion 1 ⇑E₆ * qExpansion 1 ⇑E₆) := by simpa using congrArg₂ (fun x y => x - y) h43 h62
+    _ = 0 := by
+      rw [PowerSeries.coeff_mul, PowerSeries.coeff_mul]
+      simp only [Finset.antidiagonal_zero, Prod.mk_zero_zero, Finset.sum_singleton, Prod.fst_zero, Prod.snd_zero]
+      simp_rw [E4_q_exp_zero, E6_q_exp_zero]
+      rw [h42, PowerSeries.coeff_mul]
+      simp only [Finset.antidiagonal_zero, Prod.mk_zero_zero, Finset.sum_singleton, Prod.fst_zero, Prod.snd_zero, one_mul, mul_one]
+      rw [E4_q_exp_zero]
+      simp
 
 /-- The cusp form `(1/1728) * (E₄^3 - E₆^2)` of weight `12`. -/
 @[expose] public def Delta_E4_E6_aux : CuspForm (CongruenceSubgroup.Gamma 1) 12 := by
@@ -862,7 +864,9 @@ public lemma norm_tsum_logDeriv_expo_le {q : ℂ} (hq : ‖q‖ < 1) :
     rw [norm_div, norm_mul, Complex.norm_natCast]
     have hdenom_lower : 1 - r ≤ ‖1 - q ^ (n : ℕ)‖ := calc
       1 - r ≤ 1 - r ^ (n : ℕ) := by
-        have : r ^ (n : ℕ) ≤ r := by simpa using pow_le_pow_of_le_one (norm_nonneg _) hq.le n.one_le
+        have hpow : ‖q‖ ^ (n : ℕ) ≤ ‖q‖ ^ (1 : ℕ) :=
+          pow_le_pow_of_le_one (norm_nonneg q) hq.le n.one_le
+        have : r ^ (n : ℕ) ≤ r := by simpa [r, pow_one] using hpow
         linarith
       _ = 1 - ‖q ^ (n : ℕ)‖ := by rw [norm_pow]
       _ ≤ ‖1 - q ^ (n : ℕ)‖ := by
