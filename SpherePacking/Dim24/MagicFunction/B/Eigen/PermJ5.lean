@@ -203,7 +203,11 @@ theorem perm_J₅ : FT J₅ = -J₆ := by
                   ∫ s in Ici (1 : ℝ), J5Change.g (‖x‖ ^ 2) s :=
               integral_const_mul (-2) fun a =>
                 cexp (↑(-2 * (π * ⟪a, w⟫)) * I) * ∫ (s : ℝ) in Ici 1, J5Change.g (‖a‖ ^ 2) s
-    lia
+    calc
+      (∫ x : ℝ²⁴, cexp (↑(-2 * (π * ⟪x, w⟫)) * I) * ((-2 : ℂ) * ∫ s in Ici (1 : ℝ), J5Change.g (‖x‖ ^ 2) s)) =
+          (-2 : ℂ) * (∫ x : ℝ²⁴, cexp (↑(-2 * (π * ⟪x, w⟫)) * I) * ∫ s in Ici (1 : ℝ), J5Change.g (‖x‖ ^ 2) s) := hpull
+      _ = (-2 : ℂ) * ∫ s in Ici (1 : ℝ), (-I) * ψS' ((Complex.I : ℂ) * (s : ℂ)) * cexp (-π * (‖w‖ ^ 2) * s) := by
+        rw [htoIter, hswap', hintEq]
   -- Compare the computed `s`-integral with the explicit representation of `J₆'`.
   rw [hmain]
   rw [J₆'_eq (r := ‖w‖ ^ 2)]
