@@ -221,7 +221,10 @@ theorem W_eq_neg_integral_pow_ten_varphi (u : ℝ) (hu : 4 < u) :
         have hCnonneg : 0 ≤ C := by simp [C]
         have hle : C * Real.exp (-(2 * Real.pi) * (t⁻¹)) ≤ C := by
           simpa [mul_one] using (mul_le_mul_of_nonneg_left hexp_le_one hCnonneg)
-        lia
+        calc
+          ‖varphi (iOverT t ht0)‖ = ‖ResToImagAxis varphi (t⁻¹)‖ := by rw [← hres']
+          _ ≤ C * Real.exp (-(2 * Real.pi) * (t⁻¹)) := hres
+          _ ≤ C := hle
       have hpow : ‖(t : ℂ) ^ (10 : ℕ)‖ ≤ 1 := by
         have htabs : ‖(t : ℂ)‖ = |t| := by simp
         have htabs' : |t| ≤ 1 := by
