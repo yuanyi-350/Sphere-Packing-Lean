@@ -1,5 +1,4 @@
-module
-public import SpherePacking.Dim8.E8.Packing
+import SpherePacking.Dim8.E8.Packing
 import SpherePacking.Dim8.UpperBound
 
 /-!
