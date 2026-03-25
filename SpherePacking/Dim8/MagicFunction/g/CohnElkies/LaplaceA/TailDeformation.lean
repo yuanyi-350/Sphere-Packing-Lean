@@ -616,7 +616,9 @@ lemma I₆'_eq_deform_imag_axis {u : ℝ} (hu : 2 < u) :
               simpa using congrArg (fun z : ℂ => z + ∫ t, f4 t ∂μ)
                 (MeasureTheory.integral_sub hf2 hf5')
         _ = ((∫ t, f2 t ∂μ) - ((2 : ℂ) * ∫ t, f5 t ∂μ)) + ∫ t, f4 t ∂μ := by
-              rw [MeasureTheory.integral_const_mul (μ := μ) (r := (2 : ℂ)) (f := f5)]
+              simpa using congrArg
+                (fun z : ℂ => ((∫ t, f2 t ∂μ) - z) + ∫ t, f4 t ∂μ)
+                (MeasureTheory.integral_const_mul (μ := μ) (r := (2 : ℂ)) (f := f5))
         _ = (∫ t, f2 t ∂μ) - (2 : ℂ) * (∫ t, f5 t ∂μ) + ∫ t, f4 t ∂μ := by ring
     -- Put everything back into `setIntegral` notation and pull out the leading `I`.
     have hinner :
