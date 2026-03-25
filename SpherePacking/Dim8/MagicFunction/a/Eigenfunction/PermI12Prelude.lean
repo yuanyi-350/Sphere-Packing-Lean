@@ -125,15 +125,20 @@ section CurveIntegral
 open scoped Interval
 open Complex
 
+public instance instContinuousSMulRealComplex : ContinuousSMul ℝ ℂ := by
+  refine ContinuousSMul.mk ?_
+  simpa [Complex.real_smul] using
+    (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd
+
 /-- Rewrite `I₁'` as a curve integral of `Φ₁'` along the segment `-1 → -1 + i`. -/
 public lemma I₁'_eq_curveIntegral_segment (r : ℝ) :
     MagicFunction.a.RealIntegrals.I₁' r =
       (∫ᶜ z in Path.segment (-1 : ℂ) (-1 + Complex.I),
         scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' r) z) := by
   -- Unfold the curve integral along a segment.
-  rw [curveIntegral_segment
-    (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' r))
-    (-1 : ℂ) (-1 + Complex.I)]
+  trans ∫ t : ℝ in 0..1,
+      (scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' r)
+        ((AffineMap.lineMap (-1 : ℂ) (-1 + Complex.I)) t)) ((-1 + Complex.I) - (-1 : ℂ))
   -- Unfold `I₁'` and the real integrand `Φ₁`.
   simp only [MagicFunction.a.RealIntegrals.I₁', MagicFunction.a.RealIntegrands.Φ₁_def]
   -- Reduce to pointwise equality of the integrands on `[0,1]`.
@@ -144,15 +149,19 @@ public lemma I₁'_eq_curveIntegral_segment (r : ℝ) :
     SpherePacking.Contour.lineMap_z₁_eq_z₁' (t := t) (by
       simpa [Set.uIcc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] using ht)
   simp [scalarOneForm_apply, hzlin]
+  · symm
+    exact curveIntegral_segment
+      (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' r))
+      (-1 : ℂ) (-1 + Complex.I)
 
 /-- Rewrite `I₂'` as a curve integral of `Φ₁'` along the segment `-1 + i → i`. -/
 public lemma I₂'_eq_curveIntegral_segment (r : ℝ) :
     MagicFunction.a.RealIntegrals.I₂' r =
       (∫ᶜ z in Path.segment ((-1 : ℂ) + Complex.I) Complex.I,
         scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' r) z) := by
-  rw [curveIntegral_segment
-    (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' r))
-    ((-1 : ℂ) + Complex.I) Complex.I]
+  trans ∫ t : ℝ in 0..1,
+      (scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' r)
+        ((AffineMap.lineMap ((-1 : ℂ) + Complex.I) Complex.I) t)) (Complex.I - ((-1 : ℂ) + Complex.I))
   simp only [MagicFunction.a.RealIntegrals.I₂', MagicFunction.a.RealIntegrands.Φ₂_def]
   refine intervalIntegral.integral_congr ?_
   intro t ht
@@ -161,14 +170,18 @@ public lemma I₂'_eq_curveIntegral_segment (r : ℝ) :
     SpherePacking.Contour.lineMap_z₂_eq_z₂' (t := t) (by
       simpa [Set.uIcc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] using ht)
   simp [scalarOneForm_apply, hzlin, MagicFunction.a.ComplexIntegrands.Φ₂']
+  · symm
+    exact curveIntegral_segment
+      (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' r))
+      ((-1 : ℂ) + Complex.I) Complex.I
 
 lemma I₃'_eq_curveIntegral_segment (r : ℝ) :
     MagicFunction.a.RealIntegrals.I₃' r =
       (∫ᶜ z in Path.segment (1 : ℂ) ((1 : ℂ) + Complex.I),
         scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₃' r) z) := by
-  rw [curveIntegral_segment
-    (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₃' r))
-    (1 : ℂ) ((1 : ℂ) + Complex.I)]
+  trans ∫ t : ℝ in 0..1,
+      (scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₃' r)
+        ((AffineMap.lineMap (1 : ℂ) ((1 : ℂ) + Complex.I)) t)) (((1 : ℂ) + Complex.I) - (1 : ℂ))
   simp only [MagicFunction.a.RealIntegrals.I₃', MagicFunction.a.RealIntegrands.Φ₃_def]
   refine intervalIntegral.integral_congr ?_
   intro t ht
@@ -177,14 +190,18 @@ lemma I₃'_eq_curveIntegral_segment (r : ℝ) :
     SpherePacking.Contour.lineMap_z₃_eq_z₃' (t := t) (by
       simpa [Set.uIcc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] using ht)
   simp [scalarOneForm_apply, hzlin]
+  · symm
+    exact curveIntegral_segment
+      (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₃' r))
+      (1 : ℂ) ((1 : ℂ) + Complex.I)
 
 lemma I₄'_eq_curveIntegral_segment (r : ℝ) :
     MagicFunction.a.RealIntegrals.I₄' r =
       (∫ᶜ z in Path.segment ((1 : ℂ) + Complex.I) Complex.I,
         scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₃' r) z) := by
-  rw [curveIntegral_segment
-    (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₃' r))
-    ((1 : ℂ) + Complex.I) Complex.I]
+  trans ∫ t : ℝ in 0..1,
+      (scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₃' r)
+        ((AffineMap.lineMap ((1 : ℂ) + Complex.I) Complex.I) t)) (Complex.I - ((1 : ℂ) + Complex.I))
   simp only [MagicFunction.a.RealIntegrals.I₄', MagicFunction.a.RealIntegrands.Φ₄_def]
   refine intervalIntegral.integral_congr ?_
   intro t ht
@@ -193,6 +210,10 @@ lemma I₄'_eq_curveIntegral_segment (r : ℝ) :
     SpherePacking.Contour.lineMap_z₄_eq_z₄' (t := t) (by
       simpa [Set.uIcc_of_le (show (0 : ℝ) ≤ 1 by norm_num)] using ht)
   simp [scalarOneForm_apply, hzlin, MagicFunction.a.ComplexIntegrands.Φ₄']
+  · symm
+    exact curveIntegral_segment
+      (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₃' r))
+      ((1 : ℂ) + Complex.I) Complex.I
 
 /-- Rewrite `I₃' + I₄'` as a sum of curve integrals of `Φ₃'` along the two segments
 `1 → 1 + i` and `1 + i → i`. -/
