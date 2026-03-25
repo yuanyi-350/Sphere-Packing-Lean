@@ -102,8 +102,6 @@ public lemma isCompl_Harm_range_mulR2Pk (k : ℕ) :
     IsCompl (Harmonic.Harm (k + 2)) (LinearMap.range (mulR2Pk (k := k))) := by
   -- Use the abstract fact that a submodule splits with its orthogonal complement,
   -- then rewrite the orthogonal complement via the adjoint/range computation.
-  haveI : CompleteSpace (Harmonic.Harm (k + 2)) := by
-    simpa using (FiniteDimensional.complete ℝ (Harmonic.Harm (k + 2)))
   haveI : (Harmonic.Harm (k + 2)).HasOrthogonalProjection :=
     Submodule.HasOrthogonalProjection.ofCompleteSpace (K := Harmonic.Harm (k + 2))
   have h :
