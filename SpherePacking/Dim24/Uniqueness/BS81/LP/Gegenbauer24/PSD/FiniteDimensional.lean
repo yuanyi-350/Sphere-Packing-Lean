@@ -28,7 +28,7 @@ public noncomputable instance finiteDimensional_Pk (k : ℕ) : FiniteDimensional
   -- Let `S` be the (finite) set of exponent vectors of degree `k`.
   let S : Set (Var →₀ ℕ) := expSet k
   have hEq :
-      (MvPolynomial.homogeneousSubmodule Var ℝ k : Submodule ℝ (MvPolynomial Var ℝ)) =
+      MvPolynomial.homogeneousSubmodule Var ℝ k =
         Finsupp.supported (α := Var →₀ ℕ) (M := ℝ) ℝ S := by
     simpa [S] using (MvPolynomial.homogeneousSubmodule_eq_finsupp_supported (σ := Var) (R := ℝ) k)
   haveI : Finite S :=
