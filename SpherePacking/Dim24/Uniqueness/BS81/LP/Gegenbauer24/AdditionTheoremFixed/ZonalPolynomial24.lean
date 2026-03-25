@@ -70,7 +70,12 @@ public theorem harmKernel24_eq_harmPoly24Raw_eval
     have ht :
         MvPolynomial.eval (fun i : Fin 24 => u.ofLp i) (t v : MvPolynomial (Fin 24) ℝ) =
           (⟪u, v⟫ : ℝ) := by
-      simp [t, yPoint, PSD.LinOps.lin, PiLp.inner_apply]
+      simpa [t, yPoint, PSD.LinOps.lin, PiLp.inner_apply] using
+        (show (∑ i : Fin 24, v.ofLp i * u.ofLp i) = ∑ i : Fin 24, (⟪u.ofLp i, v.ofLp i⟫ : ℝ) from by
+          refine Finset.sum_congr rfl ?_
+          intro i hi
+          have hinner : (⟪u.ofLp i, v.ofLp i⟫ : ℝ) = v.ofLp i * u.ofLp i := RCLike.inner_apply _ _
+          exact hinner.symm)
     have hr2 : MvPolynomial.eval (fun i : Fin 24 => u.ofLp i) (r2 : MvPolynomial (Fin 24) ℝ) =
         (⟪u, u⟫ : ℝ) := by
       rw [PiLp.inner_apply]
