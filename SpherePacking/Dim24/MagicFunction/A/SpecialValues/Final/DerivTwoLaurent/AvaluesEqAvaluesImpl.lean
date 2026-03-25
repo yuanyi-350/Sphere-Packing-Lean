@@ -444,7 +444,7 @@ lemma analyticOnNhd_avaluesRemainderIntegralC_domainTwo :
       grind only
     have hre_lower : ∀ u ∈ Metric.ball u0 ε, m < u.re := by
       intro u hu
-      have hnorm : ‖u - u0‖ < ε := by simpa [Metric.mem_ball] using hu
+      have hnorm : ‖u - u0‖ < ε := by simpa [Metric.mem_ball, dist_eq_norm] using hu
       have hle : |u.re - u0.re| ≤ ‖u - u0‖ := by
         simpa [Complex.sub_re] using (Complex.abs_re_le_norm (u - u0))
       have hlt : |u.re - u0.re| < ε := lt_of_le_of_lt hle hnorm
@@ -687,8 +687,12 @@ lemma analyticOnNhd_avaluesRemainderIntegralC_domainTwo :
           refine mul_le_mul hbase (le_rfl) (by positivity) ?_
           -- `0 ≤ diffBound t * exp(...)`.
           exact mul_nonneg hdiffBound_nonneg (by positivity)
-        -- Rearrange the RHS.
-        lia
+        -- Rearrange the factors.
+        calc
+          ‖avaluesRemainderIntegrandCDeriv u t‖ = ‖avaluesRemainderIntegrandC u t‖ * (Real.pi * |t|) := by rw [hnorm, hnπt]
+          _ ≤ (diffBound t * Real.exp (-Real.pi * m * t)) * (Real.pi * |t|) := by
+            simpa [hnπt, abs_of_nonneg Real.pi_pos.le] using hmul
+          _ = Real.pi * |t| * (diffBound t * Real.exp (-Real.pi * m * t)) := by ring
       have hbnd : Real.pi * |t| * (diffBound t * Real.exp (-Real.pi * m * t)) = bound t := by
         dsimp [bound]
         ring
