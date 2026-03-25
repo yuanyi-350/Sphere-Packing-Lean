@@ -107,7 +107,7 @@ theorem ineq2_num_trunc_bound_geOne (t : ℝ) (ht : 1 ≤ t) :
               ((16 : ℝ) ^ (8 : ℕ) * (∑' m : ℕ, AppendixA.powGeomTerm (r t) 27 (100 + m))) :=
       mul_le_mul_of_nonneg_right hc hnonneg
     have hpsiTail := psi_majorant_tail_bound_cPi27 (t := t) ht
-    lia
+    exact le_trans hscale (by simpa [mul_assoc] using hpsiTail)
   -- Scale the `psiS_num` real-part bound.
   have hpsi_scaled :
       cPiLower10 * (psiS_num z).re ≤
