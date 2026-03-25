@@ -418,8 +418,12 @@ public lemma abs_Bleading_exact_trunc_le (t : ℝ) (ht : 1 ≤ t) :
                 simp [add_assoc]
       simpa [S, rt4, constA, constB, constC, mul_assoc, add_assoc] using hfinal
     exact le_trans this (le_of_eq hrewrite)
-  -- Combine.
-  lia
+  -- Combine the expansion, triangle inequality, and summed coefficient bound.
+  calc
+    |Bleading_exact_trunc t| = |∑ i ∈ Finset.range BleadingCoeffs.N, Bleading_exact_coeff t i * (r t) ^ i| := by
+      rw [hsum_eq]
+    _ ≤ ∑ i ∈ Finset.range BleadingCoeffs.N, |Bleading_exact_coeff t i * (r t) ^ i| := htri
+    _ ≤ _ := hsum
 
 end
 
