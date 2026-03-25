@@ -130,7 +130,11 @@ public lemma gN_integrable (n : ℕ) (x : ℝ) (hx : x ∈ s) : Integrable (gN n
 
 /-- Differentiation under the integral sign: `d/dx (F n x) = F (n + 1) x` on `s`. -/
 public lemma hasDerivAt_F (n : ℕ) (x : ℝ) (hx : x ∈ s) :
-    HasDerivAt (fun y : ℝ ↦ F n y) (F (n + 1) x) x := by
+    @HasDerivAt ℝ _ ℂ _ _ _
+      (by
+        refine ⟨by simpa [Algebra.smul_def] using
+          (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd⟩)
+      (fun y : ℝ ↦ F n y) (F (n + 1) x) x := by
   have hx' : (-1 : ℝ) < x := by simpa [s] using hx
   have hInt : Integrable (gN n x) μIciOne := gN_integrable (n := n) (x := x) hx
   have exists_bound :
@@ -153,9 +157,8 @@ lemma deriv_F (n : ℕ) (x : ℝ) (hx : x ∈ s) :
 
 lemma deriv_G (n : ℕ) (x : ℝ) (hx : x ∈ s) :
     deriv (G n) x = G (n + 1) x := by
-  have hF : HasDerivAt (fun y : ℝ ↦ F n y) (F (n + 1) x) x := hasDerivAt_F (n := n) (x := x) hx
-  change deriv (fun y : ℝ ↦ (2 : ℂ) * F n y) x = (2 : ℂ) * F (n + 1) x
-  simpa [G] using (hF.const_mul (2 : ℂ)).deriv
+  have hF := hasDerivAt_F (n := n) (x := x) hx
+  simpa [G, mul_assoc, mul_left_comm, mul_comm] using (hF.const_mul (2 : ℂ)).deriv
 
 /-- On `s`, iterated derivatives of `G m` agree with `G (n + m)`. -/
 public lemma iteratedDeriv_G_eq :
