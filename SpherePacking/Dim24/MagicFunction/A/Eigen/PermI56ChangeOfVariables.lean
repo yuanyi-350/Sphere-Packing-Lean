@@ -47,7 +47,10 @@ The auxiliary integrand on `s ≥ 1` obtained from `I₅'` after the change of v
 lemma I₅'_eq_Ioc (r : ℝ) :
     RealIntegrals.I₅' r = (-2 : ℂ) * ∫ t in Ioc (0 : ℝ) 1, RealIntegrals.RealIntegrands.Φ₅ r t := by
   -- `intervalIntegral` is defined via the set integral over `uIoc`.
-  simp [RealIntegrals.I₅', intervalIntegral_eq_integral_uIoc]
+  rw [RealIntegrals.I₅', intervalIntegral_eq_integral_uIoc]
+  simp
+  exact one_smul ℂ
+    (∫ t in Ioc (0 : ℝ) 1, RealIntegrals.RealIntegrands.Φ₅ r t ∂MeasureTheory.volume)
 
 lemma changing_domain (r : ℝ) :
     ∫ s in Ici (1 : ℝ), g r s = ∫ s in f '' (Ioc (0 : ℝ) (1 : ℝ)), g r s := by
@@ -83,7 +86,10 @@ lemma changing_variables (r : ℝ) :
 lemma writing_as_intervalIntegral (r : ℝ) :
     ∫ (t : ℝ) in Ioc (0 : ℝ) (1 : ℝ), |f' t| • g r (f t) =
       ∫ t in (0 : ℝ)..1, |f' t| • g r (f t) := by
-  simp [intervalIntegral_eq_integral_uIoc]
+  rw [intervalIntegral_eq_integral_uIoc]
+  simp
+  exact (one_smul ℂ
+    (∫ t in Ioc (0 : ℝ) (1 : ℝ), ↑|f' t| * g r (f t) ∂MeasureTheory.volume)).symm
 
 lemma core_identity (A T V : ℂ)
     (hcexp : cexp (I * (I * A)) = cexp (-A))
