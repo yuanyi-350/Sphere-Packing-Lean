@@ -43,7 +43,8 @@ lemma coordCubeCover_unique (x : EuclideanSpace ℝ (Fin d)) (g : cubeLattice (d
 
 lemma mem_neg_coordCubeCover_vadd_coordCube (x : EuclideanSpace ℝ (Fin d)) :
     x ∈ (-coordCubeCover (d := d) L hL x) +ᵥ coordCube (d := d) L := by
-  simpa [Set.mem_vadd_set_iff_neg_vadd_mem] using coordCubeCover_spec (d := d) L hL x
+  exact (Set.mem_vadd_set_iff_neg_vadd_mem).2 <| by
+    simpa using coordCubeCover_spec (d := d) L hL x
 
 lemma neg_coordCubeCover_mem_ball {C R : ℝ}
     (hC : coordCube (d := d) L ⊆ ball (0 : EuclideanSpace ℝ (Fin d)) C)
@@ -76,7 +77,7 @@ lemma mem_vadd_coordCube_iff_eq_neg_coordCubeCover (g : cubeLattice (d := d) L h
   · intro hx
     have : (-g : cubeLattice (d := d) L hL) = coordCubeCover (d := d) L hL x :=
       coordCubeCover_unique (d := d) L hL x (-g)
-        (by simpa [Set.mem_vadd_set_iff_neg_vadd_mem] using hx)
+        ((Set.mem_vadd_set_iff_neg_vadd_mem).1 hx)
     simpa using congrArg (fun t : cubeLattice (d := d) L hL => -t) this
   · rintro rfl; exact mem_neg_coordCubeCover_vadd_coordCube (d := d) L hL x
 
@@ -134,7 +135,8 @@ lemma card_finite_lattice_in_ball_mul_volume_coordCube_le_volume_ball {L : ℝ} 
   have hmeas :
       ∀ g ∈ t, MeasurableSet (g +ᵥ coordCube (d := d) L) := by
     intro g _; simpa using
-      (MeasurableSet.const_vadd (PeriodicConstant.measurableSet_coordCube (d := d) L hL) g)
+      (MeasurableSet.const_vadd (PeriodicConstant.measurableSet_coordCube (d := d) L hL)
+        (g : EuclideanSpace ℝ (Fin d)))
   have hvol_union :
       volume (⋃ g ∈ t, g +ᵥ coordCube (d := d) L) =
         ∑ g ∈ t, volume (g +ᵥ coordCube (d := d) L) :=
@@ -143,8 +145,11 @@ lemma card_finite_lattice_in_ball_mul_volume_coordCube_le_volume_ball {L : ℝ} 
       (⋃ g ∈ t, g +ᵥ coordCube (d := d) L) ⊆
         ball (0 : EuclideanSpace ℝ (Fin d)) (R + (2 * C)) :=
     iUnion_finset_vadd_coordCube_subset_ball (d := d) (hL := hL) (R := R) (C := C) hC
-  have hle := volume.mono hsub
-  simp_all
+  have htrans (g : cubeLattice (d := d) L hL) :
+      volume (g +ᵥ coordCube (d := d) L) = volume (coordCube (d := d) L) := by
+    change volume (((g : EuclideanSpace ℝ (Fin d)) +ᵥ coordCube (d := d) L)) = _
+    simp [measure_vadd]
+  simpa [hvol_union, htrans, mul_comm] using (volume.mono hsub)
 
 end CoverVolumeBound
 
@@ -260,12 +265,12 @@ lemma card_mul_volume_ball_le_volume_outer_diff_inner {L : ℝ} (hL : 0 < L)
     rcases Set.mem_iUnion.1 hx with ⟨hxS, hyBall⟩
     have hxB := hs_boundary x hxS
     have hx0 : (- (g : EuclideanSpace ℝ (Fin d))) +ᵥ x ∈ coordCube (d := d) L := by
-      simpa [Set.mem_vadd_set_iff_neg_vadd_mem] using hxB.1
+      exact (Set.mem_vadd_set_iff_neg_vadd_mem).1 hxB.1
     have hx0_notInner :
         (- (g : EuclideanSpace ℝ (Fin d))) +ᵥ x ∉ coordCubeInner (d := d) L (1 / 2) := by
       intro hx0Inner
       apply hxB.2
-      simpa [Set.mem_vadd_set_iff_neg_vadd_mem] using hx0Inner
+      exact (Set.mem_vadd_set_iff_neg_vadd_mem).2 hx0Inner
     have hy0 :
         (- (g : EuclideanSpace ℝ (Fin d))) +ᵥ y ∈
           ball ((- (g : EuclideanSpace ℝ (Fin d))) +ᵥ x) r := by
@@ -294,7 +299,7 @@ lemma card_mul_volume_ball_le_volume_outer_diff_inner {L : ℝ} (hL : 0 < L)
       simpa [r] using
         (coordCube_boundary_half_add_ball_subset_outer_diff_inner (d := d) L
           (by simpa [r] using hy0'))
-    simpa [Set.mem_vadd_set_iff_neg_vadd_mem] using hy0''
+    exact (Set.mem_vadd_set_iff_neg_vadd_mem).2 hy0''
   have hle : volume (⋃ x ∈ s, ball x r) ≤
       volume (g +ᵥ
           (((constVec (d := d) (- (1 / 2 : ℝ))) +ᵥ coordCubeInner (d := d) (L + 1) 0) \
@@ -306,6 +311,9 @@ lemma card_mul_volume_ball_le_volume_outer_diff_inner {L : ℝ} (hL : 0 < L)
               coordCubeInner (d := d) L 1)) =
         volume (((constVec (d := d) (- (1 / 2 : ℝ))) +ᵥ coordCubeInner (d := d) (L + 1) 0) \
           coordCubeInner (d := d) L 1) := by
+    change volume (((g : EuclideanSpace ℝ (Fin d)) +ᵥ
+      (((constVec (d := d) (- (1 / 2 : ℝ))) +ᵥ coordCubeInner (d := d) (L + 1) 0) \
+        coordCubeInner (d := d) L 1))) = _
     simp [measure_vadd]
   have hr : (2⁻¹ : ℝ) = r := by
     dsimp [r]
@@ -414,8 +422,13 @@ open ZSpan
 lemma covolume_cubeLattice_eq_volume_coordCube_toReal (L : ℝ) (hL : 0 < L) :
     ZLattice.covolume (cubeLattice (d := d) L hL) volume =
       (volume (coordCube (d := d) L)).toReal := by
-  letI : DiscreteTopology (cubeLattice (d := d) L hL) := by dsimp [cubeLattice]; infer_instance
-  letI : IsZLattice ℝ (cubeLattice (d := d) L hL) := by dsimp [cubeLattice]; infer_instance
+  let b := cubeBasis (d := d) L hL
+  letI : DiscreteTopology (cubeLattice (d := d) L hL) := by
+    simpa [cubeLattice, b] using
+      (inferInstance : DiscreteTopology (Submodule.span ℤ (Set.range ⇑b)))
+  letI : IsZLattice ℝ (cubeLattice (d := d) L hL) := by
+    simpa [cubeLattice, b] using
+      (inferInstance : IsZLattice ℝ (Submodule.span ℤ (Set.range ⇑b)))
   have hfund :
       IsAddFundamentalDomain (cubeLattice (d := d) L hL)
         (fundamentalDomain (cubeBasis (d := d) L hL)) volume := by
@@ -452,12 +465,13 @@ lemma periodize_cube_density_eq (hd : 0 < d) (S : SpherePacking d) (hSsep : S.se
   let Λ : Submodule ℤ (EuclideanSpace ℝ (Fin d)) := cubeLattice (d := d) L hL
   let D : Set (EuclideanSpace ℝ (Fin d)) := g +ᵥ coordCube (d := d) L
   let Fset : Set (EuclideanSpace ℝ (Fin d)) := (F : Set (EuclideanSpace ℝ (Fin d)))
+  let b := cubeBasis (d := d) L hL
   letI : DiscreteTopology Λ := by
-    dsimp [Λ, cubeLattice]
-    infer_instance
+    simpa [Λ, cubeLattice, b] using
+      (inferInstance : DiscreteTopology (Submodule.span ℤ (Set.range ⇑b)))
   letI : IsZLattice ℝ Λ := by
-    dsimp [Λ, cubeLattice]
-    infer_instance
+    simpa [Λ, cubeLattice, b] using
+      (inferInstance : IsZLattice ℝ (Submodule.span ℤ (Set.range ⇑b)))
   let P : PeriodicSpherePacking d :=
     periodize_to_periodicSpherePacking (d := d) S (Λ := Λ) D Fset
       (hD_unique_covers := PeriodicConstantApprox.coordCube_unique_covers_vadd (d := d) L hL g)
@@ -493,7 +507,7 @@ lemma periodize_cube_density_eq (hd : 0 < d) (S : SpherePacking d) (hSsep : S.se
     have h' : (P.numReps : ENat) = (F.card : ENat) := by
       simpa [hcenters_inter, Fset, Set.encard_coe_eq_coe_finsetCard] using
         (P.encard_centers_inter_isFundamentalDomain (d := d) (D := D) hD_bounded hD_unique hd).symm
-    exact_mod_cast h'
+    exact ENat.coe_inj.mp h'
   simpa [hnumReps, hPsep] using P.density_eq' (d := d) hd
 
 end PeriodizeCubeDensity
