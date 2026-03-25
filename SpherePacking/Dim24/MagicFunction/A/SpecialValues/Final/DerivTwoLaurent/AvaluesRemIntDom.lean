@@ -165,7 +165,7 @@ public theorem exists_integrable_bound_Ici_one :
                     (C * (t ^ (2 : ℕ))) *
                       (Real.exp (-(2 * Real.pi) * t) * Real.exp (-Real.pi * (3 / 2) * t)) := by
                 simp [mul_assoc]
-              exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hExpProd)) (id (Eq.symm this)))
+              rw [this, hExpProd]
 
 /-!
 ### Small-`t` bounds
