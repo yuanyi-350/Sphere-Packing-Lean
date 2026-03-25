@@ -61,11 +61,12 @@ theorem relIndex_preimageOverlattice_eq_card (L : Submodule ℤ ℝ²⁴)
   let mkQAdd : DualLattice L →+ DiscriminantGroup L := mkQ.toAddMonoidHom
   have hmap_mkQ : AddSubgroup.map mkQAdd P.toAddSubgroup = H.toAddSubgroup := by
     have hm : Submodule.map mkQ P = H := by
-      simp [P, mkQ, map_mkQ_preimageSubmodule]
+      simpa only [P, mkQ] using (map_mkQ_preimageSubmodule (L := L) (H := H))
     simpa [Submodule.map_toAddSubgroup, mkQAdd, mkQ] using congrArg Submodule.toAddSubgroup hm
   have hker_mkQ : mkQAdd.ker = (latticeInDual L).toAddSubgroup := by
     ext x
-    simp [mkQAdd, mkQ]
+    simpa only [mkQAdd, mkQ, mem_latticeInDual_iff] using
+      (Submodule.Quotient.mk_eq_zero (p := latticeInDual L) (x := x))
   have hrelIndex_P :
       (latticeInDual L).toAddSubgroup.relIndex P.toAddSubgroup = Nat.card H := by
     simpa [hker_mkQ, hmap_mkQ] using (AddSubgroup.relIndex_ker (K := P.toAddSubgroup) mkQAdd)
