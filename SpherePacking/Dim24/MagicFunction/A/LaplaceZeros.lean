@@ -79,7 +79,15 @@ public lemma I₁'_add_I₃'_add_I₅'_eq_imag_axis (u : ℝ) :
         _ =
             (Complex.I : ℂ) * Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) *
               (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * Complex.I)) := by
-              simp [mul_assoc]
+              calc
+                ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * (Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) * Φ₅' u ((t : ℂ) * Complex.I)) =
+                    (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) * Φ₅' u ((t : ℂ) * Complex.I) :=
+                      intervalIntegral.integral_const_mul (Complex.I : ℂ) (fun t => Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) * Φ₅' u ((t : ℂ) * Complex.I))
+                _ = (Complex.I : ℂ) * (Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) * (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * Complex.I))) := by
+                    exact congrArg (fun z => (Complex.I : ℂ) * z)
+                      (intervalIntegral.integral_const_mul (Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I))) (fun t => Φ₅' u ((t : ℂ) * Complex.I)))
+                _ = (Complex.I : ℂ) * Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) * (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * Complex.I)) := by
+                    ring_nf
     simpa [RealIntegrals.I₁', RealIntegrands.Φ₁, hV0, mul_assoc] using (hparam.trans hshift)
   have hI3 :
       RealIntegrals.I₃' u =
@@ -107,7 +115,15 @@ public lemma I₁'_add_I₃'_add_I₅'_eq_imag_axis (u : ℝ) :
         _ =
             (Complex.I : ℂ) * Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) *
               (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * Complex.I)) := by
-              simp [mul_assoc]
+              calc
+                ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * (Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * Φ₅' u ((t : ℂ) * Complex.I)) =
+                    (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * Φ₅' u ((t : ℂ) * Complex.I) :=
+                      intervalIntegral.integral_const_mul (Complex.I : ℂ) (fun t => Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * Φ₅' u ((t : ℂ) * Complex.I))
+                _ = (Complex.I : ℂ) * (Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * Complex.I))) := by
+                    exact congrArg (fun z => (Complex.I : ℂ) * z)
+                      (intervalIntegral.integral_const_mul (Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I)) (fun t => Φ₅' u ((t : ℂ) * Complex.I)))
+                _ = (Complex.I : ℂ) * Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * Complex.I)) := by
+                    ring_nf
     simpa [RealIntegrals.I₃', RealIntegrands.Φ₃, hV0, mul_assoc] using (hparam.trans hshift)
   have hI5 : RealIntegrals.I₅' u = (-2 : ℂ) * (Complex.I : ℂ) * V0 := by
     have hparam :
@@ -125,7 +141,9 @@ public lemma I₁'_add_I₃'_add_I₅'_eq_imag_axis (u : ℝ) :
       RealIntegrals.I₅' u =
           (-2 : ℂ) * ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * Φ₅' u ((t : ℂ) * Complex.I) := this
       _ = (-2 : ℂ) * ((Complex.I : ℂ) * V0) := by
-          simp [hV0, intervalIntegral.integral_const_mul]
+          congr 1
+          rw [hV0]
+          exact intervalIntegral.integral_const_mul (Complex.I : ℂ) (fun t => Φ₅' u ((t : ℂ) * Complex.I))
       _ = (-2 : ℂ) * (Complex.I : ℂ) * V0 := by ring_nf
   grind only
 
