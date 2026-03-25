@@ -47,8 +47,9 @@ open SpherePacking.Integration (μIoo01)
 
 private lemma I₁'_eq_integral_g_Ioo (x : ℝ) :
     RealIntegrals.I₁' x = ∫ t in Ioo (0 : ℝ) 1, g x t := by
-  simp [I₁'_eq_integral, intervalIntegral_eq_integral_uIoc, zero_le_one, uIoc_of_le,
+  rw [I₁'_eq_integral, intervalIntegral_eq_integral_uIoc, if_pos zero_le_one, uIoc_of_le zero_le_one,
     integral_Ioc_eq_integral_Ioo]
+  exact one_smul ℝ (∫ t in Ioo (0 : ℝ) 1, g x t)
 
 private lemma continuous_coeff : Continuous coeff := by
   simpa [coeff] using (continuous_const.mul continuous_z₁')
@@ -111,6 +112,11 @@ private lemma ae_bound_gN_succ (n : ℕ) (x₀ : ℝ) :
 
 /-- The integral of the differentiated kernel `gN` over `t ∈ (0, 1)`. -/
 @[expose] public def I (n : ℕ) (x : ℝ) : ℂ := ∫ t, gN n x t ∂μIoo01
+
+local instance : ContinuousSMul ℝ ℂ := by
+  refine ⟨?_⟩
+  simpa [smul_eq_mul] using
+    (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd
 
 private lemma hasDerivAt_integral_gN (n : ℕ) (x₀ : ℝ) :
     HasDerivAt (fun x : ℝ ↦ I n x) (I (n + 1) x₀) x₀ := by
