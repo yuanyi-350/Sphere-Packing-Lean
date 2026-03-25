@@ -116,12 +116,22 @@ public lemma norm_iteratedFDeriv_smul_cexp_mul_pi_I_le (m : ℕ) (x : ℝ) :
   have hsmul :
       ‖iteratedFDeriv ℝ m (fun t : ℝ ↦ (-1 / 2 : ℂ) • e t) x‖ =
         ‖(-1 / 2 : ℂ)‖ * ‖iteratedFDeriv ℝ m e x‖ := by
+    have hcontTop : ContDiff ℝ (⊤ : ℕ∞) e := by
+      simpa [e, one_mul] using
+        (contDiff_of_hasDerivAt_succ
+          (I := fun n ↦ fun t : ℝ ↦ (((Real.pi : ℂ) * Complex.I) ^ n) *
+            ((1 : ℂ) * Complex.exp ((t : ℂ) * ((Real.pi : ℂ) * Complex.I))))
+          (fun n x ↦ hasDerivAt_pow_mul_mul_cexp_ofReal_mul_const
+            (a := (1 : ℂ)) (c := (Real.pi : ℂ) * Complex.I) (n := n) x))
+    have hcont : ContDiffAt ℝ (↑m) e x := (hcontTop.of_le (by
+      exact_mod_cast (show (m : ℕ∞) ≤ (⊤ : ℕ∞) from le_top))).contDiffAt
     calc
       ‖iteratedFDeriv ℝ m (fun t : ℝ ↦ (-1 / 2 : ℂ) • e t) x‖ =
           ‖iteratedDeriv m (fun t : ℝ ↦ (-1 / 2 : ℂ) • e t) x‖ :=
             norm_iteratedFDeriv_eq_norm_iteratedDeriv
       _ = ‖(-1 / 2 : ℂ) • iteratedDeriv m e x‖ := by
-            simp
+            change ‖iteratedDeriv m ((-1 / 2 : ℂ) • e) x‖ = _
+            rw [iteratedDeriv_const_smul hcont (-1 / 2 : ℂ)]
       _ = ‖(-1 / 2 : ℂ)‖ * ‖iteratedDeriv m e x‖ := by simp
       _ = ‖(-1 / 2 : ℂ)‖ * ‖iteratedFDeriv ℝ m e x‖ := by
             simp [norm_iteratedFDeriv_eq_norm_iteratedDeriv (𝕜 := ℝ) (n := m) (f := e) (x := x)]
@@ -149,11 +159,11 @@ public lemma iteratedFDeriv_add₆_apply'
   have h123 := h12.add hf₃
   have h1234 := h123.add hf₄
   have h12345 := h1234.add hf₅
-  simp [iteratedFDeriv_add_apply' (𝕜 := ℝ) (i := n) (x := x) h12345 hf₆,
-    iteratedFDeriv_add_apply' (𝕜 := ℝ) (i := n) (x := x) h1234 hf₅,
-    iteratedFDeriv_add_apply' (𝕜 := ℝ) (i := n) (x := x) h123 hf₄,
-    iteratedFDeriv_add_apply' (𝕜 := ℝ) (i := n) (x := x) h12 hf₃,
-    iteratedFDeriv_add_apply' (𝕜 := ℝ) (i := n) (x := x) hf₁ hf₂]
+  simp [fun_iteratedFDeriv_add_apply (𝕜 := ℝ) (i := n) (x := x) h12345 hf₆,
+    fun_iteratedFDeriv_add_apply (𝕜 := ℝ) (i := n) (x := x) h1234 hf₅,
+    fun_iteratedFDeriv_add_apply (𝕜 := ℝ) (i := n) (x := x) h123 hf₄,
+    fun_iteratedFDeriv_add_apply (𝕜 := ℝ) (i := n) (x := x) h12 hf₃,
+    fun_iteratedFDeriv_add_apply (𝕜 := ℝ) (i := n) (x := x) hf₁ hf₂]
 
 /-- Triangle inequality for the norm of the `iteratedFDeriv` of a sum of six terms. -/
 public lemma norm_iteratedFDeriv_add₆_le
