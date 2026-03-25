@@ -763,7 +763,8 @@ lemma sphereAvg24_coord0_pow_four_mul_coord1_pow_four_eq
   have horth :
       (⟪EuclideanSpace.single (0 : Fin 24) (1 : ℝ),
           EuclideanSpace.single (1 : Fin 24) (1 : ℝ)⟫ : ℝ) = 0 := by
-    simp [EuclideanSpace.inner_single_left]
+    simpa using (EuclideanSpace.inner_single_left (i := (0 : Fin 24)) (a := (1 : ℝ))
+      (v := EuclideanSpace.single (1 : Fin 24) (1 : ℝ)))
   have hw2' : ‖w‖ * ‖w‖ = (2 : ℝ) := by
     have h' :
         ‖w‖ * ‖w‖ = (1 : ℝ) + 1 := by
@@ -833,7 +834,14 @@ lemma sphereAvg24_coord0_pow_four_mul_coord1_pow_four_eq
         fun x : ℝ²⁴ => (x (0 : Fin 24) + x (1 : Fin 24)) ^ 8 := by
       funext x
       have hinner : (⟪x, w⟫ : ℝ) = x (0 : Fin 24) + x (1 : Fin 24) := by
-        simp [w, inner_add_right, EuclideanSpace.inner_single_right]
+        change (⟪x, EuclideanSpace.single (0 : Fin 24) (1 : ℝ) +
+          EuclideanSpace.single (1 : Fin 24) (1 : ℝ)⟫ : ℝ) = _
+        rw [inner_add_right]
+        have h0 : (⟪x, EuclideanSpace.single (0 : Fin 24) (1 : ℝ)⟫ : ℝ) = x (0 : Fin 24) := by
+          simpa using (EuclideanSpace.inner_single_right (i := (0 : Fin 24)) (a := (1 : ℝ)) (v := x))
+        have h1 : (⟪x, EuclideanSpace.single (1 : Fin 24) (1 : ℝ)⟫ : ℝ) = x (1 : Fin 24) := by
+          simpa using (EuclideanSpace.inner_single_right (i := (1 : Fin 24)) (a := (1 : ℝ)) (v := x))
+        simp [h0, h1]
       simp [hinner]
     -- substitute `hA8` and `hwNorm`
     simpa [this, hwNorm, hA8, mul_assoc] using hEw
@@ -843,12 +851,17 @@ lemma sphereAvg24_coord0_pow_four_mul_coord1_pow_four_eq
     have huv :
         (⟪EuclideanSpace.single (0 : Fin 24) (1 : ℝ),
             EuclideanSpace.single (1 : Fin 24) (1 : ℝ)⟫ : ℝ) = 0 := by
-      simp [EuclideanSpace.inner_single_left]
+      simpa using (EuclideanSpace.inner_single_left (i := (0 : Fin 24)) (a := (1 : ℝ))
+        (v := EuclideanSpace.single (1 : Fin 24) (1 : ℝ)))
     have := CommonNeighbors44Aux.sphereAvg24_inner_pow_mul_inner_pow_eq_zero_of_odd_left
       (u := EuclideanSpace.single (0 : Fin 24) (1 : ℝ))
       (v := EuclideanSpace.single (1 : Fin 24) (1 : ℝ))
       (huv := huv) (i := k) (j := (8 - k)) hk
-    simpa [EuclideanSpace.inner_single_right, mul_assoc, mul_left_comm, mul_comm] using this
+    have h0 (x : ℝ²⁴) : (⟪x, EuclideanSpace.single (0 : Fin 24) (1 : ℝ)⟫ : ℝ) = x (0 : Fin 24) := by
+      simpa using (EuclideanSpace.inner_single_right (i := (0 : Fin 24)) (a := (1 : ℝ)) (v := x))
+    have h1 (x : ℝ²⁴) : (⟪x, EuclideanSpace.single (1 : Fin 24) (1 : ℝ)⟫ : ℝ) = x (1 : Fin 24) := by
+      simpa using (EuclideanSpace.inner_single_right (i := (1 : Fin 24)) (a := (1 : ℝ)) (v := x))
+    simpa [h0, h1] using this
   -- Express `E[(x0+x1)^8]` as a finite sum and simplify.
   let F : ℝ :=
     sphereAvg24 (fun x : ℝ²⁴ => (x (0 : Fin 24)) ^ 4 * (x (1 : Fin 24)) ^ 4)
