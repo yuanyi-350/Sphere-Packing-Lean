@@ -224,7 +224,8 @@ public lemma intervalIntegral_cexp_two_pi_mul_I_int (k : ℤ) :
       if k = 0 then (1 : ℂ) else 0 := by
   by_cases hk : k = 0
   · subst hk
-    simp
+    norm_num [intervalIntegral.integral_const]
+    exact one_smul ℂ (1 : ℂ)
   · let c : ℂ := (k : ℂ) * ((2 * (Real.pi : ℝ)) * Complex.I)
     have hc : c ≠ 0 := by
       have hk' : (k : ℂ) ≠ 0 := by exact_mod_cast hk
@@ -271,7 +272,11 @@ public lemma intervalIntegral_cexp_two_pi_mul_I_int_mul_add_I_eq_zero_of_ne_zero
         (∫ u : ℝ in (0 : ℝ)..1,
             Complex.exp (((k : ℂ) * ((2 * (Real.pi : ℝ)) * Complex.I)) * u)) *
           Complex.exp (A * Complex.I) := by
-          simp [intervalIntegral.integral_mul_const, A, mul_assoc]
+          change
+            (∫ u : ℝ in (0 : ℝ)..1, Complex.exp (A * (u : ℂ)) * Complex.exp (A * Complex.I)) =
+              (∫ u : ℝ in (0 : ℝ)..1, Complex.exp (A * (u : ℂ))) * Complex.exp (A * Complex.I)
+          exact intervalIntegral.integral_mul_const (a := (0 : ℝ)) (b := 1) (r := Complex.exp (A * Complex.I))
+            (f := fun u : ℝ => Complex.exp (A * (u : ℂ)))
     _ = 0 := by simp [hint0]
 
 /-- The constant term of the theta series (as a modular form) is `1`. -/
@@ -325,7 +330,8 @@ public lemma qExpansion_coeff_zero_thetaSeries
     simpa [hrewrite, hswap] using hcoeff
   have hterm0 :
       (∫ u : ℝ in (0 : ℝ)..1, thetaTerm L (u + (Complex.I : ℂ)) (0 : L)) = (1 : ℂ) := by
-    simp [thetaTerm]
+    norm_num [thetaTerm, intervalIntegral.integral_const]
+    exact one_smul ℂ (1 : ℂ)
   have hterm_ne (z : L) (hz : z ≠ 0) :
       (∫ u : ℝ in (0 : ℝ)..1, thetaTerm L (u + (Complex.I : ℂ)) z) = 0 := by
     rcases hEven (z : ℝ²⁴) z.property with ⟨m, hm⟩
