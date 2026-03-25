@@ -33,7 +33,9 @@ public lemma DiscriminantProductFormula (z : ℍ) :
 
 /-- The discriminant form is the 24th power of the Dedekind eta function. -/
 public lemma Delta_eq_eta_pow (z : ℍ) : Δ z = (η z) ^ 24 := by
-  rw [η, Δ, mul_pow]
+  have hη : η z = «η» z := by
+    simp [ModularForm.eta, «η», ModularForm.eta_q_eq_cexp, Periodic.qParam]
+  rw [hη, «η», Δ, mul_pow]
   congr
   · rw [← Complex.exp_nat_mul]
     congr 1
@@ -44,7 +46,8 @@ public lemma Delta_eq_eta_pow (z : ℍ) : Δ z = (η z) ^ 24 := by
 
 /-- The discriminant `Δ z` is nonzero on the upper half-plane. -/
 public lemma Δ_ne_zero (z : UpperHalfPlane) : Δ z ≠ 0 := by
-  simpa [Delta_eq_eta_pow] using pow_ne_zero 24 (eta_nonzero_on_UpperHalfPlane z)
+  rw [Delta_eq_eta_pow]
+  exact pow_ne_zero 24 (ModularForm.eta_ne_zero z.2)
 
 /-- Invariance of `Δ` under the translation `T : z ↦ z + 1`. -/
 public lemma Discriminant_T_invariant : (Δ ∣[(12 : ℤ)] ModularGroup.T) = Δ := by
@@ -63,6 +66,10 @@ public lemma Discriminant_S_invariant : (Δ ∣[(12 : ℤ)] ModularGroup.S) = Δ
   ext z
   rw [modular_slash_S_apply, Delta_eq_eta_pow, Delta_eq_eta_pow]
   have he : η ((-z : ℂ)⁻¹) = (csqrt Complex.I)⁻¹ * (csqrt (z : ℂ) * η (z : ℂ)) := by
+    rw [show η ((-z : ℂ)⁻¹) = «η» ((-z : ℂ)⁻¹) by
+        simp [ModularForm.eta, «η», ModularForm.eta_q_eq_cexp, Periodic.qParam]]
+    rw [show η (z : ℂ) = «η» (z : ℂ) by
+        simp [ModularForm.eta, «η», ModularForm.eta_q_eq_cexp, Periodic.qParam]]
     simpa [Function.comp, Pi.smul_apply, Pi.mul_apply, smul_eq_mul, div_eq_mul_inv] using
       (eta_equality z.2)
   have hz : (z : ℂ) ≠ 0 := ne_zero z
