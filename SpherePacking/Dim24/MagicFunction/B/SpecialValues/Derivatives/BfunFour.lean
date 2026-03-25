@@ -115,7 +115,9 @@ public lemma Bfun_four : Bfun (4 : ℝ) = (2 : ℂ) := by
         (intervalIntegral.integral_sub (μ := MeasureTheory.volume) (a := (0 : ℝ)) (b := (1 : ℝ))
           (f := fT) (g := fun _ : ℝ => (2 : ℂ)) hIntF hIntC)
       have hconst : (∫ x in (0 : ℝ)..1, (2 : ℂ)) = (2 : ℂ) := by
-        simp [intervalIntegral.integral_const]
+        rw [intervalIntegral.integral_const]
+        rw [show (1 - 0 : ℝ) = 1 by norm_num]
+        exact one_smul ℝ (2 : ℂ)
       simpa [TopEdge, fT, hconst, sub_eq_add_neg, add_assoc] using hsub.symm
     have hnorm :
         ‖∫ x in (0 : ℝ)..1, (fT x - (2 : ℂ))‖ ≤ (ε / 2) * |(1 : ℝ) - 0| :=
