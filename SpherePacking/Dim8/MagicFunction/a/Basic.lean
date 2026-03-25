@@ -250,7 +250,13 @@ public lemma I₁'_eq_Ioc (r : ℝ) : I₁' r = ∫ (t : ℝ) in Ioc 0 1, -I
     * φ₀'' (-1 / (I * t))
     * t ^ 2
     * cexp (-π * I * r)
-    * cexp (-π * r * t) := by simp [I₁'_eq, intervalIntegral_eq_integral_uIoc]
+    * cexp (-π * r * t) := by
+  rw [I₁'_eq, intervalIntegral_eq_integral_uIoc]
+  simp
+  exact one_smul ℝ
+    (∫ (x : ℝ) in Ioc 0 1,
+      -(I * φ₀'' (-1 / (I * x)) * x ^ 2 * cexp (-(π * I * r)) * cexp (-(π * r * x)))
+        ∂MeasureTheory.volume)
 
 /-- An explicit integral expression for `I₂'` after rewriting `Φ₂` and the parametrization `z₂'`. -/
 public lemma I₂'_eq (r : ℝ) : I₂' r = ∫ t in (0 : ℝ)..1,
@@ -349,7 +355,11 @@ public lemma I₅'_eq (r : ℝ) : I₅' r = -2 * ∫ t in (0 : ℝ)..1, -I
 public lemma I₅'_eq_Ioc (r : ℝ) : I₅' r = -2 * ∫ (t : ℝ) in Ioc 0 1, -I
     * φ₀'' (-1 / (I * t))
     * t ^ 2
-    * cexp (-π * r * t) := by simp [I₅'_eq, intervalIntegral_eq_integral_uIoc]
+    * cexp (-π * r * t) := by
+  rw [I₅'_eq, intervalIntegral_eq_integral_uIoc]
+  simp
+  exact one_smul ℝ
+    (∫ (t : ℝ) in Ioc 0 1, -(I * φ₀'' (-1 / (I * t)) * t ^ 2 * cexp (-(π * r * t))) ∂MeasureTheory.volume)
 
 /-- An explicit integral expression for `I₆'` after rewriting `Φ₆` and the parametrization `z₆'`. -/
 public lemma I₆'_eq (r : ℝ) : I₆' r = 2 * ∫ t in Ici (1 : ℝ), I
