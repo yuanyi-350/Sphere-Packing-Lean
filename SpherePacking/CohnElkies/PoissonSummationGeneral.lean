@@ -342,7 +342,12 @@ public theorem poissonSummation_lattice (f : SchwartzMap E ℂ) (v : E) :
         have : inner ℝ (A.symm v) w = inner ℝ v ((Bₗ (d := d) L) w) := by
           simpa [A, Bₗ] using
             (LinearMap.adjoint_inner_right ((A.symm : E ≃ₗ[ℝ] E).toLinearMap) v w).symm
-        simpa [RCLike.inner_eq_wInner_one] using this
+        calc
+          ⟪A.symm v, w⟫_[ℝ] = inner ℝ (A.symm v) w := by
+            simpa using (RCLike.wInner_one_eq_inner (A.symm v).ofLp w.ofLp)
+          _ = inner ℝ v ((Bₗ (d := d) L) w) := this
+          _ = ⟪v, (Bₗ (d := d) L) w⟫_[ℝ] := by
+            simpa using (RCLike.wInner_one_eq_inner v.ofLp ((Bₗ (d := d) L) w).ofLp).symm
       simp [hinner]
     have hdetC : cC = (1 / ZLattice.covolume L) := by
       have hcovol : ZLattice.covolume L = abs detA := by
