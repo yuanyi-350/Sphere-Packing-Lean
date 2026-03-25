@@ -588,7 +588,8 @@ public lemma f0_strip_cancel_I6 (u : ℝ) (hu : expU u 1 = 1) (hu0 : 0 ≤ u) :
               ((Cφ * Real.exp (-(2 * Real.pi) * z.im)) * (5 * z.im)) * ‖expU u z‖ ≤
                 ((Cφ * Real.exp (-(2 * Real.pi) * z.im)) * (5 * z.im)) * 1 :=
             mul_le_mul_of_nonneg_left hexp_le hprod0
-          lia
+          exact le_trans hace (by
+            simpa [mul_assoc, mul_left_comm, mul_comm] using hce)
         simpa [this, f0, mul_assoc] using hgoal
       have hzImM0 : M0 ≤ z.im := le_trans (le_max_right _ _) hzIm
       have hsmall : (5 * Cφ) * (z.im * Real.exp (-(2 * Real.pi) * z.im)) < ε := by
@@ -708,7 +709,14 @@ public lemma f0_strip_cancel_I6 (u : ℝ) (hu : expU u 1 = 1) (hu0 : 0 ≤ u) :
       have ht' : t ∈ Set.Ici (1 : ℝ) := le_of_lt (by simpa [Set.mem_Ioi] using ht)
       simp [RealIntegrands.Φ₆, ComplexIntegrands.Φ₆', expU,
         MagicFunction.Parametrisations.z₆'_eq_of_mem (t := t) ht', mul_left_comm, mul_comm]
-    simp [hIci, hparam, MeasureTheory.integral_const_mul, smul_eq_mul, mul_left_comm, mul_comm]
+    let F : ℝ → ℂ := fun t =>
+      varphi' ((t : ℂ) * Complex.I) * expU u ((t : ℂ) * Complex.I)
+    have hI : ∫ t in Set.Ioi (1 : ℝ), (Complex.I : ℂ) * F t = (Complex.I : ℂ) * ∫ t in Set.Ioi (1 : ℝ), F t := by
+      simpa [F] using (MeasureTheory.integral_const_mul (r := (Complex.I : ℂ)) (f := F) (μ := MeasureTheory.volume.restrict (Set.Ioi (1 : ℝ))))
+    have h2 : ∫ t in Set.Ioi (1 : ℝ), (2 : ℂ) * F t = (2 : ℂ) * ∫ t in Set.Ioi (1 : ℝ), F t := by
+      simpa [F] using (MeasureTheory.integral_const_mul (r := (2 : ℂ)) (f := F) (μ := MeasureTheory.volume.restrict (Set.Ioi (1 : ℝ))))
+    rw [hIci, hparam, smul_eq_mul, hI, h2]
+    ring
   -- Combine `hrect` with `hvert` and rewrite `I₆'`.
   have hrect0 := hrect
   rw [hhor, hright, hleft] at hrect0
