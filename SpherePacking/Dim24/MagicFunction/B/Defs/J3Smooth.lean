@@ -111,7 +111,7 @@ lemma J₃'_eq (x : ℝ) :
             (Complex.I : ℂ) * ψI' (z₅' t) *
               cexp (Real.pi * (Complex.I : ℂ) * (x : ℂ) * (z₅' t))) *
           cexp (Real.pi * (Complex.I : ℂ) * (x : ℂ)) := by
-          simp [intervalIntegral.integral_mul_const]
+          exact intervalIntegral.integral_mul_const _ _
   have hK :
       (∫ t in (0 : ℝ)..1,
           (Complex.I : ℂ) * ψI' (z₅' t) *
