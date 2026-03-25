@@ -63,8 +63,8 @@ public theorem aRadial_eq_laplace_phi0_main {u : ℝ} (hu : 2 < u) :
       (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * Complex.I)) =
         ∫ t in Set.Ioc (0 : ℝ) 1, Φ₅' u ((t : ℂ) * Complex.I) := by
     -- `intervalIntegral` is the integral on `uIoc`, and `uIoc 0 1 = Ioc 0 1`.
-    simp
-      [intervalIntegral.intervalIntegral_eq_integral_uIoc]
+    simp [intervalIntegral.intervalIntegral_eq_integral_uIoc]
+    exact one_smul ℝ (∫ t in Set.Ioc (0 : ℝ) 1, Φ₅' u ((t : ℂ) * Complex.I))
   rw [hseg]
   have hsplitIoi :
       (Set.Ioi (0 : ℝ)) = Set.Ioc (0 : ℝ) 1 ∪ Set.Ioi (1 : ℝ) := by
