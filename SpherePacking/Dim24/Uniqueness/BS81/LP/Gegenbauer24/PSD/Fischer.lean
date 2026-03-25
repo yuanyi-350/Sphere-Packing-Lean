@@ -82,7 +82,7 @@ private lemma multiFactorial_ne_zero (d : Var →₀ ℕ) : (multiFactorial d : 
 -/
 
 /-- The degree-`k` homogeneous submodule. -/
-public abbrev Pk (k : ℕ) : Submodule ℝ Poly :=
+public abbrev Pk (k : ℕ) :=
   MvPolynomial.homogeneousSubmodule Var ℝ k
 
 namespace Pk
