@@ -16,3 +16,6 @@ blueprint/src/print.out
 blueprint/src/print.toc
 blueprint/src/print.pdf
 blueprint/src/print.synctex.gz
+email_config.toml
+.log
+__pycache__
