@@ -77,13 +77,16 @@ end Complex_Function_Helpers
 
 section Nonnegativity
 
-theorem hIntegrable : MeasureTheory.Integrable (𝓕 ⇑f) := (FT f).integrable
+theorem hIntegrable : MeasureTheory.Integrable (𝓕 ⇑f) := by
+  simpa using
+    (FourierTransform.fourierCLE ℂ (SchwartzMap (EuclideanSpace ℝ (Fin d)) ℂ) f).integrable
 
 include hne_zero in
 theorem fourier_ne_zero : 𝓕 f ≠ 0 := by
   intro hFourierZero
   apply hne_zero
-  rw [← ContinuousLinearEquiv.map_eq_zero_iff (FourierTransform.fourierCLE ℝ _)]
+  rw [← ContinuousLinearEquiv.map_eq_zero_iff
+    (FourierTransform.fourierCLE ℂ (SchwartzMap (EuclideanSpace ℝ (Fin d)) ℂ))]
   exact hFourierZero
 
 include hCohnElkies₂ in
@@ -91,7 +94,10 @@ theorem f_nonneg_at_zero : 0 ≤ (f 0).re := by
   -- f(0) is an integral of a nonneg function, hence nonneg.
   rw [← f.fourierInversion, fourierInv_eq]
   simp only [inner_zero_right, AddChar.map_zero_eq_one, one_smul]
-  rw [← RCLike.re_eq_complex_re, ← integral_re hIntegrable]
+  have hre : (∫ v : EuclideanSpace ℝ (Fin d), (𝓕 (⇑f) v).re) =
+      (∫ v : EuclideanSpace ℝ (Fin d), 𝓕 (⇑f) v).re := by
+    simpa using (integral_re (f := fun v : EuclideanSpace ℝ (Fin d) => 𝓕 (⇑f) v) hIntegrable)
+  rw [← hre]
   refine integral_nonneg ?_
   intro v
   simpa [RCLike.re_eq_complex_re] using hCohnElkies₂ v
@@ -122,9 +128,10 @@ theorem f_zero_pos : 0 < (f 0).re := by
     refine (Continuous.integral_zero_iff_zero_of_nonneg hcont ?_ hCohnElkies₂).1 ?_
     · have h𝓕_int : MeasureTheory.Integrable
           (fun x : EuclideanSpace ℝ (Fin d) => 𝓕 f x) := by
-        rw [← FourierTransform.fourierCLE_apply (R := ℝ)
+        rw [← FourierTransform.fourierCLE_apply (R := ℂ)
           (E := 𝓢(EuclideanSpace ℝ (Fin d), ℂ)) f]
-        exact (FT f).integrable
+        simpa using
+          (FourierTransform.fourierCLE ℂ (SchwartzMap (EuclideanSpace ℝ (Fin d)) ℂ) f).integrable
       exact h𝓕_int.re
     simpa using hintRe
   have h𝓕fzero : 𝓕 f = 0 := by
