@@ -165,7 +165,7 @@ public lemma bProfile_hasDerivAt_four :
     have hJ6 : DifferentiableAt ℝ RealIntegrals.J₆' (4 : ℝ) := by
       have hcont := Schwartz.J6Smooth.contDiffOn_J₆'_Ioi_neg1
       exact (hcont.contDiffAt (x := (4 : ℝ)) hIoi).differentiableAt (by simp)
-    simp_all
+    simpa [hbfun] using hJ4.neg.add ((differentiableAt_const (-1 / 2 : ℂ)).mul hJ6)
   have hb' : HasDerivAt b (deriv b (4 : ℝ)) (4 : ℝ) := hb_diff.hasDerivAt
   have hab :
       HasDerivAt (fun u : ℝ => a u * b u)
@@ -218,7 +218,7 @@ public lemma bProfile_hasDerivAt_two :
     have hJ6 : DifferentiableAt ℝ RealIntegrals.J₆' (2 : ℝ) := by
       have hcont := Schwartz.J6Smooth.contDiffOn_J₆'_Ioi_neg1
       exact (hcont.contDiffAt (x := (2 : ℝ)) hIoi).differentiableAt (by simp)
-    simp_all
+    simpa [hbfun] using hJ4.neg.add ((differentiableAt_const (-1 / 2 : ℂ)).mul hJ6)
   have hb' : HasDerivAt b (deriv b (2 : ℝ)) (2 : ℝ) := hb_diff.hasDerivAt
   have hab :
       HasDerivAt (fun u : ℝ => a u * b u)
