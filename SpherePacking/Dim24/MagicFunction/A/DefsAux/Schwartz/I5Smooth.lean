@@ -108,7 +108,8 @@ lemma I₅'_eq (x : ℝ) :
         (-2 : ℂ) *
           ((∫ t in (0 : ℝ)..1, RealIntegrals.RealIntegrands.Φ₁ x t) *
             cexp ((x : ℂ) * ((Real.pi : ℂ) * Complex.I))) := by
-          simp [intervalIntegral.integral_mul_const]
+          congr 1
+          exact intervalIntegral.integral_mul_const _ _
     _ = (-2 : ℂ) * (RealIntegrals.I₁' x * cexp ((x : ℂ) * ((Real.pi : ℂ) * Complex.I))) := by rfl
 
 /-- Smoothness of `I₅'`. -/
