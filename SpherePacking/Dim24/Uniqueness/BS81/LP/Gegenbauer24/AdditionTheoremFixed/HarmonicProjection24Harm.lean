@@ -118,10 +118,21 @@ public lemma laplacian_harmApprox_eq_zero (k : ℕ) (y : ℝ²⁴) (hy : ‖y‖
   have hLap :
       PSD.Harmonic.laplacian (harmApprox k y) =
         (Finset.range (N + 1)).sum (fun j => fA j + fB j) := by
-    -- Expand `harmApprox` and use termwise Laplacian.
-    -- (`range (N+1)` is definitional equal to `range (k/2+1)`.)
-    simp [harmApprox, N, fA, fB, map_sum, smul_add,
-      laplacian_term_unit (k := k) (y := y) (hy := hy)]
+    calc
+      PSD.Harmonic.laplacian (harmApprox k y)
+          = (Finset.range (N + 1)).sum (fun j =>
+              PSD.Harmonic.laplacian ((aCoeff k j) • ((r2 : Poly) ^ j * (t y : Poly) ^ (k - 2 * j)))) := by
+                change PSD.Harmonic.laplacian ((Finset.range (N + 1)).sum
+                  (fun j => (aCoeff k j) • ((r2 : Poly) ^ j * (t y : Poly) ^ (k - 2 * j)))) = _
+                exact map_sum (LinearMap.toAddMonoidHom PSD.Harmonic.laplacian)
+                  (fun j => (aCoeff k j) • ((r2 : Poly) ^ j * (t y : Poly) ^ (k - 2 * j)))
+                  (Finset.range (N + 1))
+      _ = (Finset.range (N + 1)).sum (fun j => fA j + fB j) := by
+            refine Finset.sum_congr rfl ?_
+            intro j hj
+            rw [map_smul]
+            simpa [fA, fB, smul_add] using congrArg (fun p => (aCoeff k j) • p)
+              (laplacian_term_unit (k := k) (y := y) (hy := hy) (j := j))
   -- The `j=0` term of the `A`-sum is `0` since `A k 0 = 0`.
   have hA0 : fA 0 = (0 : Poly) := by
     simp [fA, A]
