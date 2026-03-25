@@ -160,7 +160,14 @@ public theorem gRadial_eq_integral_A {u : ℝ} (hu : 2 < u) :
     -- Split the integral and simplify.
     rw [MeasureTheory.integral_add hIntA'' hIntB'']
     -- Identify the two integrals with `IA` and `IB`.
-    simp [IA, IB, c, mul_assoc, MeasureTheory.integral_neg, MeasureTheory.integral_const_mul]
+    have hIBc :
+        (∫ t in Set.Ioi (0 : ℝ), c * (ψI' ((Complex.I : ℂ) * (t : ℂ)) * Real.exp (-π * u * t))) = c * IB := by
+      simpa [IB] using
+        (MeasureTheory.integral_const_mul c
+          (f := fun t : ℝ => ψI' ((Complex.I : ℂ) * (t : ℂ)) * Real.exp (-π * u * t))
+          (μ := ((volume : Measure ℝ).restrict (Set.Ioi (0 : ℝ)))))
+    rw [hIBc]
+    simp [IA, MeasureTheory.integral_neg]
   -- Pull out the common `sin^2` factor and use `hA_integral`.
   have hmain :
       ((↑π * Complex.I) / 8640 : ℂ) *
