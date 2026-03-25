@@ -129,7 +129,10 @@ public theorem exists_linearIsometryEquiv_map_unit_to_basis0
   refine ⟨E, ?_⟩
   have : E (b' (0 : Fin 24)) = bstd (0 : Fin 24) := by
     simp [E]
-  simpa [hb0] using this.trans (by simp [bstd])
+  have hbstd0 : bstd (0 : Fin 24) = (EuclideanSpace.single (0 : Fin 24) (1 : ℝ) : ℝ²⁴) := by
+    dsimp [bstd]
+    exact EuclideanSpace.basisFun_apply (ι := Fin 24) (𝕜 := ℝ) (i := (0 : Fin 24))
+  simpa [hb0] using this.trans hbstd0
 
 /-- The fourth moment of a coordinate on the unit sphere in `ℝ²⁴` is `1 / 208`. -/
 public theorem sphereAvg24_coord_pow_four :
@@ -185,14 +188,14 @@ public theorem sphereAvg24_coord_pow_four :
   -- Choose an isometry sending `u` to `e0`.
   obtain ⟨E, hEu⟩ := exists_linearIsometryEquiv_map_unit_to_basis0 (u := u) hu_norm
   have hEu0 : E u = e0 := by
-    -- `e0 = basisFun 0 = single 0 1`.
-    simpa [e0, bstd] using hEu
+    dsimp [e0, bstd]
+    exact hEu.trans (EuclideanSpace.basisFun_apply (ι := Fin 24) (𝕜 := ℝ) (i := (0 : Fin 24))).symm
   -- Relate `((E x) 0)` to `⟪x,u⟫`.
   have hinner_coord0 : ∀ x : ℝ²⁴, (E x) (0 : Fin 24) = (⟪x, u⟫ : ℝ) := by
     intro x
     have hx0 : (E x) (0 : Fin 24) = (⟪E x, e0⟫ : ℝ) := by
-      -- `⟪x, e0⟫ = x0`
-      simpa [e0, bstd] using
+      dsimp [e0, bstd]
+      simpa only using
         (EuclideanSpace.inner_basisFun_real (ι := Fin 24) (x := (E x)) (i := (0 : Fin 24))).symm
     have hx1 : (⟪E x, e0⟫ : ℝ) = (⟪E x, E u⟫ : ℝ) := by simp [hEu0]
     have hx2 : (⟪E x, E u⟫ : ℝ) = (⟪x, u⟫ : ℝ) :=
@@ -223,10 +226,12 @@ public theorem sphereAvg24_coord_pow_four :
         (⟪x, u⟫ : ℝ) = (Real.sqrt 2)⁻¹ * (x (0 : Fin 24) + x (1 : Fin 24)) := by
       intro x
       have hx0 : (⟪x, e0⟫ : ℝ) = x (0 : Fin 24) := by
-        simpa [e0, bstd] using
+        dsimp [e0, bstd]
+        simpa only using
           (EuclideanSpace.inner_basisFun_real (ι := Fin 24) (x := x) (i := (0 : Fin 24)))
       have hx1 : (⟪x, e1⟫ : ℝ) = x (1 : Fin 24) := by
-        simpa [e1, bstd] using
+        dsimp [e1, bstd]
+        simpa only using
           (EuclideanSpace.inner_basisFun_real (ι := Fin 24) (x := x) (i := (1 : Fin 24)))
       calc
         (⟪x, u⟫ : ℝ) = (Real.sqrt 2)⁻¹ * (⟪x, e0⟫ + ⟪x, e1⟫) := by
