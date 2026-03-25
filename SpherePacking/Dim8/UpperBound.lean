@@ -1,6 +1,5 @@
-module
-public import SpherePacking.Basic.SpherePacking
-public import SpherePacking.Dim8.E8.Packing
+import SpherePacking.Basic.SpherePacking
+import SpherePacking.Dim8.E8.Packing
 import SpherePacking.CohnElkies.LPBound
 import SpherePacking.Dim8.ScaledMagic
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.ScaledMagic
