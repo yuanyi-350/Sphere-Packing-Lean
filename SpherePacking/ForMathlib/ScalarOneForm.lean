@@ -12,7 +12,7 @@ This file is meant to be independent of the rest of the project so it can be ups
 namespace MagicFunction
 
 /-- Interpret a scalar function `F : ℂ → ℂ` as the `ℂ`-linear one-form `v ↦ v * F z`. -/
-@[expose] public def scalarOneForm (F : ℂ → ℂ) : ℂ → ℂ →L[ℂ] ℂ :=
+@[expose] public noncomputable def scalarOneForm (F : ℂ → ℂ) : ℂ → ℂ →L[ℂ] ℂ :=
   fun z ↦ (ContinuousLinearMap.id ℂ ℂ).smulRight (F z)
 
 /-- Evaluate `scalarOneForm` as multiplication by `F z`. -/
