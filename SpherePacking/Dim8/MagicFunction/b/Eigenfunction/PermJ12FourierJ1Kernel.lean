@@ -79,14 +79,13 @@ public lemma phase_mul_J₁'_eq_integral_permJ1Kernel (w x : EuclideanSpace ℝ 
             cexp ((π : ℂ) * Complex.I * ((‖x‖ ^ (2 : ℕ) : ℝ) : ℂ) * (z₁line t)) ∂μIoc01 := by
     simpa [μIoc01] using (J₁'_eq_integral_z₁line (r := (‖x‖ ^ (2 : ℕ))))
   rw [hJ₁μ]
-  rw [(MeasureTheory.integral_const_mul
-        (μ := μIoc01)
-        (r := cexp (↑(-2 * Real.pi * ⟪x, w⟫) * Complex.I))
-        (f := fun t : ℝ =>
-          (Complex.I : ℂ) * ψT' (z₁line t) *
-            cexp ((π : ℂ) * Complex.I * ((‖x‖ ^ (2 : ℕ) : ℝ) : ℂ) * (z₁line t)))).symm]
-  refine MeasureTheory.integral_congr_ae <| Filter.Eventually.of_forall fun t => ?_
-  simp [permJ1Kernel, mul_assoc, mul_left_comm, mul_comm]
+  simpa [permJ1Kernel, mul_assoc] using
+    (MeasureTheory.integral_const_mul
+      (μ := μIoc01)
+      (r := cexp (↑(-2 * Real.pi * ⟪x, w⟫) * Complex.I))
+      (f := fun t : ℝ =>
+        (Complex.I : ℂ) * ψT' (z₁line t) *
+          cexp ((π : ℂ) * Complex.I * ((‖x‖ ^ (2 : ℕ) : ℝ) : ℂ) * (z₁line t)))).symm
 
 lemma norm_permJ1Kernel (w x : EuclideanSpace ℝ (Fin 8)) (t : ℝ) :
     ‖permJ1Kernel w (x, t)‖ = ‖ψT' (z₁line t)‖ * rexp (-(π * t * (‖x‖ ^ 2))) := by
