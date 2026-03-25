@@ -44,7 +44,7 @@ lemma tendsto_integral_atTop_nhds_zero_of_tendsto_im_atTop_nhds_zero
     Tendsto (fun (m : ℝ) ↦ ∫ (x : ℝ) in x₁..x₂, f (x + m * I)) atTop (𝓝 0) := by
   by_cases h : x₁ = x₂
   · subst h; simp
-  simp only [NormedAddCommGroup.tendsto_nhds_zero, eventually_atTop, ge_iff_le]
+  simp only [NormedAddGroup.tendsto_nhds_zero, eventually_atTop, ge_iff_le]
   intro ε hε
   have hx : 0 < |x₂ - x₁| := abs_sub_pos.mpr (ne_comm.mp h)
   obtain ⟨M, hM⟩ :=
