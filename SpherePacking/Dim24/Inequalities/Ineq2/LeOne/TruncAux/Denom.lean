@@ -106,7 +106,7 @@ public theorem ineq2_lowerBound_of_num {t : ℝ} (ht0 : 0 < t) {L : ℝ}
       mul_le_mul_of_nonneg_right hnum (by positivity)
     have hL' : L ≤ L * (1 / ((Δ (it t ht0)).re ^ (2 : ℕ))) := by
       simpa [mul_one] using (mul_le_mul_of_nonneg_left hinv_ge_one hL)
-    lia
+    simpa [div_eq_mul_inv] using le_trans hL' hscale
   simpa [hdiff] using hmul
 
 end SpherePacking.Dim24.Ineq2LeOneTruncAux
