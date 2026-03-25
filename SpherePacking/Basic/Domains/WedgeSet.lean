@@ -71,11 +71,15 @@ public lemma convex_wedgeSet : Convex ℝ wedgeSet := by
   have hB : Convex ℝ {z : ℂ | z.re - z.im < (1 : ℝ)} := by
     refine convex_halfSpace_lt (f := fun z : ℂ => z.re - z.im) ?_ (1 : ℝ)
     refine .mk (by intro z w; simp [sub_eq_add_neg, add_assoc, add_left_comm, add_comm]) ?_
-    intro c z; simp [sub_eq_add_neg, mul_add, mul_comm]
+    intro c z
+    show (c • z).re - (c • z).im = c • (z.re - z.im)
+    rw [Complex.smul_re, Complex.smul_im, smul_sub]
   have hC : Convex ℝ {z : ℂ | (1 : ℝ) < z.re + z.im} := by
     refine convex_halfSpace_gt (f := fun z : ℂ => z.re + z.im) ?_ (1 : ℝ)
     refine .mk (by intro z w; simp [add_left_comm, add_comm]) ?_
-    intro c z; simp [mul_add, mul_comm]
+    intro c z
+    show (c • z).re + (c • z).im = c • (z.re + z.im)
+    rw [Complex.smul_re, Complex.smul_im, smul_add]
   simpa [hEq, Set.inter_assoc, Set.inter_left_comm, Set.inter_comm] using hA.inter (hB.inter hC)
 
 public lemma wedgeSet_subset_upperHalfPlaneSet :
@@ -111,13 +115,18 @@ public lemma mem_upperHalfPlane_of_mem_closure_wedgeSet_ne_one
 /-- Membership in `wedgeSet` for the vertical line segment from `1` to `1 + I`. -/
 public lemma lineMap_z₃line_mem_wedgeSet {t : ℝ} (ht0 : 0 < t) :
     AffineMap.lineMap (1 : ℂ) ((1 : ℂ) + Complex.I) t ∈ wedgeSet := by
-  simp [wedgeSet, AffineMap.lineMap_apply_module', Algebra.smul_def, ht0, add_comm, mul_comm]
+  simp [wedgeSet, AffineMap.lineMap_apply_module']; refine ⟨?_, ?_, ?_⟩
+  · show 0 < (t • Complex.I).im; rw [Complex.smul_im]; simpa using ht0
+  · show (t • Complex.I).re < (t • Complex.I).im; rw [Complex.smul_re, Complex.smul_im]; simpa using ht0
+  · show -(t • Complex.I).re < (t • Complex.I).im; rw [Complex.smul_re, Complex.smul_im]; simpa using ht0
 
 /-- Membership in `wedgeSet` for the line segment from `1 + I` to `I`, for `t ∈ (0, 1)`. -/
 public lemma lineMap_z₄line_mem_wedgeSet {t : ℝ} (ht0 : 0 < t) (ht1 : t < 1) :
     AffineMap.lineMap ((1 : ℂ) + Complex.I) Complex.I t ∈ wedgeSet := by
-  simp [wedgeSet, AffineMap.lineMap_apply_module', Algebra.smul_def,
-    (by linarith [ht0] : (-t : ℝ) < 1), ht1, sub_eq_add_neg, add_left_comm, add_comm]
+  simp [wedgeSet, AffineMap.lineMap_apply_module']; refine ⟨?_, ?_, ?_⟩
+  · show (t • (1 : ℂ)).im < 1; rw [Complex.smul_im]; norm_num
+  · show (t • (1 : ℂ)).im < 1 + (t • (1 : ℂ)).re; rw [Complex.smul_re, Complex.smul_im]; norm_num; linarith
+  · show (t • (1 : ℂ)).im + (t • (1 : ℂ)).re < 1; rw [Complex.smul_re, Complex.smul_im]; norm_num; linarith
 
 end
 
