@@ -53,6 +53,10 @@ lemma I₂'_eq_integral_g_Ioo (x : ℝ) :
     SpherePacking.Integration.DifferentiationUnderIntegral.g, Φ₂', Φ₁',
     intervalIntegral_eq_integral_uIoc, zero_le_one, uIoc_of_le, integral_Ioc_eq_integral_Ioo,
     mul_assoc, mul_left_comm, mul_comm]
+  let A : ℂ := ∫ t in Ioo (0 : ℝ) 1,
+    φ₀'' (-1 / (z₂' t + 1)) * (cexp (I * (↑x * (↑π * z₂' t))) * (z₂' t + 1) ^ 2)
+  change (1 : ℂ) • A = A
+  exact one_smul ℂ A
 
 lemma coeff_norm_le (t : ℝ) : ‖coeff t‖ ≤ 2 * π := by
   simpa [coeff, mul_assoc] using (norm_mul_pi_I_le_two_pi (z := z₂' t) (hz := norm_z₂'_le_two t))
