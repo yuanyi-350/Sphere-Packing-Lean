@@ -557,8 +557,11 @@ lemma A_E_sq_eq_tsum (z : ℍ) :
             _ = cexp (2 * π * I * ((m + 2 : ℕ) : ℂ) * (z : ℂ)) := by simp [huv]
         simpa [e₁, e₂, u, v] using this
       -- Expand `t` and use `hexp`.
-      dsimp [t, A_E_term, e₁, e₂]
-      exact CancelDenoms.mul_subst rfl hexp rfl
+      change (A_E_coeff p.1 * e₁) * (A_E_coeff p.2 * e₂) =
+          (A_E_coeff p.1 * A_E_coeff p.2) * cexp (2 * π * I * ((m + 2 : ℕ) : ℂ) * (z : ℂ))
+      calc
+        (A_E_coeff p.1 * e₁) * (A_E_coeff p.2 * e₂) = (A_E_coeff p.1 * A_E_coeff p.2) * (e₁ * e₂) := by ring
+        _ = _ := by rw [hexp]
     calc
       (∑ p ∈ Finset.antidiagonal m, t p.1 * t p.2)
           = ∑ p ∈ Finset.antidiagonal m,
