@@ -32,8 +32,10 @@ public theorem ENat.tsum_const {α : Type*} (c : ENat) :
       obtain ⟨s, hs⟩ := Infinite.exists_subset_card_eq α (n + 1)
       filter_upwards [Filter.eventually_ge_atTop s] with t ht
       refine lt_of_lt_of_le ?_ (le_mul_of_one_le_right' (ENat.one_le_iff_ne_zero.2 hc))
-      refine lt_of_lt_of_le (b := (s.card : ℕ∞)) ?_ (by exact_mod_cast (Finset.card_le_card ht))
-      simp only [Nat.cast_lt, hs, Nat.lt_succ_self n])
+      refine lt_of_lt_of_le (b := (s.card : ℕ∞)) ?_
+        ((WithTop.coe_le_coe).2 (Finset.card_le_card ht))
+      simpa [hs] using
+        (ENat.lt_add_one_iff (m := (n : ℕ∞)) (n := (n : ℕ∞)) (by simp)).2 le_rfl)
 
 /-- The infinite sum of a constant `c : ENat` over a set `s` is `s.encard * c`. -/
 public theorem ENat.tsum_set_const {α : Type*} (s : Set α) (c : ENat) :
