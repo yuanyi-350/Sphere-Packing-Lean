@@ -54,7 +54,9 @@ section Setup
 
 /-- Rewrite `I₄' r` as a set integral of `g r` over `Ioo (0, 1)`. -/
 public lemma I₄'_eq_integral_g_Ioo (r : ℝ) : I₄' r = ∫ t in Ioo (0 : ℝ) 1, g r t := by
-  simp [I₄'_eq, intervalIntegral_eq_integral_uIoc, zero_le_one, g, integral_Ioc_eq_integral_Ioo]
+  simp [I₄'_eq, intervalIntegral_eq_integral_uIoc, zero_le_one, uIoc_of_le, g,
+    integral_Ioc_eq_integral_Ioo]
+  exact one_smul ℝ _
 
 end Setup
 
