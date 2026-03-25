@@ -725,7 +725,9 @@ theorem varphi_num_eq_qseries (z : ℍ) :
     -- `qseries a = 25 * qseries coeffE4Fourth = 25 * E₄^4`.
     have h1 : qseries a z = (25 : ℂ) * qseries (fun n : ℕ => (coeffE4Fourth n : ℂ)) z := by
       simpa [a, mul_assoc] using this
-    exact Eq.symm (CancelDenoms.derive_trans hE4Fourth (id (Eq.symm h1)))
+    calc
+      qseries a z = (25 : ℂ) * qseries (fun n : ℕ => (coeffE4Fourth n : ℂ)) z := h1
+      _ = (25 : ℂ) * (E₄ z) ^ 4 := by rw [← hE4Fourth]
   have hb_term : qseries b z = (-49 : ℂ) * ((E₆ z) ^ 2 * (E₄ z)) := by
     have hconv' :
         qseries (fun n : ℕ => (conv coeffE6Sq coeffE4 n : ℂ)) z = (E₆ z) ^ 2 * (E₄ z) := by
