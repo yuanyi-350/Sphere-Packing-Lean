@@ -467,8 +467,10 @@ public lemma exists_bound_norm_psiI'_mul_I_sub_exp_add_const_Ici_one :
           (Csum * Real.exp (-(3 : ℝ) * Real.pi * t)) *
               (Cinv2 * Real.exp (-(2 : ℝ) * Real.pi * t)) =
             (Csum * Cinv2) * Real.exp (-(5 : ℝ) * Real.pi * t) := by
-        -- reassociate and fold `exp(-3πt) * exp(-2πt)` into `exp(-5πt)`
-        exact CancelDenoms.mul_subst rfl hExp rfl
+        calc
+          (Csum * Real.exp (-(3 : ℝ) * Real.pi * t)) * (Cinv2 * Real.exp (-(2 : ℝ) * Real.pi * t)) =
+              (Csum * Cinv2) * (Real.exp (-(3 : ℝ) * Real.pi * t) * Real.exp (-(2 : ℝ) * Real.pi * t)) := by ring
+          _ = (Csum * Cinv2) * Real.exp (-(5 : ℝ) * Real.pi * t) := by rw [hExp]
       have hterm :
           (Csum * Cinv2) * Real.exp (-(5 : ℝ) * Real.pi * t) ≤
             (Csum * Cinv2) * Real.exp (-Real.pi * t) := by
