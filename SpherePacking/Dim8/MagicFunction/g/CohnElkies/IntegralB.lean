@@ -1,5 +1,4 @@
-module
-public import SpherePacking.Dim8.MagicFunction.g.CohnElkies.Defs
+import SpherePacking.Dim8.MagicFunction.g.CohnElkies.Defs
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.ImagAxisReal
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.LaplaceLemmas
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.AnotherIntegral.A.Representation
@@ -273,8 +272,23 @@ lemma integral_B_mul_exp_decomp {u : ℝ} (hu : 0 < u) :
   rw [hrew]
   -- Apply the split and simplify the resulting integrals.
   rw [hsplit]
-  simp [f1, f2, f3, f4, MeasureTheory.integral_neg, MeasureTheory.integral_const_mul, μ,
-    sub_eq_add_neg, add_assoc, add_left_comm, add_comm, mul_assoc]
+  dsimp [f1, f2, f3, f4]
+  have h2 : (∫ t : ℝ, (((36 / (π ^ (2 : ℕ)) : ℝ) : ℂ) *
+      MagicFunction.g.CohnElkies.IntegralReps.bAnotherIntegrand u t) ∂μ) =
+      (((36 / (π ^ (2 : ℕ)) : ℝ) : ℂ) * ∫ t : ℝ,
+        MagicFunction.g.CohnElkies.IntegralReps.bAnotherIntegrand u t ∂μ) := by
+    simpa using MeasureTheory.integral_const_mul (μ := μ) (((36 / (π ^ (2 : ℕ)) : ℝ) : ℂ))
+      (fun t : ℝ => MagicFunction.g.CohnElkies.IntegralReps.bAnotherIntegrand u t)
+  have h3 : (∫ t : ℝ, (((8640 / π : ℝ) : ℂ) * ((t : ℂ) * (Real.exp (-π * u * t) : ℂ))) ∂μ) =
+      ((((8640 / π : ℝ) : ℂ) * ∫ t : ℝ, (t : ℂ) * (Real.exp (-π * u * t) : ℂ) ∂μ)) := by
+    simpa using MeasureTheory.integral_const_mul (μ := μ) (((8640 / π : ℝ) : ℂ))
+      (fun t : ℝ => (t : ℂ) * (Real.exp (-π * u * t) : ℂ))
+  have h4 : (∫ t : ℝ, (-((12960 / (π ^ (2 : ℕ)) : ℝ) : ℂ) * (Real.exp (-π * u * t) : ℂ)) ∂μ) =
+      (-((12960 / (π ^ (2 : ℕ)) : ℝ) : ℂ) * ∫ t : ℝ, (Real.exp (-π * u * t) : ℂ) ∂μ) := by
+    simpa using MeasureTheory.integral_const_mul (μ := μ) (-((12960 / (π ^ (2 : ℕ)) : ℝ) : ℂ))
+      (fun t : ℝ => (Real.exp (-π * u * t) : ℂ))
+  rw [h2, h3, h4]
+  simp [MeasureTheory.integral_neg, μ, sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
 
 end IntegralB
 
@@ -328,13 +342,19 @@ theorem fourier_g_eq_integral_B_of_ne_two {x : ℝ⁸} (hx : 0 < ‖x‖ ^ 2)
   have hu : 0 < u := by simpa [u] using hx
   have hu2 : u ≠ 2 := by simpa [u] using hx2
   -- Rewrite `𝓕 g` using the Fourier eigenfunction identities for `a` and `b`.
-  have hF : (𝓕 g) = FourierTransform.fourierCLE ℂ (SchwartzMap ℝ⁸ ℂ) g := by
-    rfl
   have hFg :
-      FourierTransform.fourierCLE ℂ (SchwartzMap ℝ⁸ ℂ) g =
+      (𝓕 g : 𝓢(ℝ⁸, ℂ)) =
         ((↑π * I) / 8640) • a + (I / (240 * (↑π))) • b := by
-    simp [g, map_sub, map_smul, MagicFunction.a.Fourier.eig_a, MagicFunction.b.Fourier.eig_b,
-      -FourierTransform.fourierCLE_apply]
+    letI : FourierPair (𝓢(ℝ⁸, ℂ)) (𝓢(ℝ⁸, ℂ)) := SchwartzMap.instFourierPair
+    letI : FourierInvPair (𝓢(ℝ⁸, ℂ)) (𝓢(ℝ⁸, ℂ)) := SchwartzMap.instFourierInvPair
+    change FourierTransform.fourierCLE ℂ (SchwartzMap ℝ⁸ ℂ) g =
+      ((↑π * I) / 8640) • a + (I / (240 * (↑π))) • b
+    have haFT : FourierTransform.fourierCLE ℂ (𝓢(ℝ⁸, ℂ)) a = a := by
+      simpa using MagicFunction.a.Fourier.eig_a
+    have hbFT : FourierTransform.fourierCLE ℂ (𝓢(ℝ⁸, ℂ)) b = -b := by
+      simpa using MagicFunction.b.Fourier.eig_b
+    rw [g, map_sub, map_smul, map_smul, haFT, hbFT]
+    simp
   -- Reduce to the 1D radial profiles `a'` and `b'`.
   have ha : a x = a' u := by
     simp [u, MagicFunction.FourierEigenfunctions.a,
@@ -345,7 +365,7 @@ theorem fourier_g_eq_integral_B_of_ne_two {x : ℝ⁸} (hx : 0 < ‖x‖ ^ 2)
   have hFourier :
       ((𝓕 g : 𝓢(ℝ⁸, ℂ)) x) =
         ((↑π * I) / 8640 : ℂ) * a' u + (I / (240 * (↑π)) : ℂ) * b' u := by
-    rw [hF, hFg]
+    rw [hFg]
     simp [SchwartzMap.add_apply, SchwartzMap.smul_apply, smul_eq_mul, ha, hb]
   -- Apply the "another integral" formulas for `a'` and `b'`.
   have haEq :=
