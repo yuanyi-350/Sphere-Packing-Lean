@@ -139,6 +139,11 @@ lemma exp_r_mul_coeff (r s : ℝ) :
     ring_nf
   simp [harg, Complex.exp_add, mul_assoc]
 
+local instance : ContinuousSMul ℝ ℂ := by
+  refine ⟨?_⟩
+  simpa [smul_eq_mul] using
+    (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd
+
 lemma hasDerivAt_g (r s : ℝ) :
     HasDerivAt (fun r : ℝ ↦ g r s) (coeff s * g r s) r := by
   let A : ℂ := (-I) * φ₀'' (I * (s : ℂ)) * (s ^ (-4 : ℤ) : ℂ)
@@ -390,7 +395,9 @@ lemma xpow_mul_exp_neg_pi_div_le (k : ℕ) {x s : ℝ} (hx : 0 ≤ x) (hs : 1 �
   have hu0 : 0 ≤ u := div_nonneg (by positivity) (zero_le_one.trans hs)
   have hu : u ^ k * rexp (-u) ≤ Cpow := hCpow u hu0
   have hu_mul : u * s = π * x := div_mul_cancel₀ (π * x) hs0
-  have hx' : x = u * s / π := CancelDenoms.cancel_factors_eq_div (id (Eq.symm hu_mul)) hpi0
+  have hx' : x = u * s / π := by
+    rw [eq_div_iff hpi0]
+    simpa [mul_assoc, mul_left_comm, mul_comm] using hu_mul.symm
   have hxpow : x ^ k = (π ^ k)⁻¹ * s ^ k * u ^ k := by
     simp [hx', mul_pow, div_eq_mul_inv, inv_pow, mul_assoc, mul_left_comm, mul_comm]
   have hexp : rexp (-π * x / s) = rexp (-u) := by
