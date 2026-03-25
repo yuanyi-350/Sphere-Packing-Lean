@@ -303,13 +303,14 @@ lemma norm_Φ₂'_vadd_it_le (u a : ℝ) (ha : |a + 1| ≤ 1) :
           exact mul_le_mul hA hE (by positivity) (by positivity)
     _ = (4 * K) * (t' ^ (2 : ℕ) + t' + 1) * Real.exp (-Real.pi * (u - 4) * t') := by
           -- reassociate and use `hExp`.
-          have :
-              ((4 * K) * (t' ^ (2 : ℕ) + t' + 1) * Real.exp (4 * Real.pi * t')) *
-                  Real.exp (-Real.pi * u * t') =
-                (4 * K) * (t' ^ (2 : ℕ) + t' + 1) *
-                  (Real.exp (4 * Real.pi * t') * Real.exp (-Real.pi * u * t')) := by
-            simp [mul_assoc]
-          exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hExp)) (id (Eq.symm this)))
+          calc
+            ((4 * K) * (t' ^ (2 : ℕ) + t' + 1) * Real.exp (4 * Real.pi * t')) *
+                Real.exp (-Real.pi * u * t') =
+              (4 * K) * (t' ^ (2 : ℕ) + t' + 1) *
+                (Real.exp (4 * Real.pi * t') * Real.exp (-Real.pi * u * t')) := by
+                  simp [mul_assoc]
+            _ = (4 * K) * (t' ^ (2 : ℕ) + t' + 1) * Real.exp (-Real.pi * (u - 4) * t') := by
+                  rw [hExp]
 
 lemma norm_Φ₄'_vadd_it_le (u a : ℝ) (ha : |a - 1| ≤ 1) :
     ∃ C : ℝ, 0 < C ∧ ∀ᶠ t' : ℝ in atTop,
@@ -374,13 +375,14 @@ lemma norm_Φ₄'_vadd_it_le (u a : ℝ) (ha : |a - 1| ≤ 1) :
               (4 * K) * (t' ^ (2 : ℕ) + t' + 1) * Real.exp (4 * Real.pi * t') := hwbound
           exact mul_le_mul hA hE (by positivity) (by positivity)
     _ = (4 * K) * (t' ^ (2 : ℕ) + t' + 1) * Real.exp (-Real.pi * (u - 4) * t') := by
-          have :
-              ((4 * K) * (t' ^ (2 : ℕ) + t' + 1) * Real.exp (4 * Real.pi * t')) *
-                  Real.exp (-Real.pi * u * t') =
-                (4 * K) * (t' ^ (2 : ℕ) + t' + 1) *
-                  (Real.exp (4 * Real.pi * t') * Real.exp (-Real.pi * u * t')) := by
-            simp [mul_assoc]
-          exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hExp)) (id (Eq.symm this)))
+          calc
+            ((4 * K) * (t' ^ (2 : ℕ) + t' + 1) * Real.exp (4 * Real.pi * t')) *
+                Real.exp (-Real.pi * u * t') =
+              (4 * K) * (t' ^ (2 : ℕ) + t' + 1) *
+                (Real.exp (4 * Real.pi * t') * Real.exp (-Real.pi * u * t')) := by
+                  simp [mul_assoc]
+            _ = (4 * K) * (t' ^ (2 : ℕ) + t' + 1) * Real.exp (-Real.pi * (u - 4) * t') := by
+                  rw [hExp]
 
 /-!
 ### Deformation prerequisites (`u > 4`)
@@ -691,13 +693,14 @@ lemma tendsto_top_edge_I₂' (u : ℝ) (hu : 4 < u) :
               le_of_eq hexp
             exact mul_le_mul hwbound hE (by positivity) (by positivity)
       _ = C0 * (m ^ (2 : ℕ) + m + 1) * Real.exp (-Real.pi * (u - 4) * m) := by
-            have :
-                (C0 * (m ^ (2 : ℕ) + m + 1) * Real.exp (4 * Real.pi * m)) *
-                    Real.exp (-Real.pi * u * m) =
-                  C0 * (m ^ (2 : ℕ) + m + 1) *
-                    (Real.exp (4 * Real.pi * m) * Real.exp (-Real.pi * u * m)) := by
-              simp [mul_assoc]
-            exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hExp)) (id (Eq.symm this)))
+            calc
+              (C0 * (m ^ (2 : ℕ) + m + 1) * Real.exp (4 * Real.pi * m)) *
+                  Real.exp (-Real.pi * u * m) =
+                C0 * (m ^ (2 : ℕ) + m + 1) *
+                  (Real.exp (4 * Real.pi * m) * Real.exp (-Real.pi * u * m)) := by
+                    simp [mul_assoc]
+              _ = C0 * (m ^ (2 : ℕ) + m + 1) * Real.exp (-Real.pi * (u - 4) * m) := by
+                    rw [hExp]
   -- Convert to a norm estimate on the interval integral.
   have hle :
       ∀ᶠ m : ℝ in atTop,
@@ -795,13 +798,14 @@ lemma tendsto_top_edge_I₄' (u : ℝ) (hu : 4 < u) :
               le_of_eq hexp
             exact mul_le_mul hwbound hE (by positivity) (by positivity)
       _ = C0 * (m ^ (2 : ℕ) + m + 1) * Real.exp (-Real.pi * (u - 4) * m) := by
-            have :
-                (C0 * (m ^ (2 : ℕ) + m + 1) * Real.exp (4 * Real.pi * m)) *
-                    Real.exp (-Real.pi * u * m) =
-                  C0 * (m ^ (2 : ℕ) + m + 1) *
-                    (Real.exp (4 * Real.pi * m) * Real.exp (-Real.pi * u * m)) := by
-              simp [mul_assoc]
-            exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hExp)) (id (Eq.symm this)))
+            calc
+              (C0 * (m ^ (2 : ℕ) + m + 1) * Real.exp (4 * Real.pi * m)) *
+                  Real.exp (-Real.pi * u * m) =
+                C0 * (m ^ (2 : ℕ) + m + 1) *
+                  (Real.exp (4 * Real.pi * m) * Real.exp (-Real.pi * u * m)) := by
+                    simp [mul_assoc]
+              _ = C0 * (m ^ (2 : ℕ) + m + 1) * Real.exp (-Real.pi * (u - 4) * m) := by
+                    rw [hExp]
   have hle :
       ∀ᶠ m : ℝ in atTop,
         ‖∫ x in (1 : ℝ)..0, Φ₄' u ((x : ℂ) + (m : ℂ) * Complex.I)‖ ≤
@@ -947,7 +951,12 @@ lemma I₆'_eq_two_mul_I_mul_integral_Φ₆' (u : ℝ) :
   -- Assemble `I₆'`.
   rw [RealIntegrals.I₆', hIci, hcongr]
   -- Pull out the constant `I`.
-  simp [MeasureTheory.integral_const_mul, mul_assoc, mul_left_comm, mul_comm]
+  have hconst :
+      ∫ t in Set.Ioi (1 : ℝ), (Complex.I : ℂ) * Φ₆' u ((t : ℂ) * Complex.I) =
+        (Complex.I : ℂ) * ∫ t in Set.Ioi (1 : ℝ), Φ₆' u ((t : ℂ) * Complex.I) := by
+    simpa using
+      (MeasureTheory.integral_const_mul (Complex.I : ℂ) (fun t : ℝ => Φ₆' u ((t : ℂ) * Complex.I)))
+  simpa [mul_assoc] using congrArg (fun z : ℂ => (2 : ℂ) * z) hconst
 
 /-- Integrability of the primed integrand `Φ₅'` along the imaginary axis on `(1,∞)` for `u > 4`.
 
@@ -1007,8 +1016,11 @@ public theorem I₂'_add_I₄'_add_I₆'_eq_imag_axis (u : ℝ) (hu : 4 < u) :
             Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) * Φ₅' u ((t : ℂ) * Complex.I) := by
       funext t
       simpa using (Φ₂'_shift_left (u := u) (t := t))
-    -- Rewrite the integrand and pull out the constant factor.
-    simp [hfun, V, MeasureTheory.integral_const_mul, mul_assoc]
+    rw [hfun, hV]
+    simpa using
+      (MeasureTheory.integral_const_mul
+        (Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)))
+        (fun t : ℝ => Φ₅' u ((t : ℂ) * Complex.I)))
   have hshift4 :
       (∫ t in Set.Ioi (1 : ℝ), Φ₄' u ((1 : ℂ) + (t : ℂ) * Complex.I)) =
         Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * V := by
@@ -1018,7 +1030,11 @@ public theorem I₂'_add_I₄'_add_I₆'_eq_imag_axis (u : ℝ) (hu : 4 < u) :
             Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * Φ₅' u ((t : ℂ) * Complex.I) := by
       funext t
       simpa using (Φ₄'_shift_right (u := u) (t := t))
-    simp [hfun, V, MeasureTheory.integral_const_mul, mul_assoc]
+    rw [hfun, hV]
+    simpa using
+      (MeasureTheory.integral_const_mul
+        (Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I))
+        (fun t : ℝ => Φ₅' u ((t : ℂ) * Complex.I)))
   -- Abbreviate the imaginary-axis integrands at `x=0`.
   let f2 : ℝ → ℂ := fun t : ℝ => Φ₂' u ((t : ℂ) * Complex.I)
   let f4 : ℝ → ℂ := fun t : ℝ => Φ₄' u ((t : ℂ) * Complex.I)
@@ -1152,7 +1168,11 @@ public theorem I₂'_add_I₄'_add_I₆'_eq_imag_axis (u : ℝ) (hu : 4 < u) :
             (∫ t, (2 : ℂ) * f5 t ∂μ) + (∫ t, (2 : ℂ) * f6 t ∂μ) := hcongr'
         _ =
             (2 : ℂ) * (∫ t, f5 t ∂μ) + (2 : ℂ) * (∫ t, f6 t ∂μ) := by
-            simp [MeasureTheory.integral_const_mul]
+            have h5 : (∫ t, (2 : ℂ) * f5 t ∂μ) = (2 : ℂ) * (∫ t, f5 t ∂μ) := by
+              simpa using (MeasureTheory.integral_const_mul (2 : ℂ) f5)
+            have h6 : (∫ t, (2 : ℂ) * f6 t ∂μ) = (2 : ℂ) * (∫ t, f6 t ∂μ) := by
+              simpa using (MeasureTheory.integral_const_mul (2 : ℂ) f6)
+            rw [h5, h6]
         _ = (2 : ℂ) * V + (2 : ℂ) * (∫ t, f6 t ∂μ) := by simp [hVμ]
     simpa [μ] using hFinal
   grind only
