@@ -69,7 +69,8 @@ public theorem ncard_minVecDn_inner_g1_g2_eq_two
     by_cases h : a = b
     · subst h
       simp [eStd]
-    · simp [eStd, EuclideanSpace.inner_single_left, h]
+    · simpa [eq_comm, eStd, h] using
+        (EuclideanSpace.inner_single_left (i := a) (a := (1 : ℝ)) (v := eStd (n := n) b))
   -- Encode sign choices `{+1,-1}` via `Bool`.
   let signZ : Bool → ℤ := fun b => if b then (1 : ℤ) else (-1 : ℤ)
   have signZ_mem : ∀ b, signZ b ∈ Sign := by
@@ -122,10 +123,11 @@ public theorem ncard_minVecDn_inner_g1_g2_eq_two
       have hi1 : i1 ≠ shift k := by
         intro hEq; exact shift_ne_i1 k hEq.symm
       have hI0 : (⟪eStd (n := n) i0, vec ⟨k, b⟩⟫ : ℝ) = Real.sqrt 2 := by
-        simp [vec, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hi0]
+        simpa [eq_comm, vec, eStd, hi0] using
+          (EuclideanSpace.inner_single_left (i := i0) (a := (1 : ℝ)) (v := vec ⟨k, b⟩))
       have hI1 : (⟪eStd (n := n) i1, vec ⟨k, b⟩⟫ : ℝ) = 0 := by
-        simp [vec, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hi1,
-          i1_ne_i0]
+        simpa [eq_comm, vec, eStd, hi1, i1_ne_i0] using
+          (EuclideanSpace.inner_single_left (i := i1) (a := (1 : ℝ)) (v := vec ⟨k, b⟩))
       calc
         (⟪g1 (n := n) hn2, vec ⟨k, b⟩⟫ : ℝ)
             = (Real.sqrt 2) *
@@ -139,10 +141,11 @@ public theorem ncard_minVecDn_inner_g1_g2_eq_two
       have hi1 : i1 ≠ shift k := by
         intro hEq; exact shift_ne_i1 k hEq.symm
       have hI0 : (⟪eStd (n := n) i0, vec ⟨k, b⟩⟫ : ℝ) = Real.sqrt 2 := by
-        simp [vec, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hi0]
+        simpa [eq_comm, vec, eStd, hi0] using
+          (EuclideanSpace.inner_single_left (i := i0) (a := (1 : ℝ)) (v := vec ⟨k, b⟩))
       have hI1 : (⟪eStd (n := n) i1, vec ⟨k, b⟩⟫ : ℝ) = 0 := by
-        simp [vec, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hi1,
-          i1_ne_i0]
+        simpa [eq_comm, vec, eStd, hi1, i1_ne_i0] using
+          (EuclideanSpace.inner_single_left (i := i1) (a := (1 : ℝ)) (v := vec ⟨k, b⟩))
       calc
         (⟪g2 (n := n) hn2, vec ⟨k, b⟩⟫ : ℝ)
             = (Real.sqrt 2) *
@@ -213,7 +216,8 @@ public theorem ncard_minVecDn_inner_g1_g2_eq_two
           intro hEq
           exact hj hEq.symm
         have : a1 = (Real.sqrt 2) * (s : ℝ) := by
-          simp [a1, w, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hj']
+          simpa [eq_comm, a1, w, eStd, hj] using
+            (EuclideanSpace.inner_single_left (i := i1) (a := (1 : ℝ)) (v := w))
         -- `s = ±1`, so `√2*s ≠ 0`.
         rcases hs' with rfl | rfl <;> (simp [this, hsqrt] at ha1)
       have hj_ne_i1 : j ≠ i1 := by
@@ -225,7 +229,8 @@ public theorem ncard_minVecDn_inner_g1_g2_eq_two
           intro hEq
           exact hi' hEq.symm
         have : a1 = (Real.sqrt 2) * (t : ℝ) := by
-          simp [a1, w, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hi'']
+          simpa [eq_comm, a1, w, eStd, hi'] using
+            (EuclideanSpace.inner_single_left (i := i1) (a := (1 : ℝ)) (v := w))
         rcases ht' with rfl | rfl <;> (simp [this, hsqrt] at ha1)
       -- From `a0=√2` we conclude that one index equals `i0` with sign `+1`.
       by_cases hi0 : i = i0
@@ -235,7 +240,8 @@ public theorem ncard_minVecDn_inner_g1_g2_eq_two
           intro hEq
           exact hj0 hEq.symm
         have : a0 = (Real.sqrt 2) * (s : ℝ) := by
-          simp [a0, w, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hj0']
+          simpa [eq_comm, a0, w, eStd, hj0] using
+            (EuclideanSpace.inner_single_left (i := i0) (a := (1 : ℝ)) (v := w))
         have hs1 : s = 1 := by
           simp_all
         subst hs1
@@ -289,7 +295,8 @@ public theorem ncard_minVecDn_inner_g1_g2_eq_two
           intro hEq
           exact hi0' hEq.symm
         have : a0 = (Real.sqrt 2) * (t : ℝ) := by
-          simp [a0, w, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hi0'']
+          simpa [eq_comm, a0, w, eStd, hi0'] using
+            (EuclideanSpace.inner_single_left (i := i0) (a := (1 : ℝ)) (v := w))
         have ht1 : t = 1 := by
           simp_all
         subst ht1
@@ -340,10 +347,11 @@ public theorem ncard_minVecDn_inner_g1_g2_eq_two
       have hL : (⟪eStd (n := n) (shift k), vec ⟨k, b⟩⟫ : ℝ) =
           (Real.sqrt 2) * ((signZ b : ℤ) : ℝ) := by
         have hi0' : shift k ≠ i0 := shift_ne_i0 k
-        simp [vec, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hi0']
+        have hnorm : ‖eStd (n := n) (shift k)‖ ^ 2 = 1 := by simp [eStd]
+        simp [vec, inner_add_right, real_inner_smul_right, inner_eStd, hi0', hnorm]
       have hR : (⟪eStd (n := n) (shift k), vec ⟨k', b'⟩⟫ : ℝ) = 0 := by
         have hi0' : shift k ≠ i0 := shift_ne_i0 k
-        simp [vec, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hi0', hneq]
+        simp [vec, inner_add_right, real_inner_smul_right, inner_eStd, hi0', hneq]
       -- `√2 * signZ b ≠ 0`.
       have hNz : (Real.sqrt 2) * ((signZ b : ℤ) : ℝ) ≠ 0 := by
         have : ((signZ b : ℤ) : ℝ) ≠ 0 := by
@@ -359,8 +367,12 @@ public theorem ncard_minVecDn_inner_g1_g2_eq_two
     have hEq :
         (Real.sqrt 2) * ((signZ b : ℤ) : ℝ) = (Real.sqrt 2) * ((signZ b' : ℤ) : ℝ) := by
       have hi0' : shift k ≠ i0 := shift_ne_i0 k
-      simpa [vec, eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hi0'] using
-        hinner
+      have hnorm : ‖eStd (n := n) (shift k)‖ ^ 2 = 1 := by simp [eStd]
+      have hLb : (⟪eStd (n := n) (shift k), vec ⟨k, b⟩⟫ : ℝ) = (Real.sqrt 2) * ((signZ b : ℤ) : ℝ) := by
+        simp [vec, inner_add_right, real_inner_smul_right, inner_eStd, hi0', hnorm]
+      have hRb : (⟪eStd (n := n) (shift k), vec ⟨k, b'⟩⟫ : ℝ) = (Real.sqrt 2) * ((signZ b' : ℤ) : ℝ) := by
+        simp [vec, inner_add_right, real_inner_smul_right, inner_eStd, hi0', hnorm]
+      simpa [hLb, hRb] using hinner
     have hEq' : ((signZ b : ℤ) : ℝ) = ((signZ b' : ℤ) : ℝ) := mul_left_cancel₀ hsqrt hEq
     have : signZ b = signZ b' := by exact_mod_cast hEq'
     have : b = b' := signZ_inj this
