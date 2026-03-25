@@ -95,6 +95,11 @@ lemma J₅'_eq_Ioc (r : ℝ) :
         (Complex.I : ℂ) * ψI' (z₅' t) * cexp (π * (Complex.I : ℂ) * r * (z₅' t)) := by
   simp [MagicFunction.b.RealIntegrals.J₅', intervalIntegral_eq_integral_uIoc, zero_le_one,
     uIoc_of_le, mul_assoc]
+  show 1 • ∫ (t : ℝ) in Ioc 0 1, (Complex.I : ℂ) *
+      (ψI' (z₅' t) * cexp (π * ((Complex.I : ℂ) * ((r : ℂ) * z₅' t)))) ∂volume =
+    ∫ (t : ℝ) in Ioc 0 1, (Complex.I : ℂ) *
+      (ψI' (z₅' t) * cexp (π * ((Complex.I : ℂ) * ((r : ℂ) * z₅' t)))) ∂volume
+  exact one_smul ℂ (∫ (t : ℝ) in Ioc 0 1, (Complex.I : ℂ) * (ψI' (z₅' t) * cexp (π * ((Complex.I : ℂ) * ((r : ℂ) * z₅' t)))) ∂volume)
 
 lemma Reconciling_Change_of_Variables (r : ℝ) :
     MagicFunction.b.RealIntegrals.J₅' r =
