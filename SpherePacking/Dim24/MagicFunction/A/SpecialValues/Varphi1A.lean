@@ -338,15 +338,22 @@ public lemma tendsto_B_div_q :
       dsimp [a]
       have hdiv :
           cexp (2 * π * Complex.I * (z : ℂ) * ((n + 1 : ℕ) : ℂ)) / q (z : ℂ) =
-            cexp (2 * π * Complex.I * (z : ℂ) * (n : ℂ)) :=
-        Eq.symm (CancelDenoms.cancel_factors_eq_div (id (Eq.symm hexp)) hz)
+            cexp (2 * π * Complex.I * (z : ℂ) * (n : ℂ)) := by
+        rw [hexp]
+        field_simp [hz]
       have hmul :
           ((((n + 1 : ℕ) : ℂ) * (σ 5 (n + 1) : ℂ)) *
                 cexp (2 * π * Complex.I * (z : ℂ) * ((n + 1 : ℕ) : ℂ))) / q (z : ℂ) =
             (((n + 1 : ℕ) : ℂ) * (σ 5 (n + 1) : ℂ)) *
               (cexp (2 * π * Complex.I * (z : ℂ) * ((n + 1 : ℕ) : ℂ)) / q (z : ℂ)) := by
         ring
-      exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hdiv)) (id (Eq.symm hmul)))
+      calc
+        ((((n + 1 : ℕ) : ℂ) * (σ 5 (n + 1) : ℂ)) *
+              cexp (2 * π * Complex.I * (z : ℂ) * ((n + 1 : ℕ) : ℂ))) / q (z : ℂ) =
+            (((n + 1 : ℕ) : ℂ) * (σ 5 (n + 1) : ℂ)) *
+              (cexp (2 * π * Complex.I * (z : ℂ) * ((n + 1 : ℕ) : ℂ)) / q (z : ℂ)) := hmul
+        _ = (((n + 1 : ℕ) : ℂ) * (σ 5 (n + 1) : ℂ)) *
+              cexp (2 * π * Complex.I * (z : ℂ) * (n : ℂ)) := by rw [hdiv]
     calc
       ((E₂ z) * (E₆ z) - (E₄ z) * (E₄ z)) / q (z : ℂ)
           = (-(1008 : ℂ)) *
