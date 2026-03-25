@@ -310,7 +310,9 @@ lemma J₂'_J₄'_J₆'_zero_sum : J₂' (0 : ℝ) + J₄' 0 + J₆' 0 = 0 := by
       intro t ht
       have ht' : t ∈ Set.Ici (1 : ℝ) := le_of_lt (by simpa [Set.mem_Ioi] using ht)
       simp [MagicFunction.Parametrisations.z₆'_eq_of_mem (t := t) ht', mul_comm]
-    simp [hIci, hparam, MeasureTheory.integral_const_mul, smul_eq_mul]
+    simpa [hIci, hparam, smul_eq_mul] using
+      (MeasureTheory.integral_const_mul (μ := MeasureTheory.volume.restrict (Set.Ioi (1 : ℝ)))
+        (r := (Complex.I : ℂ)) (f := fun t : ℝ => ψS' (t * Complex.I)))
   have htail :
       (∫ (x : ℝ) in (0 : ℝ)..1, ψS' ((x : ℂ) + Complex.I)) + J₆' (0 : ℝ) = 0 := by
     have : (∫ (x : ℝ) in (0 : ℝ)..1, ψS' ((x : ℂ) + Complex.I)) =
