@@ -1,6 +1,7 @@
 module
 public import SpherePacking.Dim24.Uniqueness.BS81.LP.Gegenbauer24.PSD.Fischer
 public import Mathlib.Algebra.MvPolynomial.PDeriv
+import Mathlib.RingTheory.MvPolynomial.Basic
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
 
 /-!
@@ -24,19 +25,20 @@ open Finset Finsupp MvPolynomial
 open Fischer
 
 /-- The degree-`k` homogeneous component, as a shorthand for `Fischer.Pk k`. -/
-public abbrev Pk (k : ℕ) : Submodule ℝ Poly := Fischer.Pk k
+public abbrev Pk (k : ℕ) := Fischer.Pk k
 
 /-- The Laplacian on multivariate polynomials in `24` variables: `Δ = ∑ᵢ ∂ᵢ^2`. -/
 @[expose]
-public noncomputable def laplacian : Poly →ₗ[ℝ] Poly :=
-  (Finset.univ : Finset Var).sum (fun i =>
-    ((MvPolynomial.pderiv i).toLinearMap.comp (MvPolynomial.pderiv i).toLinearMap))
+public noncomputable def laplacian :=
+  (Finset.univ : Finset (Fin 24)).sum (fun i =>
+    ((MvPolynomial.pderiv (σ := Fin 24) (R := ℝ) i).toLinearMap.comp
+      (MvPolynomial.pderiv (σ := Fin 24) (R := ℝ) i).toLinearMap))
 
 /-- Expanded formula for `laplacian`. -/
 public lemma laplacian_apply (p : Poly) :
     laplacian p =
       ∑ i : Var, (MvPolynomial.pderiv i) (MvPolynomial.pderiv i p) := by
-  simp [laplacian, LinearMap.sum_apply]
+  rfl
 
 /-- The Laplacian lowers homogeneity degree by `2`. -/
 public lemma isHomogeneous_laplacian {k : ℕ} {p : Poly} (hp : p.IsHomogeneous k) :
