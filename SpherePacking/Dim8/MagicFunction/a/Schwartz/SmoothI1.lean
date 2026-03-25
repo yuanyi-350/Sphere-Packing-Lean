@@ -54,6 +54,8 @@ lemma I₁'_eq_integral_g_Ioo (x : ℝ) :
     SpherePacking.Integration.DifferentiationUnderIntegral.g, MagicFunction.a.ComplexIntegrands.Φ₁',
     intervalIntegral_eq_integral_uIoc, zero_le_one, uIoc_of_le, integral_Ioc_eq_integral_Ioo,
     mul_assoc, mul_left_comm, mul_comm]
+  exact one_smul ℂ (∫ t in Ioo (0 : ℝ) 1,
+    I * (φ₀'' (-1 / ((z₁' t : ℂ) + 1)) * (cexp (I * ((x : ℂ) * ((π : ℂ) * z₁' t))) * ((z₁' t : ℂ) + 1) ^ (2 : ℕ))))
 
 lemma coeff_norm_le (t : ℝ) : ‖coeff t‖ ≤ 2 * π := by
   simpa [coeff, mul_assoc] using (norm_mul_pi_I_le_two_pi (z := z₁' t) (hz := norm_z₁'_le_two t))
