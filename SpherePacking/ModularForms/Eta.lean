@@ -29,7 +29,7 @@ open ModularForm EisensteinSeries UpperHalfPlane TopologicalSpace Set MeasureThe
   Metric Filter Function Complex
 
 /-- The Dedekind eta function on `ℂ`, defined by an exponential factor times an infinite product. -/
-@[expose] public noncomputable def η (z : ℂ) :=
+@[expose] public noncomputable def «η» (z : ℂ) :=
   cexp (2 * π * Complex.I * z / 24) * ∏' (n : ℕ),
     (1 - cexp (2 * π * Complex.I * (n + 1) * z))
 
@@ -61,8 +61,8 @@ theorem eta_tprod_ne_zero (z : ℍ) :
     (ModularForm.eta_tprod_ne_zero (z := (↑z : ℂ)) (hz := by simpa using z.2))
 
 /-- The eta function does not vanish on the upper half-plane. -/
-public lemma eta_nonzero_on_UpperHalfPlane (z : ℍ) : η z ≠ 0 := by
-  simpa [η] using
+public lemma eta_nonzero_on_UpperHalfPlane (z : ℍ) : «η» z ≠ 0 := by
+  simpa only [«η»] using
     mul_ne_zero (Complex.exp_ne_zero (2 * π * Complex.I * (z : ℂ) / 24)) (eta_tprod_ne_zero z)
 
 lemma logDeriv_eta_factor (i : ℕ) (z : ℂ) :
@@ -101,8 +101,8 @@ theorem eta_differentiableAt (z : ℍ) :
     (ModularForm.differentiableAt_eta_tprod (z := (↑z : ℂ)) (hz := by simpa using z.2))
 
 /-- The eta function is complex differentiable at every point of the upper half-plane. -/
-public lemma eta_DifferentiableAt_UpperHalfPlane (z : ℍ) : DifferentiableAt ℂ η z := by
-  unfold η
+public lemma eta_DifferentiableAt_UpperHalfPlane (z : ℍ) : DifferentiableAt ℂ «η» z := by
+  unfold «η»
   refine (DifferentiableAt.mul ?_ (eta_differentiableAt z))
   · have : DifferentiableAt ℂ (fun z : ℂ => 2 * ↑π * Complex.I * z / 24) z := by fun_prop
     simpa using DifferentiableAt.cexp this
@@ -114,8 +114,8 @@ lemma summable_logDeriv_eta_factor (z : ℍ) :
     (ModularForm.summable_logDeriv_one_sub_eta_q (z := (↑z : ℂ)) (hz := by simpa using z.2))
 
 /-- The logarithmic derivative of `η` is `(π * I / 12) * E₂`. -/
-public lemma eta_logDeriv (z : ℍ) : logDeriv η z = (π * Complex.I / 12) * E₂ z := by
-  unfold η
+public lemma eta_logDeriv (z : ℍ) : logDeriv «η» z = (π * Complex.I / 12) * E₂ z := by
+  unfold «η»
   rw [logDeriv_mul]
   · let s : Set ℂ := UpperHalfPlane.upperHalfPlaneSet
     have hs : IsOpen s := UpperHalfPlane.isOpen_upperHalfPlaneSet
@@ -202,11 +202,11 @@ public lemma eta_logDeriv (z : ℍ) : logDeriv η z = (π * Complex.I / 12) * E�
   · apply eta_differentiableAt
 
 
-lemma eta_logDeriv_eql (z : ℍ) : (logDeriv (η ∘ (fun z : ℂ => -1/z))) z =
-  (logDeriv ((csqrt) * η)) z := by
-  have h0 : (logDeriv (η ∘ (fun z : ℂ => -1/z))) z =
+lemma eta_logDeriv_eql (z : ℍ) : (logDeriv («η» ∘ (fun z : ℂ => -1/z))) z =
+  (logDeriv ((csqrt) * «η»)) z := by
+  have h0 : (logDeriv («η» ∘ (fun z : ℂ => -1/z))) z =
             ((z :ℂ)^(2 : ℤ))⁻¹ *
-              (logDeriv η) (⟨-1 / z, by simpa using pnat_div_upper 1 z⟩ : ℍ) := by
+              (logDeriv «η») (⟨-1 / z, by simpa using pnat_div_upper 1 z⟩ : ℍ) := by
     rw [logDeriv_comp, mul_comm]
     · congr
       conv =>
@@ -231,7 +231,7 @@ lemma eta_logDeriv_eql (z : ℍ) : (logDeriv (η ∘ (fun z : ℂ => -1/z))) z =
     change DifferentiableAt ℂ (fun z : ℂ => 1 / z) (↑z : ℂ)
     simp only [one_div]
     exact h
-  rw [h0, show ((csqrt) * η) = (fun x => (csqrt) x * η x) by rfl, logDeriv_mul]
+  rw [h0, show ((csqrt) * «η») = (fun x => (csqrt) x * «η» x) by rfl, logDeriv_mul]
   · nth_rw 2 [logDeriv_apply]
     unfold csqrt
     have := csqrt_deriv z
@@ -273,14 +273,14 @@ lemma eta_logDeriv_eql (z : ℍ) : (logDeriv (η ∘ (fun z : ℂ => -1/z))) z =
   · exact csqrt_differentiableAt z
   · apply eta_DifferentiableAt_UpperHalfPlane z
 
-lemma eta_logderivs : {z : ℂ | 0 < z.im}.EqOn (logDeriv (η ∘ (fun z : ℂ => -1/z)))
-  (logDeriv ((csqrt) * η)) := by
+lemma eta_logderivs : {z : ℂ | 0 < z.im}.EqOn (logDeriv («η» ∘ (fun z : ℂ => -1/z)))
+  (logDeriv ((csqrt) * «η»)) := by
   intro z hz
   simpa using eta_logDeriv_eql (z := ⟨z, hz⟩)
 
 lemma eta_logderivs_const :
     ∃ z : ℂ, z ≠ 0 ∧
-      {z : ℂ | 0 < z.im}.EqOn (η ∘ fun z : ℂ => -1 / z) (z • (csqrt * η)) := by
+      {z : ℂ | 0 < z.im}.EqOn («η» ∘ fun z : ℂ => -1 / z) (z • (csqrt * «η»)) := by
   have h := eta_logderivs
   rw [logDeriv_eqOn_iff] at h
   · exact h
@@ -308,8 +308,9 @@ lemma eta_logderivs_const :
     intro x hx
     apply (eta_DifferentiableAt_UpperHalfPlane ⟨x, hx⟩).differentiableWithinAt
   · exact isOpen_lt continuous_const Complex.continuous_im
-  · apply Convex.isPreconnected
-    exact convex_halfSpace_im_gt 0
+  · letI : ContinuousSMul ℝ ℂ := ⟨by
+        simpa [smul_eq_mul] using (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd⟩
+    exact (convex_halfSpace_im_gt 0).isPreconnected
   · intro x hx
     simp only [Pi.mul_apply, ne_eq, mul_eq_zero, not_or]
     refine ⟨ ?_ , by apply eta_nonzero_on_UpperHalfPlane ⟨x, hx⟩⟩
@@ -321,8 +322,8 @@ lemma eta_logderivs_const :
     simpa [UpperHalfPlane.coe_mk] using this
 
 /-- A functional equation for `η` under `z ↦ -1/z` on the upper half-plane. -/
-public lemma eta_equality : {z : ℂ | 0 < z.im}.EqOn ((η ∘ (fun z : ℂ => -1 / z)))
-    ((csqrt (Complex.I))⁻¹ • ((csqrt) * η)) := by
+public lemma eta_equality : {z : ℂ | 0 < z.im}.EqOn ((«η» ∘ (fun z : ℂ => -1 / z)))
+    ((csqrt (Complex.I))⁻¹ • ((csqrt) * «η»)) := by
   rcases eta_logderivs_const with ⟨z, hz0, hzEq⟩
   intro x hx
   have hI : (Complex.I) ∈ {z : ℂ | 0 < z.im} := by
@@ -330,9 +331,9 @@ public lemma eta_equality : {z : ℂ | 0 < z.im}.EqOn ((η ∘ (fun z : ℂ => -
   have h3 := hzEq hI
   have hIdiv : (-1 : ℂ) / Complex.I = Complex.I := by
     simp [div_eq_mul_inv, Complex.inv_I]
-  have h3' : η Complex.I = z * csqrt Complex.I * η Complex.I := by
+  have h3' : «η» Complex.I = z * csqrt Complex.I * «η» Complex.I := by
     simpa [hIdiv, comp_apply, Pi.smul_apply, Pi.mul_apply, smul_eq_mul, mul_assoc] using h3
-  have he : η Complex.I ≠ 0 := by
+  have he : «η» Complex.I ≠ 0 := by
     simpa using eta_nonzero_on_UpperHalfPlane UpperHalfPlane.I
   have hcd : z * csqrt Complex.I = 1 :=
     (mul_eq_right₀ he).1 (by simpa [mul_assoc] using h3'.symm)
