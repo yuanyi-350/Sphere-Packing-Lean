@@ -51,7 +51,7 @@ public theorem ineq2_lowerBound_of_num {t : ℝ} (ht0 : 0 < t) {L : ℝ}
     simpa [d] using (ineq2_num_it_re_eq (t := t) (ht0 := ht0))
   have : L ≤
       (varphi_num (it t ht0) - (432 / (Real.pi ^ 2) : ℂ) * psiS_num (it t ht0)).re / d := by
-    lia
+    exact le_trans hL' (by simpa [div_eq_mul_inv] using hnum')
   simpa [hdiv] using this
 
 end SpherePacking.Dim24
