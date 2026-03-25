@@ -67,15 +67,18 @@ variable {d : ℕ}
     have hcover : cover (toCenter p) = -p.2 := by
       symm
       refine cover_unique (toCenter p) (-p.2) ?_
-      simp [toCenter, p.1.property]
+      simp [toCenter, Submodule.vadd_def]
     refine Prod.ext ?_ ?_
     · apply Subtype.ext
-      simp [toPair, repr, toCenter, hcover]
+      change ((cover (toCenter p) : P.lattice) +ᵥ (toCenter p : EuclideanSpace ℝ (Fin d))) =
+        (p.1 : EuclideanSpace ℝ (Fin d))
+      rw [hcover]
+      simp [toCenter, Submodule.vadd_def]
     · simp [toPair, hcover]
   · intro x
     -- `(-cover x) +ᵥ (cover x +ᵥ x) = x`
     apply Subtype.ext
-    simp [toPair, repr, toCenter, neg_vadd_vadd]
+    simp [toPair, repr, toCenter, Submodule.vadd_def]
 
 /-- Reindex the `x : P.centers` sum as a `x₀ : P.centers ∩ D` sum over lattice translates. This is
 the periodic decomposition used in `LPBound.lean` to pass from a sum over all centers to a sum
