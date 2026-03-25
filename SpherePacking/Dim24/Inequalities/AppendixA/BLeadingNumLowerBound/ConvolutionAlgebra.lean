@@ -85,7 +85,7 @@ public lemma coeffQ_ofFn_lt (f : Fin BleadingCoeffs.QN → ℚ) (n : ℕ) (hn : 
   unfold BleadingCoeffs.coeffQ
   have hpos : n < (List.ofFn f).length := by simpa [List.length_ofFn] using hn
   rw [List.getD_eq_getElem (l := List.ofFn f) (d := (0 : ℚ)) hpos]
-  simpa using (List.getElem_ofFn (f := f) (i := n) (h := hpos))
+  exact List.getElem_ofFn (f := f) (i := n) (h := hpos)
 
 /-- `coeffQ (List.ofFn f) i = f i` (Fin-indexed form of `coeffQ_ofFn_lt`). -/
 public lemma coeffQ_ofFn (f : Fin BleadingCoeffs.QN → ℚ) (i : Fin BleadingCoeffs.QN) :
