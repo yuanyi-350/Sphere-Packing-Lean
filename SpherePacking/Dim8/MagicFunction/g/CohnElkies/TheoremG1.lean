@@ -1,6 +1,4 @@
-module
-
-public import SpherePacking.Dim8.MagicFunction.g.Basic
+import SpherePacking.Dim8.MagicFunction.g.Basic
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.RealValued
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.SignConditions
 
