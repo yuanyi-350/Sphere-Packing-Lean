@@ -276,7 +276,9 @@ lemma diffContOnCl_Φ₃'_wedgeSet (r : ℝ) :
   have hdiffC : DifferentiableOn ℂ (Φ₃' r) UpperHalfPlane.upperHalfPlaneSet :=
     differentiableOn_Φ₃'_upper (r := r)
   have hdiffR : DifferentiableOn ℝ (Φ₃' r) UpperHalfPlane.upperHalfPlaneSet :=
-    hdiffC.restrictScalars ℝ
+    @DifferentiableOn.restrictScalars ℝ _ ℂ _ _ ℂ _ _ _
+      (IsScalarTower.right : IsScalarTower ℝ ℂ ℂ) ℂ _ _ _
+      (IsScalarTower.right : IsScalarTower ℝ ℂ ℂ) (Φ₃' r) UpperHalfPlane.upperHalfPlaneSet hdiffC
   have hcontU : ContinuousOn (Φ₃' r) UpperHalfPlane.upperHalfPlaneSet := hdiffC.continuousOn
   refine ⟨?_, ?_⟩
   · exact (hdiffR.mono wedgeSet_subset_upperHalfPlaneSet)
