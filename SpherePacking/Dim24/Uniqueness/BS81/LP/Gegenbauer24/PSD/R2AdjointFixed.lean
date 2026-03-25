@@ -44,11 +44,8 @@ private noncomputable def pderiv2Pk (k : ℕ) (i : Var) : Pk (k + 2) →ₗ[ℝ]
 private lemma laplacianPk_apply_eq_sum_pderiv2Pk (k : ℕ) (q : Pk (k + 2)) :
     Harmonic.laplacianPk (k + 2) q =
       (univ : Finset Var).sum (fun i => pderiv2Pk (k := k) i q) := by
-  -- Compare the underlying polynomials.
   ext d
-  -- Unfold the degree-restricted Laplacian and the `pderivPk` maps.
-  simp [Harmonic.laplacianPk, Harmonic.laplacian, pderiv2Pk, pderivPk,
-    LinearMap.codRestrict, LinearMap.sum_apply, LinearMap.comp_apply]
+  rfl
 
 /-- Adjointness: multiplication by `r²` is adjoint to the Laplacian (between homogeneous pieces). -/
 public lemma inner_mulR2Pk_eq_inner_laplacianPk (k : ℕ) (p : Pk k) (q : Pk (k + 2)) :
@@ -99,7 +96,9 @@ private lemma inner_mulR2Pk_eq_zero_of_mem_Harm (k : ℕ) (p : Pk k) (h : Pk (k 
     ⟪mulR2Pk (k := k) p, h⟫ = 0 := by
   -- Use adjointness and `laplacianPk h = 0`.
   have : Harmonic.laplacianPk (k + 2) h = 0 := (Harmonic.mem_Harm_iff (k := k + 2) (p := h)).1 hh
-  simp [inner_mulR2Pk_eq_inner_laplacianPk (k := k) (p := p) (q := h), this]
+  rw [inner_mulR2Pk_eq_inner_laplacianPk (k := k) (p := p) (q := h), this]
+  change Fischer.inner k p 0 = 0
+  simp [Fischer.inner]
 
 end
 
