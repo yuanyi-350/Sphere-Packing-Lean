@@ -86,8 +86,15 @@ lemma E4_cubed_q_exp_two :
     simp [E4_q_exp_zero]
   have hs1 := E4_sq_q_exp_one
   have hs2 := E4_sq_q_exp_two
-  simp [h0, h1, h2, hs0, hs1, hs2]
-  ring
+  simp [h0, h1, h2]
+  calc
+    2160 * PowerSeries.constantCoeff (qExpansion 1 (E₄.mul E₄)) +
+        (240 * (qExpansion 1 (E₄.mul E₄)).coeff 1 + (qExpansion 1 (E₄.mul E₄)).coeff 2)
+        = 2160 * (1 : ℂ) + (240 * (qExpansion 1 (E₄.mul E₄)).coeff 1 + (qExpansion 1 (E₄.mul E₄)).coeff 2) := by
+          simpa using congrArg (fun z => 2160 * z + (240 * (qExpansion 1 (E₄.mul E₄)).coeff 1 + (qExpansion 1 (E₄.mul E₄)).coeff 2)) (show PowerSeries.constantCoeff (qExpansion 1 (E₄.mul E₄)) = 1 from by simpa using hs0)
+    _ = 2160 * (1 : ℂ) + (240 * 480 + (qExpansion 1 (E₄.mul E₄)).coeff 2) := by simpa using congrArg (fun z => 2160 * (1 : ℂ) + (240 * z + (qExpansion 1 (E₄.mul E₄)).coeff 2)) hs1
+    _ = 2160 * (1 : ℂ) + (240 * 480 + 61920) := by simpa using congrArg (fun z => 2160 * (1 : ℂ) + (240 * 480 + z)) hs2
+    _ = 179280 := by norm_num
 
 lemma E6_squared_q_exp_two :
     (qExpansion 1 (E₆.mul E₆)).coeff 2 = 220752 := by
