@@ -1,5 +1,4 @@
-module
-public import SpherePacking.Dim8.MagicFunction.g.CohnElkies.Defs
+import SpherePacking.Dim8.MagicFunction.g.CohnElkies.Defs
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.IntegralA
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.IntegralB
 import SpherePacking.Dim8.MagicFunction.g.CohnElkies.IneqA
@@ -42,7 +41,12 @@ lemma gRadial_re_nonpos_of_two_lt {u : ℝ} (hu : 2 < u) : (gRadial u).re ≤ 0 
     integral_Ioi_ofReal_mul_exp u A
   have hEq' : gRadial u =
       (π / 2160 : ℂ) * (Real.sin (π * u / 2)) ^ (2 : ℕ) * (IA : ℂ) := by
-    exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hIntA)) (id (Eq.symm hEq)))
+    have hIntA' :
+        (∫ t in Set.Ioi (0 : ℝ), (A t : ℂ) * Complex.exp (-(π * u * t : ℝ))) = (IA : ℂ) := by
+      simpa [Complex.ofReal_mul, Complex.ofReal_exp] using hIntA
+    calc
+      gRadial u = (π / 2160 : ℂ) * (Real.sin (π * u / 2)) ^ (2 : ℕ) * (∫ t in Set.Ioi (0 : ℝ), (A t : ℂ) * Complex.exp (-(π * u * t : ℝ))) := by simpa [Complex.ofReal_mul, Complex.ofReal_exp] using hEq
+      _ = (π / 2160 : ℂ) * (Real.sin (π * u / 2)) ^ (2 : ℕ) * (IA : ℂ) := by rw [hIntA']
   have hEqReal : gRadial u =
       (((π / 2160 : ℝ) * (Real.sin (π * u / 2)) ^ (2 : ℕ) * IA : ℝ) : ℂ) := by
     have hcoef : (π / 2160 : ℂ) = ((π / 2160 : ℝ) : ℂ) := by
