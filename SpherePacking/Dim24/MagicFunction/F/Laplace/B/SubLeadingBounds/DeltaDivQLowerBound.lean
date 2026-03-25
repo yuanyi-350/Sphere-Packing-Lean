@@ -63,7 +63,9 @@ public lemma exists_lower_bound_norm_resToImagAxis_Ici_one :
     Function.tendsto_resToImagAxis_atImInfty (F := F) (l := (1 : ℂ)) hF
   have hEv :
       ∀ᶠ t : ℝ in atTop, ‖F.resToImagAxis t - (1 : ℂ)‖ < (1 / 2 : ℝ) :=
-    hAxis.eventually (Metric.ball_mem_nhds _ (by norm_num : (0 : ℝ) < (1 / 2 : ℝ)))
+    by
+      simpa [dist_eq_norm] using
+        hAxis.eventually (Metric.ball_mem_nhds _ (by norm_num : (0 : ℝ) < (1 / 2 : ℝ)))
   rcases (eventually_atTop.1 hEv) with ⟨A0, hA0⟩
   let A : ℝ := max A0 1
   -- Lower bound on `[1,A]` via bounding the inverse norm on the compact interval.
