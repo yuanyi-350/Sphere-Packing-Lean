@@ -414,7 +414,10 @@ public lemma psiS_num_it_eq_rseries_psiSnumCoeffFun (t : ℝ) (ht : 1 ≤ t) :
         rseries term3 t = (2 : ℂ) * (rseries H2CoeffFun t) ^ 7 := by
       have hsmul : rseries term3 t = (2 : ℂ) * rseries C t := by
         simpa [term3, C] using (rseries_smulFun (t := t) (c := 2) (a := C))
-      exact Eq.symm (CancelDenoms.derive_trans (hpowH2 7) (id (Eq.symm hsmul)))
+      calc
+        rseries term3 t = (2 : ℂ) * rseries C t := hsmul
+        _ = (2 : ℂ) * (rseries H2CoeffFun t) ^ 7 := by
+          simpa [C] using congrArg (fun z : ℂ => (2 : ℂ) * z) (hpowH2 7).symm
     -- Put the pieces together.
     have hsum :
         rseries psiSnumCoeffFun t = -((rseries term1 t + rseries term2 t) + rseries term3 t) := by
