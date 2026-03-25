@@ -191,15 +191,16 @@ public lemma Discriminant_zeroAtImInfty :
       apply DifferentiableOn.pow
       intro x hx
       apply DifferentiableAt.differentiableWithinAt
-      exact this ⟨x, hx⟩
+      convert (this ⟨x, hx⟩) using 1
+      funext z
+      simp [ModularForm.eta, «η», ModularForm.eta_q_eq_cexp, Periodic.qParam]
     rw [Discriminant_SIF]
     simp only [SlashInvariantForm.coe_mk]
     apply he2.congr
     intro z hz
-    have := Delta_eq_eta_pow (⟨z, hz⟩ : ℍ)
-    simp only [comp_apply] at *
+    simp only [comp_apply]
     rw [ofComplex_apply_of_im_pos hz]
-    exact this
+    convert (Delta_eq_eta_pow (⟨z, hz⟩ : ℍ)) using 1
   zero_at_cusps' hc := zero_at_cusps_of_zero_at_infty hc Discriminant_zeroAtImInfty
 
 /-- Unfolding lemma for `Delta`. -/
