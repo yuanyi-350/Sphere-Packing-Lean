@@ -96,13 +96,24 @@ We use the orthogonal decomposition `ℝ²⁴ ≃ₗ W × K` for `W = spanR L` a
 `latticeInSpanR L`.
 -/
 
+noncomputable local instance instModuleFiniteLW [DiscreteTopology L] : Module.Finite ℤ LW :=
+  @ZLattice.module_finite ℝ _ _ _ _ _ _ _ _ _ _ LW
+    (instDiscreteTopology_latticeInSpanR (L := L)) (instIsZLattice_latticeInSpanR (L := L))
+
+noncomputable local instance instModuleFreeLW [DiscreteTopology L] : Module.Free ℤ LW :=
+  @ZLattice.module_free ℝ _ _ _ _ _ _ _ _ _ _ LW
+    (instDiscreteTopology_latticeInSpanR (L := L)) (instIsZLattice_latticeInSpanR (L := L))
+
 noncomputable def bZ [DiscreteTopology L] :
-    Module.Basis (Module.Free.ChooseBasisIndex ℤ LW) ℤ LW :=
-  Module.Free.chooseBasis ℤ LW
+    Module.Basis (Fin (Module.finrank ℝ W)) ℤ LW :=
+  (Module.Free.chooseBasis ℤ LW).reindex (Fintype.equivOfCardEq
+    (by rw [← Module.finrank_eq_card_chooseBasisIndex, @ZLattice.rank ℝ _ _ _ _ _ _ _ _ _ _ LW
+      (instDiscreteTopology_latticeInSpanR (L := L)) (instIsZLattice_latticeInSpanR (L := L)), Fintype.card_fin]))
 
 noncomputable def bR [DiscreteTopology L] :
-    Module.Basis (Module.Free.ChooseBasisIndex ℤ LW) ℝ W :=
-  (bZ (L := L)).ofZLatticeBasis ℝ LW
+    Module.Basis (Fin (Module.finrank ℝ W)) ℝ W :=
+  @Module.Basis.ofZLatticeBasis ℝ _ _ _ _ _ _ _ _ _ _ LW
+    (instDiscreteTopology_latticeInSpanR (L := L)) _ (instIsZLattice_latticeInSpanR (L := L)) (bZ (L := L))
 
 noncomputable def A [DiscreteTopology L] : Set W :=
   ZSpan.fundamentalDomain (bR (L := L))
@@ -110,12 +121,24 @@ noncomputable def A [DiscreteTopology L] : Set W :=
 noncomputable def F0 [DiscreteTopology L] : Set ℝ²⁴ :=
   (decomp (L := L)) '' (A (L := L) ×ˢ (Set.univ : Set K))
 
+local instance instBorelSpaceW : BorelSpace W := Subtype.borelSpace fun x => x ∈ W
+local instance instOpensMeasurableSpaceW : OpensMeasurableSpace W := Subtype.opensMeasurableSpace fun x => x ∈ W
+local instance instMeasureSpaceW : MeasureSpace W :=
+  @measureSpaceOfInnerProductSpace W _ _ _ Subtype.instMeasurableSpace (instBorelSpaceW (L := L))
+local instance instBorelSpaceK : BorelSpace K := Subtype.borelSpace fun x => x ∈ K
+local instance instMeasureSpaceK : MeasureSpace K :=
+  @measureSpaceOfInnerProductSpace K _ _ _ Subtype.instMeasurableSpace (instBorelSpaceK (L := L))
+local instance instBorelSpaceWK : BorelSpace (W × K) := Prod.borelSpace
+
 lemma measurableSet_A [DiscreteTopology L] : MeasurableSet (A (L := L)) := by
-  simpa [A, bR] using (ZSpan.fundamentalDomain_measurableSet (b := bR (L := L)))
+  simpa [A, bR] using
+    (@ZSpan.fundamentalDomain_measurableSet W (Fin (Module.finrank ℝ W)) _ _ (bR (L := L))
+      Subtype.instMeasurableSpace (instOpensMeasurableSpaceW (L := L)) inferInstance)
 
 lemma measure_A_ne_zero [DiscreteTopology L] : (volume : Measure W) (A (L := L)) ≠ 0 := by
   simpa [A, bR] using
-    (ZSpan.measure_fundamentalDomain_ne_zero (b := bR (L := L)) (μ := (volume : Measure W)))
+    (@ZSpan.measure_fundamentalDomain_ne_zero W (Fin (Module.finrank ℝ W)) _ _ (bR (L := L))
+      inferInstance Subtype.instMeasurableSpace (instBorelSpaceW (L := L)) (volume : Measure W) inferInstance)
 
 lemma isAddFundamentalDomain_F0 [DiscreteTopology L] [Countable L] :
     IsAddFundamentalDomain L (F0 (L := L)) (volume : Measure ℝ²⁴) := by
@@ -134,9 +157,10 @@ lemma isAddFundamentalDomain_F0 [DiscreteTopology L] [Countable L] :
   let wk : W × K := (decomp (L := L)).symm x
   let G : Submodule ℤ W := Submodule.span ℤ (Set.range (bR (L := L)))
   have hspan : G = LW := by
-    have hspan' :
-        Submodule.span ℤ (Set.range (Module.Basis.ofZLatticeBasis ℝ LW (bZ (L := L)))) = LW :=
-      Module.Basis.ofZLatticeBasis_span ℝ (L := LW) (b := bZ (L := L))
+    have hspan' : Submodule.span ℤ (Set.range (bR (L := L))) = LW := by
+      simpa [bR] using
+        (@Module.Basis.ofZLatticeBasis_span ℝ _ _ _ _ _ _ _ _ _ _ LW
+          (instDiscreteTopology_latticeInSpanR (L := L)) _ (instIsZLattice_latticeInSpanR (L := L)) (bZ (L := L)))
     simpa [G, bR] using hspan'
   have hexuG : ∃! v : G, v +ᵥ wk.1 ∈ A (L := L) := by
     simpa [G, A] using
@@ -182,14 +206,11 @@ lemma isAddFundamentalDomain_F0 [DiscreteTopology L] [Countable L] :
     have hA0 : (v0 : W) + wk.1 ∈ A (L := L) := by simpa using hv0
     exact hfst ▸ hA0
   · intro y hy
-    have hy0 : (decomp (L := L)).symm (y +ᵥ x) ∈ (A (L := L) ×ˢ (Set.univ : Set K)) := by
-      rw [hF0_pre] at hy
-      simpa using hy
-    have hy0' :
-        (decomp (L := L)).symm (((y : L) : ℝ²⁴) + x) ∈ (A (L := L) ×ˢ (Set.univ : Set K)) := by
-      rw [← vadd_eq_add_coe (L := L) (v := y) (x := x)]
-      exact hy0
-    have hyA : ((decomp (L := L)).symm (((y : L) : ℝ²⁴) + x)).1 ∈ A (L := L) := hy0'.1
+    have hyA : ((decomp (L := L)).symm (((y : L) : ℝ²⁴) + x)).1 ∈ A (L := L) := by
+      have hy0 : ((decomp (L := L)).symm (y +ᵥ x)).1 ∈ A (L := L) := by
+        rw [hF0_pre] at hy
+        exact hy.1
+      simpa [vadd_eq_add_coe (L := L) (v := y) (x := x)] using hy0
     have hyA' : (toG y : W) + wk.1 ∈ A (L := L) := by
       have hfst_add :
           ((decomp (L := L)).symm (((y : L) : ℝ²⁴) + x)).1 =
@@ -215,8 +236,15 @@ lemma isAddFundamentalDomain_F0 [DiscreteTopology L] [Countable L] :
 
 lemma volume_F0_eq_top [DiscreteTopology L] [Countable L] (hW : spanR (L := L) ≠ ⊤) :
     (volume : Measure ℝ²⁴) (F0 (L := L)) = ⊤ := by
-  haveI : Measure.IsAddHaarMeasure (volume : Measure W) := by infer_instance
-  haveI : Measure.IsAddHaarMeasure (volume : Measure K) := by infer_instance
+  letI : BorelSpace K := Subtype.borelSpace fun x => x ∈ K
+  letI : MeasureSpace K :=
+    @measureSpaceOfInnerProductSpace K _ _ _ Subtype.instMeasurableSpace (Subtype.borelSpace fun x => x ∈ K)
+  haveI : Measure.IsAddHaarMeasure (volume : Measure W) := by
+    simpa [measureSpaceOfInnerProductSpace] using
+      (@isAddHaarMeasure_basis_addHaar _ W _ _ _ Subtype.instMeasurableSpace (instBorelSpaceW (L := L)) ((stdOrthonormalBasis ℝ W).toBasis))
+  haveI : Measure.IsAddHaarMeasure (volume : Measure K) := by
+    simpa [measureSpaceOfInnerProductSpace] using
+      (@isAddHaarMeasure_basis_addHaar _ K _ _ _ Subtype.instMeasurableSpace (inferInstance : BorelSpace K) ((stdOrthonormalBasis ℝ K).toBasis))
   -- Use the product Haar measure on `W × K` to avoid relying on an `IsAddHaarMeasure` instance
   -- for `volume : Measure (W × K)` (which can be fragile w.r.t. instance diamonds).
   let ν : Measure (W × K) := (volume : Measure W).prod (volume : Measure K)
@@ -248,8 +276,10 @@ lemma volume_F0_eq_top [DiscreteTopology L] [Countable L] (hW : spanR (L := L) �
     simp [Measure.map_apply, hemeas_symm, hmeasProd, hF0_preim]
   have hsurj : Function.Surjective ((decomp (L := L)).symm : ℝ²⁴ →ₗ[ℝ] (W × K)) :=
     (decomp (L := L)).symm.surjective
-  rcases ((decomp (L := L)).symm.exists_map_addHaar_eq_smul_addHaar
-      (μ := (volume : Measure ℝ²⁴)) (ν := ν) hsurj) with
+  rcases (@LinearMap.exists_map_addHaar_eq_smul_addHaar ℝ ℝ²⁴ (W × K)
+      _ _ _ (inferInstance : MeasurableSpace ℝ²⁴) (inferInstance : BorelSpace ℝ²⁴) _ _
+      Prod.instMeasurableSpace (instBorelSpaceWK (L := L)) _ ((decomp (L := L)).symm : ℝ²⁴ →ₗ[ℝ] (W × K))
+      (volume : Measure ℝ²⁴) ν _ _ _ hsurj) with
     ⟨c, hcpos, hc⟩
   rw [hmap, hc]
   simp [hAprod, hcpos.ne']
@@ -262,15 +292,19 @@ public theorem volume_eq_top_of_isAddFundamentalDomain_of_spanR_ne_top
     (hF : IsAddFundamentalDomain L F (volume : Measure ℝ²⁴))
     (hW : spanR (L := L) ≠ ⊤) :
     (volume : Measure ℝ²⁴) F = ⊤ := by
-  haveI : MeasurableVAdd L ℝ²⁴ := (inferInstance : MeasurableVAdd L.toAddSubgroup ℝ²⁴)
-  haveI : VAddInvariantMeasure L ℝ²⁴ (volume : Measure ℝ²⁴) :=
-    (inferInstance : VAddInvariantMeasure L.toAddSubgroup ℝ²⁴ (volume : Measure ℝ²⁴))
+  haveI : MeasurableVAdd ↥L ℝ²⁴ :=
+    show MeasurableVAdd ↥L ℝ²⁴ from (inferInstance : MeasurableVAdd L.toAddSubgroup ℝ²⁴)
+  haveI : MeasurableConstVAdd ↥L ℝ²⁴ :=
+    show MeasurableConstVAdd ↥L ℝ²⁴ from (inferInstance : MeasurableConstVAdd L.toAddSubgroup ℝ²⁴)
+  haveI : VAddInvariantMeasure ↥L ℝ²⁴ (volume : Measure ℝ²⁴) := by infer_instance
   have hF0 :
       IsAddFundamentalDomain L (InfiniteVolume.F0 (L := L)) (volume : Measure ℝ²⁴) :=
     InfiniteVolume.isAddFundamentalDomain_F0 (L := L)
   have hEq :
       (volume : Measure ℝ²⁴) F = (volume : Measure ℝ²⁴) (InfiniteVolume.F0 (L := L)) :=
-    hF.measure_eq (μ := (volume : Measure ℝ²⁴)) hF0
+    (show IsAddFundamentalDomain L.toAddSubgroup F (volume : Measure ℝ²⁴) from hF).measure_eq
+      (μ := (volume : Measure ℝ²⁴))
+      (show IsAddFundamentalDomain L.toAddSubgroup (InfiniteVolume.F0 (L := L)) (volume : Measure ℝ²⁴) from hF0)
   have hVolF0 : (volume : Measure ℝ²⁴) (InfiniteVolume.F0 (L := L)) = ⊤ :=
     InfiniteVolume.volume_F0_eq_top (L := L) hW
   simpa [hEq] using hVolF0
