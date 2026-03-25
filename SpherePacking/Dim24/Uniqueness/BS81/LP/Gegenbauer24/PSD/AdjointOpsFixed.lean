@@ -159,7 +159,7 @@ public lemma inner_mulXPk_eq_inner_pderivPk (k : ℕ) (i : Var) (p : Pk k) (q : 
       have hcoeff : coeff d (mulXPk (k := k) i p).1 = 0 := by
         -- Unfold `mulXPk` just enough to see a coefficient of `X i * p`.
         -- `coeff_X_mul'` makes it `0` when `i ∉ support d`.
-        simp [mulXPk, LinearMap.codRestrict, LinearMap.comp_apply, MvPolynomial.coeff_X_mul', hd']
+        simp [mulXPk, MvPolynomial.coeff_X_mul', hd']
       simp [hcoeff]
     -- Combine the filtered sums and cancel the zero complement.
     have hsplit :=
