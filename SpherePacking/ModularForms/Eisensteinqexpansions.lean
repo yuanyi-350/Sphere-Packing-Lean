@@ -298,7 +298,7 @@ public lemma E_k_q_expansion (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) (z 
         (1 / (riemannZeta (k))) * ((-2 * ↑π * Complex.I) ^ k / (k - 1)!) *
         ∑' n : ℕ+, σ (k - 1) n * Complex.exp (2 * ↑π * Complex.I * z * n) := by
   rw [E]
-  rw [ModularForm.IsGLPos.smul_apply]
+  change (1 / 2 : ℂ) • (ModularForm.eisensteinSeriesMF hk standardcongruencecondition) z = _
   have : (ModularForm.eisensteinSeriesMF hk standardcongruencecondition) z =
     (eisensteinSeriesSIF standardcongruencecondition k) z := rfl
   rw [this]
@@ -317,9 +317,15 @@ public lemma E_k_q_expansion (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) (z 
     exact riemannZeta_ne_zero_of_one_lt_re hk1
   rw [← inv_mul_eq_iff_eq_mul₀ z2 ] at HE2'
   simp only [one_div, inv_pow_eq_zpow_neg] at HE2'
-  conv =>
-    enter [1,2]
-    rw [← HE2']
+  have HE2'' :
+      (∑' x : gammaSet 1 1 0, ((((x.1 0 : ℤ) : ℂ) * (z : ℂ) + ((x.1 1 : ℤ) : ℂ))) ^ (- (k : ℤ))) =
+        (riemannZeta ↑k)⁻¹ *
+          (∑' x : Fin 2 → ℤ, ((((x 0 : ℤ) : ℂ) * (z : ℂ) + ((x 1 : ℤ) : ℂ))) ^ (- (k : ℤ))) := by
+    simpa using HE2'.symm
+  have hmul := congrArg (fun t : ℂ => (2⁻¹ : ℂ) * t) HE2''
+  change (fun t : ℂ => (2⁻¹ : ℂ) * t)
+    (∑' x : gammaSet 1 1 0, ((((x.1 0 : ℤ) : ℂ) * (z : ℂ) + ((x.1 1 : ℤ) : ℂ))) ^ (- (k : ℤ))) = _
+  refine hmul.trans ?_
   simp_rw [← mul_assoc]
   rw [HE1', mul_add]
   have : 2⁻¹ * (riemannZeta (k))⁻¹ * (2 * riemannZeta (k)) = 1 := by
