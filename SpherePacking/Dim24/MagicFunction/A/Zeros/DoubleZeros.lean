@@ -60,14 +60,22 @@ The contour/Laplace representation shows that for `u > 4`, `aProfile u` factors 
 the derivative of `aProfile` vanishes at `u = 2k` for `k > 2`.
 -/
 
+local instance : ContinuousSMul ℝ ℂ :=
+  continuousSMul_of_algebraMap ℝ ℂ (by simpa using (Complex.continuous_ofReal))
+
 lemma hasDerivAt_mul_of_hasDerivAt_zero_of_continuousAt
     {f g : ℝ → ℂ} {x0 : ℝ} (hf : HasDerivAt f 0 x0) (hf0 : f x0 = 0) (hg : ContinuousAt g x0) :
     HasDerivAt (fun x : ℝ => f x * g x) 0 x0 := by
   -- Reduce to a little‑o estimate using boundedness of `g` near `x0`.
-  rw [hasDerivAt_iff_isLittleO] at hf ⊢
+  refine (hasDerivAt_iff_isLittleO).2 ?_
+  have hf := (hasDerivAt_iff_isLittleO.1 hf)
   have hf' : (fun x : ℝ => f x) =o[𝓝 x0] fun x : ℝ => x - x0 := by
     -- From `hf` we get `f x - f x0 = o(x-x0)`, and `f x0 = 0`.
-    simp_all
+    refine hf.congr_left ?_
+    intro x
+    calc
+      f x - f x0 - (x - x0) • (0 : ℂ) = f x - 0 - (x - x0) • (0 : ℂ) := by rw [hf0]
+      _ = f x := by simp
   -- A local bound `‖g x‖ ≤ ‖g x0‖ + 1`.
   have hgbound :
       ∀ᶠ x in 𝓝 x0, ‖g x‖ ≤ ‖g x0‖ + 1 := by
@@ -106,7 +114,17 @@ lemma hasDerivAt_mul_of_hasDerivAt_zero_of_continuousAt
     -- Rewrite the subtraction term to `‖f x * g x‖`.
     rw [hx0, sub_zero]
     exact hstep'
-  simpa [sub_eq_add_neg, add_assoc] using this
+  have hnorm :
+      ‖f x * g x + (-(f x0 * g x0) + -((x + -x0) • (0 : ℂ)))‖ = ‖f x * g x + -(f x0 * g x0)‖ := by
+    simp
+  have hbound :
+      ‖f x * g x + (-(f x0 * g x0) + -((x + -x0) • (0 : ℂ)))‖ ≤ c * ‖x - x0‖ :=
+    hnorm.trans_le this
+  calc
+    ‖f x * g x - f x0 * g x0 - (x - x0) • (0 : ℂ)‖ =
+        ‖f x * g x + (-(f x0 * g x0) + -((x + -x0) • (0 : ℂ)))‖ := by
+          simp [sub_eq_add_neg]
+    _ ≤ c * ‖x - x0‖ := hbound
 
 lemma continuousAt_integral_Ioi_one_Φ₅' (u0 : ℝ) (hu0 : 4 < u0) :
     ContinuousAt (fun u : ℝ => ∫ t in Set.Ioi (1 : ℝ), Φ₅' u ((t : ℂ) * Complex.I)) u0 := by
@@ -229,7 +247,8 @@ lemma aProfile_hasDerivAt_zero_two_mul_nat_of_two_lt (k : ℕ) (hk : 2 < k) :
   let W : ℝ → ℂ := fun u : ℝ => Vseg u + Vtail u
   let coeff : ℝ → ℂ := fun u : ℝ => (expU u 1)⁻¹ + expU u 1 - 2
   have hcoeffDeriv : HasDerivAt coeff 0 u0 := by
-    simpa [coeff] using (hasDerivAt_factor_even (u0 := u0) hu0)
+    change HasDerivAt (fun u : ℝ => (expU u 1)⁻¹ + expU u 1 - 2) 0 u0
+    exact hasDerivAt_factor_even u0 hu0
   have hcoeff0 : coeff u0 = 0 := by simpa [coeff] using (coeff_two_mul_nat (k := k))
   have hVsegCont : ContinuousAt Vseg u0 := by
     -- `Vseg` is a constant multiple of `I₅'`, hence smooth.
@@ -249,13 +268,16 @@ lemma aProfile_hasDerivAt_zero_two_mul_nat_of_two_lt (k : ℕ) (hk : 2 < k) :
       have hmain :
           ∫ t in (0 : ℝ)..1, RealIntegrands.Φ₅ u t =
               (Complex.I : ℂ) * Vseg u := by
-        -- Rewrite the parametrization.
-        have :
-            (∫ t in (0 : ℝ)..1, RealIntegrands.Φ₅ u t) =
-                ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * Φ₅' u ((t : ℂ) * Complex.I) := by
-          simp [RealIntegrands.Φ₅, hparam]
-        -- Pull out the constant factor.
-        simpa [Vseg, intervalIntegral.integral_const_mul, mul_assoc] using this
+        calc
+          ∫ t in (0 : ℝ)..1, RealIntegrands.Φ₅ u t =
+              ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * Φ₅' u ((t : ℂ) * Complex.I) := by
+                simp [RealIntegrands.Φ₅, hparam]
+          _ = (Complex.I : ℂ) * Vseg u := by
+                change
+                  ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * Φ₅' u ((t : ℂ) * Complex.I) =
+                    (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * Complex.I)
+                exact intervalIntegral.integral_const_mul (a := (0 : ℝ)) (b := 1)
+                  (r := (Complex.I : ℂ)) (f := fun t : ℝ => Φ₅' u ((t : ℂ) * Complex.I))
       -- Finish by unfolding `I₅'`.
       simp [RealIntegrals.I₅', hmain, mul_assoc]
     set c : ℂ := ((-2 : ℂ) * (Complex.I : ℂ))⁻¹
@@ -368,7 +390,11 @@ public theorem a_zero_of_norm_sq_eq_two_mul (k : ℕ) (hk : 2 ≤ k) :
 
 /-- For `k > 2`, the one-variable profile has at least a double root at `r = √(2k)`. -/
 public theorem aRadial_hasDerivAt_zero_of_two_lt (k : ℕ) (hk : 2 < k) :
+    letI : ContinuousSMul ℝ ℂ :=
+      continuousSMul_of_algebraMap ℝ ℂ (by simpa using (Complex.continuous_ofReal))
     HasDerivAt aRadial 0 (Real.sqrt ((2 : ℝ) * k)) := by
+  letI : ContinuousSMul ℝ ℂ :=
+    continuousSMul_of_algebraMap ℝ ℂ (by simpa using (Complex.continuous_ofReal))
   /- Proof sketch:
   From the analytic continuation formula for `a(r)` (paper (2.16)), for `k>2` the non-sine factor is
   analytic at `r=√(2k)`. The `sin(π r^2/2)^2` factor then enforces vanishing to second order in `r`.
@@ -386,8 +412,11 @@ public theorem aRadial_hasDerivAt_zero_of_two_lt (k : ℕ) (hk : 2 < k) :
   have hsq : HasDerivAt (fun r : ℝ => r ^ 2) (2 * r0) r0 := by
     simpa [pow_two, two_mul, mul_assoc] using (hasDerivAt_pow 2 r0)
   have haProf' : HasDerivAt aProfile 0 (r0 ^ 2) := by simpa [hr0sq] using haProf
+  have hcompF : HasDerivAt (aProfile ∘ fun r : ℝ => r ^ 2)
+      ((ContinuousLinearMap.toSpanSingleton ℝ (0 : ℂ)) (2 * r0)) r0 := by
+    exact HasFDerivAt.comp_hasDerivAt (x := r0) haProf'.hasFDerivAt hsq
   have hcomp : HasDerivAt (fun r : ℝ => aProfile (r ^ 2)) 0 r0 := by
-    simpa using (haProf'.scomp (x := r0) (h := fun r : ℝ => r ^ 2) hsq)
+    simpa using hcompF
   simpa [haEq] using hcomp
 
 end ZerosAux
