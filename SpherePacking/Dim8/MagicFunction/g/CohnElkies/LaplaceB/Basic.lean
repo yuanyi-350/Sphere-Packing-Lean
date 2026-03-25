@@ -117,7 +117,7 @@ public lemma exists_ψI_bound_exp :
       -- Triangle inequality on `num z = (num z - 1) + 1`.
       simpa [sub_add_cancel] using (norm_add_le (num z - (1 : ℂ)) (1 : ℂ))
     have hdist' : ‖num z - (1 : ℂ)‖ < 1 := by
-      assumption
+      simpa [dist_eq_norm] using hdist
     have hlt : ‖num z‖ < (2 : ℝ) := by
       have h1 :
           ‖num z‖ < 1 + 1 :=
