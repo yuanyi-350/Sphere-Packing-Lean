@@ -428,7 +428,10 @@ lemma J₂'_J₄_eq_neg_J₆'_zero : J₂' (0 : ℝ) + J₄' 0 = -J₆' 0 := by
         le_of_lt (by simpa [Set.mem_Ioi] using ht)
       simp [MagicFunction.Parametrisations.z₆'_eq_of_mem (t := t) ht', mul_comm]
     -- Pull `I` outside as a scalar and simplify.
-    simp [hIci, hparam, MeasureTheory.integral_const_mul, smul_eq_mul]
+    rw [hIci, hparam]
+    simpa [smul_eq_mul, mul_assoc] using
+      congrArg (fun z : ℂ => (-2 : ℂ) * z)
+        (MeasureTheory.integral_const_mul (Complex.I : ℂ) (fun t : ℝ => ψS' (t * Complex.I)))
   -- Combine: `J₂'(0)+J₄'(0)` is the horizontal integral, and `J₆'(0)` is
   -- `-2` times the vertical tail.
   have htail :
