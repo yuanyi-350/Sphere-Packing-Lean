@@ -2,6 +2,7 @@ module
 public import SpherePacking.Dim24.Uniqueness.LatticeInvariants
 public import Mathlib.MeasureTheory.Group.FundamentalDomain
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
+public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 public import Mathlib.Analysis.InnerProductSpace.Projection.FiniteDimensional
 public import Mathlib.Topology.Bases
 
@@ -63,12 +64,21 @@ public lemma orthogonal_ne_bot_of_spanR_ne_top (h : spanR (L := L) ≠ ⊤) :
   exact h (by simpa [Submodule.orthogonal_eq_bot_iff] using hbot)
 
 /-- If `spanR L` is not all of `ℝ²⁴`, then the orthogonal complement has infinite volume. -/
+public instance instMeasureSpaceOrthogonal : MeasureSpace ↥((spanR (L := L))ᗮ) :=
+  @measureSpaceOfInnerProductSpace ↥((spanR (L := L))ᗮ)
+    inferInstance inferInstance inferInstance inferInstance
+    (inferInstance : BorelSpace ↥((spanR (L := L))ᗮ))
 public lemma volume_univ_orthogonal_eq_top (h : spanR (L := L) ≠ ⊤) :
-    volume (Set.univ : Set (↥((spanR (L := L))ᗮ))) = ⊤ := by
+    @MeasureTheory.MeasureSpace.volume _ (instMeasureSpaceOrthogonal (L := L))
+      (Set.univ : Set (↥((spanR (L := L))ᗮ))) = ⊤ := by
   have hne : (spanR (L := L))ᗮ ≠ ⊥ := orthogonal_ne_bot_of_spanR_ne_top (L := L) h
   haveI : Nontrivial ((spanR (L := L))ᗮ) :=
     Submodule.nontrivial_iff_ne_bot.mpr hne
-  simp_all
+  haveI : NoncompactSpace ↥((spanR (L := L))ᗮ) :=
+    RealNormedSpace.noncompactSpace (E := ↥((spanR (L := L))ᗮ))
+  haveI : (volume : Measure ↥((spanR (L := L))ᗮ)).IsAddHaarMeasure := @instIsAddHaarMeasureVolume
+    ↥((spanR (L := L))ᗮ) inferInstance inferInstance inferInstance inferInstance (inferInstance : BorelSpace ↥((spanR (L := L))ᗮ))
+  exact measure_univ_of_isAddLeftInvariant (μ := (volume : Measure ↥((spanR (L := L))ᗮ)))
 
 end IsZLatticeOfUnimodular
 
