@@ -39,7 +39,10 @@ public lemma diffContOnCl_wedgeSet_of
     (htend : Filter.Tendsto f (nhdsWithin (1 : ℂ) (closure wedgeSet)) (nhds 0))
     (hval : f (1 : ℂ) = 0) :
     DiffContOnCl ℝ f wedgeSet := by
-  refine ⟨(hdiffC.restrictScalars ℝ).mono wedgeSet_subset_upperHalfPlaneSet, ?_⟩
+  refine ⟨(@DifferentiableOn.restrictScalars ℝ _ ℂ _ _ ℂ _ _ _
+    (IsScalarTower.right : IsScalarTower ℝ ℂ ℂ) ℂ _ _ _
+    (IsScalarTower.right : IsScalarTower ℝ ℂ ℂ) f UpperHalfPlane.upperHalfPlaneSet hdiffC).mono
+    wedgeSet_subset_upperHalfPlaneSet, ?_⟩
   · intro z hzcl
     by_cases h1 : z = (1 : ℂ)
     · subst h1
