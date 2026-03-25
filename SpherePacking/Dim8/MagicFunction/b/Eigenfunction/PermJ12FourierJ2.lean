@@ -268,6 +268,10 @@ private lemma integral_permJ2Kernel_x_ae (w : EuclideanSpace ℝ (Fin 8)) :
 
 /-- Fourier transform of `J₂` as a curve integral of `Ψ₁_fourier` along the segment
 `Path.segment (-1 + I) I`. -/
+public instance instContinuousSMulRealComplex : ContinuousSMul ℝ ℂ := ⟨by
+  simpa [smul_eq_mul] using
+    (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd⟩
+
 public lemma fourier_J₂_eq_curveIntegral (w : EuclideanSpace ℝ (Fin 8)) :
     (𝓕 (J₂ : EuclideanSpace ℝ (Fin 8) → ℂ)) w =
       (∫ᶜ z in Path.segment ((-1 : ℂ) + I) I,
