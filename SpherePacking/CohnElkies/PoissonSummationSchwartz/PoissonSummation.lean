@@ -200,8 +200,9 @@ lemma mFourierCoeff_descended (n : Fin d → ℤ) :
             ∫ x in SchwartzMap.PoissonSummation.Standard.iocCube (d := d), g (ℓ +ᵥ x)
               ∂(volume : Measure E) := by
       simpa [g] using
-        (MeasureTheory.IsAddFundamentalDomain.integral_eq_tsum'' (μ := (volume : Measure E))
-          hFD (f := g) hint)
+        (@MeasureTheory.IsAddFundamentalDomain.integral_eq_tsum'' Λ E ℂ _ _ _ _ _ (volume : Measure E)
+          SchwartzMap.PoissonSummation.Standard.instMeasurableVAdd_standardLattice.toMeasurableConstVAdd
+          SchwartzMap.PoissonSummation.Standard.instVAddInvariantMeasure_standardLattice _ _ hFD g hint)
     -- Rewrite the integrand `g (ℓ +ᵥ x)` as `mFourier(-n)(x) * f(x+ℓ)`.
     have hterm :
         ∀ ℓ : Λ,
