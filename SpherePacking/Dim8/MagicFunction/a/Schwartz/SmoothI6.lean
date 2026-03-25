@@ -104,6 +104,11 @@ lemma gN_integrable (n : ℕ) (r : ℝ) (hr : -2 < r) : Integrable (gN n r) (μ)
             simp [mul_pow, mul_comm]
           grind only
 
+local instance : ContinuousSMul ℝ ℂ where
+  continuous_smul := by
+    simpa [Algebra.smul_def] using
+      (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd
+
 lemma hasDerivAt_integral_gN (n : ℕ) (r₀ : ℝ) (hr₀ : -1 < r₀) :
     HasDerivAt (fun r : ℝ ↦ ∫ t in Ici (1 : ℝ), gN n r t)
       (∫ t in Ici (1 : ℝ), gN (n + 1) r₀ t) r₀ := by
@@ -157,6 +162,11 @@ lemma gN_integrable_of_gt_neg2 (n : ℕ) (r : ℝ) (hr : -2 < r) : Integrable (g
   simpa using (gN_integrable (n := n) (r := r) hr)
 
 -- Generalize `hasDerivAt_integral_gN` from `r₀ > -1` to `r₀ > -2`.
+local instance : ContinuousSMul ℝ ℂ where
+  continuous_smul := by
+    simpa [Algebra.smul_def] using
+      (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd
+
 lemma hasDerivAt_integral_gN_of_gt_neg2 (n : ℕ) (r₀ : ℝ) (hr₀ : -2 < r₀) :
     HasDerivAt (fun r : ℝ ↦ ∫ t in Ici (1 : ℝ), gN n r t)
       (∫ t in Ici (1 : ℝ), gN (n + 1) r₀ t) r₀ := by
