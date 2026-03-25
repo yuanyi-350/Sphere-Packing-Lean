@@ -114,7 +114,7 @@ public lemma I₂'_as_F (u : ℝ) :
     I₂' u = ∫ x in (0 : ℝ)..1, RealIntegrands.Φ₂ u x := by rfl
     _ = ∫ x in (0 : ℝ)..1, (expU u 1)⁻¹ * F u (zI x) := hcongr
     _ = (expU u 1)⁻¹ * ∫ x in (0 : ℝ)..1, F u (zI x) := by
-          simp [intervalIntegral.integral_const_mul]
+          exact intervalIntegral.integral_const_mul ((expU u 1)⁻¹) (fun x : ℝ => F u (zI x))
 
 /-- Rewrite `I₄'` as a horizontal period integral of `F` on the shifted line `im = 1`. -/
 public lemma I₄'_as_F (u : ℝ) :
@@ -175,7 +175,21 @@ public lemma I₄'_as_F (u : ℝ) :
     simpa [sub_eq_add_neg, add_assoc, add_comm, add_left_comm, zI] using h
   -- Assemble and simplify.
   -- `I₄' u = ∫ (-1) * (...)`, so rewrite as `-(expU u 1) * ∫ ...`.
-  simp_all
+  rw [hcongr]
+  calc
+    ∫ x in (0 : ℝ)..1, (-1 : ℂ) * expU u 1 * F u (zI (1 - x) - 1) =
+        (-1 : ℂ) * ∫ x in (0 : ℝ)..1, expU u 1 * F u (zI (1 - x) - 1) := by
+          convert intervalIntegral.integral_const_mul (-1 : ℂ)
+            (fun x : ℝ => expU u 1 * F u (zI (1 - x) - 1)) using 1
+          refine intervalIntegral.integral_congr ?_
+          intro x hx
+          ring
+    _ = (-1 : ℂ) * (expU u 1 * ∫ x in (0 : ℝ)..1, F u (zI (1 - x) - 1)) := by
+          exact congrArg (fun z : ℂ => (-1 : ℂ) * z)
+            (intervalIntegral.integral_const_mul (expU u 1) (fun x : ℝ => F u (zI (1 - x) - 1)))
+    _ = -(expU u 1) * ∫ x in (0 : ℝ)..1, F u (zI x - 1) := by
+          rw [hsub]
+          ring
 
 /-- For even `u` (i.e. `expU u 1 = 1`), the odd contour pieces cancel in `aProfile u`. -/
 public lemma aProfile_even_reduction (u : ℝ) (hu : expU u 1 = 1) :
