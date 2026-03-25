@@ -80,7 +80,12 @@ theorem PeriodicSpherePacking.aux2_ge
       simpa using
         disjoint_vadd_of_unique_covers (d := d) (Λ := S.lattice) (D := D) hD_unique_covers hgh
     · exact fun i => MeasurableSet.const_vadd hD_measurable i.1
-  · exact (hD_isAddFundamentalDomain S D ‹_› ‹_›).measure_ne_zero (NeZero.ne volume)
+  · have hV : VAddInvariantMeasure (↥S.lattice) (EuclideanSpace ℝ (Fin d)) volume := ⟨by
+        intro c t ht
+        simp only [Submodule.vadd_def, vadd_eq_add, measure_preimage_add]⟩
+    exact @MeasureTheory.IsAddFundamentalDomain.measure_ne_zero (↥S.lattice)
+      (EuclideanSpace ℝ (Fin d)) inferInstance inferInstance inferInstance D volume inferInstance hV
+      (NeZero.ne volume) (hD_isAddFundamentalDomain S D ‹_› ‹_›)
   · have : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
     rw [← lt_top_iff_ne_top]
     exact Bornology.IsBounded.measure_lt_top (isBounded_iff_forall_norm_le.mpr ⟨L, hL⟩)
@@ -120,7 +125,12 @@ theorem PeriodicSpherePacking.aux2_le
         disjoint_vadd_of_unique_covers (d := d) (Λ := S.lattice) (D := D) hD_unique_covers hgh
     · exact fun i => MeasurableSet.const_vadd hD_measurable i.1
   · left
-    exact (hD_isAddFundamentalDomain S D ‹_› ‹_›).measure_ne_zero (NeZero.ne volume)
+    have hV : VAddInvariantMeasure (↥S.lattice) (EuclideanSpace ℝ (Fin d)) volume := ⟨by
+        intro c t ht
+        simp only [Submodule.vadd_def, vadd_eq_add, measure_preimage_add]⟩
+    exact @MeasureTheory.IsAddFundamentalDomain.measure_ne_zero (↥S.lattice)
+      (EuclideanSpace ℝ (Fin d)) inferInstance inferInstance inferInstance D volume inferInstance hV
+      (NeZero.ne volume) (hD_isAddFundamentalDomain S D ‹_› ‹_›)
   · left
     have : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
     rw [← lt_top_iff_ne_top]
