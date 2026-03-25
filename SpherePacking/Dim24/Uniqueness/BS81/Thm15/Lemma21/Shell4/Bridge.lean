@@ -263,7 +263,11 @@ lemma eight_mul_inner_eq_sum_scaledCoord_mul_scaledCoord
       have hterm :
           (8 : ℝ) * ((coord e i x) * (coord e i y)) =
             ((Real.sqrt 8 : ℝ) * (coord e i x)) * ((Real.sqrt 8 : ℝ) * (coord e i y)) :=
-        CancelDenoms.mul_subst rfl rfl hsqrt8_sq
+        by
+          calc
+            (8 : ℝ) * ((coord e i x) * (coord e i y)) =
+                ((Real.sqrt 8 : ℝ) * (Real.sqrt 8 : ℝ)) * ((coord e i x) * (coord e i y)) := by rw [hsqrt8_sq]
+            _ = ((Real.sqrt 8 : ℝ) * (coord e i x)) * ((Real.sqrt 8 : ℝ) * (coord e i y)) := by ring
       simpa [scaledCoord, mul_assoc, mul_left_comm, mul_comm] using hterm
 
 -- We keep the divisibility conversion local to `ContainsDn` coordinates.
@@ -664,13 +668,25 @@ public theorem image_shell4_subset_leechShell4_of_code_equiv
               (⟪std i, ePerm (eFrame u)⟫ : ℝ) = (⟪std (σ i), eFrame u⟫ : ℝ) := by
             calc
               (⟪std i, ePerm (eFrame u)⟫ : ℝ) = (ePerm (eFrame u)) i := by
-                simpa [std] using (EuclideanSpace.basisFun_inner (ι := Fin 24) (𝕜 := ℝ)
-                  (x := ePerm (eFrame u)) i)
+                have hstdi : std i = EuclideanSpace.single i (1 : ℝ) := by
+                  unfold std
+                  exact EuclideanSpace.basisFun_apply (ι := Fin 24) (𝕜 := ℝ) i
+                calc
+                  (⟪std i, ePerm (eFrame u)⟫ : ℝ) =
+                      (⟪EuclideanSpace.single i (1 : ℝ), ePerm (eFrame u)⟫ : ℝ) := by rw [hstdi]
+                  _ = (ePerm (eFrame u)) i := by simpa using
+                    (EuclideanSpace.basisFun_inner (ι := Fin 24) (𝕜 := ℝ) (x := ePerm (eFrame u)) i)
               _ = (eFrame u) (σ i) := by
                 simp [ePerm, LinearIsometryEquiv.piLpCongrLeft_apply, Equiv.piCongrLeft']
               _ = (⟪std (σ i), eFrame u⟫ : ℝ) := by
-                simpa [std] using
-                  (EuclideanSpace.basisFun_inner (ι := Fin 24) (𝕜 := ℝ) (x := eFrame u) (σ i)).symm
+                have hstdσ : std (σ i) = EuclideanSpace.single (σ i) (1 : ℝ) := by
+                  unfold std
+                  exact EuclideanSpace.basisFun_apply (ι := Fin 24) (𝕜 := ℝ) (σ i)
+                calc
+                  (eFrame u) (σ i) = (⟪EuclideanSpace.single (σ i) (1 : ℝ), eFrame u⟫ : ℝ) := by
+                    simpa using
+                      (EuclideanSpace.basisFun_inner (ι := Fin 24) (𝕜 := ℝ) (x := eFrame u) (σ i)).symm
+                  _ = (⟪std (σ i), eFrame u⟫ : ℝ) := by rw [hstdσ]
           simpa [coord] using hinner
         simp [scaledCoord, hcoord]
       exact (this.trans (hscaled_frame (σ i)))
@@ -803,7 +819,16 @@ public theorem image_shell4_subset_leechShell4_of_code_equiv
       have hrhs :
           scaledCoord (fun j => std j) i (Shell4IsometryLeechMembership.vecOfScaledStd zσ) =
             (zσ i : ℝ) := by
-        simpa [std] using (Shell4IsometryLeechMembership.scaledCoord_std_vecOfScaledStd zσ i)
+        have hstdi : std i = EuclideanSpace.single i (1 : ℝ) := by
+          unfold std
+          exact EuclideanSpace.basisFun_apply (ι := Fin 24) (𝕜 := ℝ) i
+        calc
+          scaledCoord (fun j => std j) i (Shell4IsometryLeechMembership.vecOfScaledStd zσ) =
+              scaledCoord (fun j : Fin 24 => EuclideanSpace.single j (1 : ℝ)) i
+                (Shell4IsometryLeechMembership.vecOfScaledStd zσ) := by
+                  simp [scaledCoord, coord, hstdi]
+          _ = (zσ i : ℝ) := by
+                simpa using (Shell4IsometryLeechMembership.scaledCoord_std_vecOfScaledStd zσ i)
       simpa [zσ] using (hlhs.trans hrhs.symm)
     -- Conclude Leech lattice membership from the Construction-A (pattern) membership lemma.
     have hvL :
