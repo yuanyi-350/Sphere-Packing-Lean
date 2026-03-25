@@ -32,11 +32,11 @@ public theorem evalPk24_mulR2Pk_of_norm_eq_one_step
   -- On the unit sphere, `∑ i, x i ^ 2 = ‖x‖^2 = 1`, so the factor cancels.
   have hmulX (j : Fin 24) (p : Fischer.Pk k) :
       (Fischer.mulXPk (k := k) j p).1 = (MvPolynomial.X j : MvPolynomial (Fin 24) ℝ) * p.1 := by
-    simp [Fischer.mulXPk, LinearMap.codRestrict, LinearMap.comp_apply]
+    simp [Fischer.mulXPk]
   have hmulX' (j : Fin 24) (p : Fischer.Pk (k + 1)) :
       (Fischer.mulXPk (k := k + 1) j p).1 =
         (MvPolynomial.X j : MvPolynomial (Fin 24) ℝ) * p.1 := by
-    simp [Fischer.mulXPk, LinearMap.codRestrict, LinearMap.comp_apply]
+    simp [Fischer.mulXPk]
   have hcoe :
       (Fischer.mulR2Pk (k := k) q).1 =
         (Finset.univ : Finset (Fin 24)).sum (fun j =>
