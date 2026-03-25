@@ -148,7 +148,10 @@ lemma measurable_permI5KernelMeas (w : ℝ²⁴) : Measurable (permI5KernelMeas 
     -- build in the same left-associative order as the definition.
     simpa [mul_assoc] using (((measurable_const.mul h_varphiC).mul h_invPow).mul h_gauss)
   -- This is exactly the product in `permI5KernelMeas`.
-  dsimp [permI5KernelMeas]
+  change Measurable (fun p : ℝ²⁴ × ℝ =>
+    cexp (↑(-2 * (π * ⟪p.1, w⟫)) * I) *
+      ((-I : ℂ) * varphi' (I * (p.2 : ℂ)) * ((p.2 : ℂ) ^ (12 : ℕ))⁻¹ *
+        cexp ((-π : ℂ) * ((‖p.1‖ ^ (2 : ℕ) : ℝ) : ℂ) / (p.2 : ℂ))))
   exact h_phase.mul h_rest
 
 lemma aestronglyMeasurable_permI5Kernel (w : ℝ²⁴) :
