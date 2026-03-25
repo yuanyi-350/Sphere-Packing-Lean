@@ -32,13 +32,12 @@ lemma coord0_of_map_unit_to_e0
     {u : ℝ²⁴}
     {E : ℝ²⁴ ≃ₗᵢ[ℝ] ℝ²⁴} (hEu : E u = (EuclideanSpace.single (0 : Fin 24) (1 : ℝ) : ℝ²⁴)) :
     ∀ x : ℝ²⁴, (E x) (0 : Fin 24) = (⟪x, u⟫ : ℝ) := by
-  let bstd : OrthonormalBasis (Fin 24) ℝ ℝ²⁴ := EuclideanSpace.basisFun (Fin 24) ℝ
-  let e0 : ℝ²⁴ := bstd (0 : Fin 24)
+  let e0 : ℝ²⁴ := (EuclideanSpace.single (0 : Fin 24) (1 : ℝ) : ℝ²⁴)
   have hEu0 : E u = e0 := by
-    simpa [e0, bstd] using hEu
+    simpa [e0] using hEu
   intro x
   have hx0 : (E x) (0 : Fin 24) = (⟪E x, e0⟫ : ℝ) := by
-    simpa [e0, bstd] using
+    simpa [e0] using
       (EuclideanSpace.inner_basisFun_real (ι := Fin 24) (x := (E x)) (i := (0 : Fin 24))).symm
   have hx1 : (⟪E x, e0⟫ : ℝ) = (⟪E x, E u⟫ : ℝ) := by
     simp [hEu0]
