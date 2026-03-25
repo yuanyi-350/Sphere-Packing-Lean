@@ -44,7 +44,8 @@ public theorem fourier_comp_linearEquiv (A : V ≃ₗ[ℝ] V) (f : V → ℂ) (w
       (∫ y : V, g y ∂Measure.map (⇑A) (volume : Measure V)) =
         (abs (LinearMap.det (A : V →ₗ[ℝ] V)))⁻¹ • ∫ y : V, g y := by
     rw [hmap, MeasureTheory.integral_smul_measure]
-    simp [abs_inv]
+    rw [ENNReal.toReal_ofReal (abs_nonneg _), abs_inv]
+    rfl
   have hadj :
       (fun y : V ↦ Real.fourierChar (-(inner ℝ (A.symm y) w)) • f y) =
         fun y : V ↦
