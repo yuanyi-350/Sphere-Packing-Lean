@@ -36,9 +36,11 @@ public lemma contDiffOn_lineMap_mobiusInv_lineMap (p0 p1 q0 q1 : ℂ)
       (Set.Icc (0 : ℝ × ℝ) 1) := by
   have hline (a b : ℂ) :
       ContDiffOn ℝ 2 (fun xy => AffineMap.lineMap a b xy.2) (Set.Icc (0 : ℝ × ℝ) 1) := by
-    simpa [AffineMap.lineMap_apply_module] using (by
-      fun_prop :
-        ContDiffOn ℝ 2 (fun xy => (1 - xy.2) • a + xy.2 • b) (Set.Icc (0 : ℝ × ℝ) 1))
+    simpa [AffineMap.lineMap_apply_module] using
+      (((by fun_prop :
+          ContDiffOn ℝ 2 (fun xy : ℝ × ℝ => (1 : ℝ) - xy.2) (Set.Icc (0 : ℝ × ℝ) 1)).smul_const a).add
+        ((by fun_prop :
+          ContDiffOn ℝ 2 (fun xy : ℝ × ℝ => xy.2) (Set.Icc (0 : ℝ × ℝ) 1)).smul_const b))
   have hA :
       ContDiffOn ℝ 2
         (fun xy : ℝ × ℝ => mobiusInv (AffineMap.lineMap p0 p1 xy.2))
