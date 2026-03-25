@@ -143,7 +143,7 @@ lemma tendsto_top_varphi₁'_mul_expU_four :
               SpecialValuesAux.varphi₁' ((x : ℂ) + m * Complex.I) *
                 SpecialValuesAux.expU (4 : ℝ) ((x : ℂ) + m * Complex.I)) - (0 : ℂ)‖ ≤ ε / 2 := by
       simpa [hsub] using hnorm'
-    exact lt_of_le_of_lt this (half_lt_self hε)
+    exact lt_of_le_of_lt (by simpa [dist_eq_norm] using this) (half_lt_self hε)
   simpa [Metric.ball, dist_eq_norm] using hdist
  
 /-- The period integral of `varphi₁' * expU 4` over `x ∈ (0,1)` at height `1` is `0`. -/
