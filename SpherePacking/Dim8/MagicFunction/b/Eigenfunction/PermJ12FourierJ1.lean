@@ -150,10 +150,15 @@ private lemma integral_permJ1Kernel_x_ae (w : EuclideanSpace ℝ (Fin 8)) :
 
 /-- Fourier transform of `J₁` as a curve integral of `Ψ₁_fourier` along the segment
 `Path.segment (-1) (-1 + I)`. -/
-public lemma fourier_J₁_eq_curveIntegral (w : EuclideanSpace ℝ (Fin 8)) :
+local instance : ContinuousSMul ℝ ℂ := ⟨by
+  simpa [smul_eq_mul] using
+    (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd⟩
+local notation "segJ1Path" => Path.segment (-1 : ℂ) ((-1 : ℂ) + Complex.I)
+lemma fourier_J₁_eq_curveIntegral (w : EuclideanSpace ℝ (Fin 8)) :
     𝓕 (J₁ : EuclideanSpace ℝ (Fin 8) → ℂ) w =
-      (∫ᶜ z in Path.segment (-1 : ℂ) ((-1 : ℂ) + I),
+      (∫ᶜ z in segJ1Path,
         scalarOneForm (Ψ₁_fourier (‖w‖ ^ 2)) z) := by
+  letI : ContinuousSMul ℝ ℂ := inferInstance
   simpa using
     SpherePacking.Contour.fourier_J₁_eq_curveIntegral_of
       (fun x => by
@@ -165,6 +170,7 @@ public lemma fourier_J₁_eq_curveIntegral (w : EuclideanSpace ℝ (Fin 8)) :
         simpa using
           (integral_I_mul_muIoc01_z₁line (F := Ψ₁_fourier (‖w'‖ ^ 2))))
       w
+abbrev _root_.fourier_J₁_eq_curveIntegral := MagicFunction.b.Fourier.fourier_J₁_eq_curveIntegral
 
 
 end Integral_Permutations.PermJ12
