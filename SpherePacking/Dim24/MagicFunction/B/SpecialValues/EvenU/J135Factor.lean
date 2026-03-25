@@ -84,7 +84,15 @@ public lemma J₁'_J₃'_J₅'_factor (u : ℝ) :
     calc
       (∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * ψT' (z₁' t) * expU u (z₁' t)) =
           (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, ψT' (z₁' t) * expU u (z₁' t) := by
-            simp [mul_assoc]
+            have hrew :
+                (∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * ψT' (z₁' t) * expU u (z₁' t)) =
+                  ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * (ψT' (z₁' t) * expU u (z₁' t)) := by
+              congr with t
+              simp [mul_assoc]
+            rw [hrew]
+            exact intervalIntegral.integral_const_mul (μ := MeasureTheory.volume)
+              (a := (0 : ℝ)) (b := (1 : ℝ)) (Complex.I : ℂ)
+              (fun t : ℝ => ψT' (z₁' t) * expU u (z₁' t))
       _ = (Complex.I : ℂ) * ((∫ t in (0 : ℝ)..1, ψI' (z₅' t) * expU u (z₅' t)) * (expU u 1)⁻¹) := by
             simp [hcongr, hmul]
       _ = (Complex.I : ℂ) * I0 * (expU u 1)⁻¹ := by simp [I0, mul_assoc]
@@ -113,7 +121,15 @@ public lemma J₁'_J₃'_J₅'_factor (u : ℝ) :
     calc
       (∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * ψT' (z₃' t) * expU u (z₃' t)) =
           (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, ψT' (z₃' t) * expU u (z₃' t) := by
-            simp [mul_assoc]
+            have hrew :
+                (∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * ψT' (z₃' t) * expU u (z₃' t)) =
+                  ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * (ψT' (z₃' t) * expU u (z₃' t)) := by
+              congr with t
+              simp [mul_assoc]
+            rw [hrew]
+            exact intervalIntegral.integral_const_mul (μ := MeasureTheory.volume)
+              (a := (0 : ℝ)) (b := (1 : ℝ)) (Complex.I : ℂ)
+              (fun t : ℝ => ψT' (z₃' t) * expU u (z₃' t))
       _ = (Complex.I : ℂ) * ((∫ t in (0 : ℝ)..1, ψI' (z₅' t) * expU u (z₅' t)) * expU u 1) := by
             simp [hcongr, hmul]
       _ = (Complex.I : ℂ) * I0 * expU u 1 := by simp [I0, mul_assoc]
@@ -140,7 +156,10 @@ public lemma J₁'_J₃'_J₅'_factor (u : ℝ) :
         funext t
         simp [mul_assoc]
       -- Now pull the scalar out of the integral.
-      simp [I0, mul_assoc]
+      rw [hrew]
+      exact intervalIntegral.integral_const_mul (μ := MeasureTheory.volume)
+        (a := (0 : ℝ)) (b := (1 : ℝ)) (Complex.I : ℂ)
+        (fun t : ℝ => ψI' (z₅' t) * expU u (z₅' t))
     -- The definition of `I0` uses `ψI' * expU`; rewrite it in the `cexp * ψI'` form that
     -- appears after unfolding `J₅'`.
     grind only
@@ -149,7 +168,15 @@ public lemma J₁'_J₃'_J₅'_factor (u : ℝ) :
       (∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * ψI' (z₅' t) * expU u (z₅' t)) =
         (Complex.I : ℂ) * I0 := by
     dsimp [I0]
-    simp [mul_assoc]
+    have hrew :
+        (∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * ψI' (z₅' t) * expU u (z₅' t)) =
+          ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * (ψI' (z₅' t) * expU u (z₅' t)) := by
+      congr with t
+      simp [mul_assoc]
+    rw [hrew]
+    exact intervalIntegral.integral_const_mul (μ := MeasureTheory.volume)
+      (a := (0 : ℝ)) (b := (1 : ℝ)) (Complex.I : ℂ)
+      (fun t : ℝ => ψI' (z₅' t) * expU u (z₅' t))
   -- Assemble the factorization.
   -- Use commutativity in `ℂ` to align the product order.
   calc
@@ -167,7 +194,8 @@ public lemma J₁'_J₃'_J₅'_factor (u : ℝ) :
                 (congrFun (congrArg HMul.hMul hI0) ((expU u 1)⁻¹ + expU u 1 - 2)))
               (congrArg Complex.im
                 (congrFun (congrArg HMul.hMul hI0) ((expU u 1)⁻¹ + expU u 1 - 2))))
-
+public instance : ContinuousSMul ℝ ℂ :=
+  ⟨Complex.continuous_ofReal.comp continuous_fst |>.mul continuous_snd⟩
 /-- If `expU u0 1 = 1`, then `u ↦ J₁' u + J₃' u + J₅' u` has derivative `0` at `u0`. -/
 public lemma J₁'_J₃'_J₅'_hasDerivAt_zero_of (u0 : ℝ) (hu : expU u0 1 = 1) :
     HasDerivAt (fun u : ℝ => J₁' u + J₃' u + J₅' u) 0 u0 := by
@@ -180,7 +208,7 @@ public lemma J₁'_J₃'_J₅'_hasDerivAt_zero_of (u0 : ℝ) (hu : expU u0 1 = 1
   let h : ℝ → ℂ := fun u => (w u)⁻¹ + w u - 2
   have hfac : (fun u : ℝ => J₁' u + J₃' u + J₅' u) = fun u => g u * h u := by
     funext u
-    simp [g, h, w, J₁'_J₃'_J₅'_factor (u := u), mul_assoc, mul_left_comm, mul_comm]
+    simp [g, h, w, J₁'_J₃'_J₅'_factor (u := u), mul_assoc, mul_comm]
   have hw0 : w u0 = 1 := hu
   have hh0 : h u0 = 0 := by
     simp [h, w, hw0]
