@@ -156,7 +156,9 @@ public theorem isGegenbauerDesign24_of_sharp_expansion
     exact Finset.mem_range.mpr (Nat.succ_pos _)
   have hsum_erase0 : (s.erase 0).sum g = 0 := by
     have hs_eq : s.sum g = g 0 := by
-      exact Eq.symm (CancelDenoms.derive_trans hG0 hsharp')
+      calc
+        s.sum g = (a 0) * (Cfin.card : ℝ) ^ 2 := by simpa [s, g] using hsharp'.symm
+        _ = g 0 := by simp [g, hG0]
     have hsplit : g 0 + (s.erase 0).sum g = s.sum g :=
       Finset.add_sum_erase (s := s) (f := g) (a := (0 : ℕ)) hs0
     have hcancel : g 0 + (s.erase 0).sum g = g 0 := by
