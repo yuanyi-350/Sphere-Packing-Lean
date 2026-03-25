@@ -445,7 +445,11 @@ lemma hw_tail_bound (t : ℝ) (ht : 1 ≤ t) (CH2 : ℝ)
                     simpa using h
             _ = Real.exp (-(4 : ℝ) * Real.pi * t) := by
                   simpa using congrArg Real.exp hsum
-        exact CancelDenoms.derive_trans hbc hab
+        calc
+          e * (Real.exp (-Real.pi * t) * Real.exp (-(5 : ℝ) * Real.pi * t))
+              = Real.exp (2 * Real.pi * t) * Real.exp (-(6 : ℝ) * Real.pi * t) := by
+                  simpa [e] using congrArg (fun z : ℝ => Real.exp (2 * Real.pi * t) * z) hbc
+          _ = Real.exp (-(4 : ℝ) * Real.pi * t) := hab
       calc
         (e / 256) * ((160 * Real.exp (-Real.pi * t)) * (CH2 * Real.exp (-(5 : ℝ) * Real.pi * t)))
               =
