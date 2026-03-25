@@ -25,8 +25,13 @@ variable {d : ℕ}
 
 /-- Any coordinate of a vector is bounded in absolute value by the Euclidean norm. -/
 public lemma abs_coord_le_norm (x : EuclideanSpace ℝ (Fin d)) (i : Fin d) : |x i| ≤ ‖x‖ := by
-  simpa [EuclideanSpace.inner_single_left, EuclideanSpace.norm_single] using
-    abs_real_inner_le_norm (EuclideanSpace.single i (1 : ℝ)) x
+  have hcoord : inner ℝ (EuclideanSpace.single i (1 : ℝ)) x = x i := by
+    simpa using (EuclideanSpace.inner_single_left i (1 : ℝ) x)
+  calc
+    |x i| = |inner ℝ (EuclideanSpace.single i (1 : ℝ)) x| := by
+      rw [hcoord]
+    _ ≤ ‖EuclideanSpace.single i (1 : ℝ)‖ * ‖x‖ := abs_real_inner_le_norm _ _
+    _ = ‖x‖ := by simp [EuclideanSpace.norm_single]
 
 lemma abs_coord_sub_lt_of_mem_ball {x y : EuclideanSpace ℝ (Fin d)} {r : ℝ} (hy : y ∈ ball x r)
     (i : Fin d) : |y i - x i| < r := by
@@ -235,11 +240,12 @@ public lemma periodizedCenters_inter_eq_of_subset {Λ : Submodule ℤ (Euclidean
     obtain ⟨g0, hg0, hg0uniq⟩ := hD_unique_covers f
     have hg : g = g0 := hg0uniq g (by simpa using hxD)
     have hg0 : g0 = 0 := by
-      simpa using (hg0uniq 0 (by simpa using hF_sub hfF)).symm
-    simpa [hg, hg0] using hfF
+      simpa [Submodule.vadd_def, vadd_eq_add] using
+        (hg0uniq 0 (by simpa [Submodule.vadd_def, vadd_eq_add] using hF_sub hfF)).symm
+    simpa [hg, hg0, Submodule.vadd_def, vadd_eq_add] using hfF
   · intro hxF
     refine ⟨(mem_periodizedCenters_iff (d := d) (Λ := Λ) (F := F) (x := x)).2 ?_, hF_sub hxF⟩
-    exact ⟨0, x, hxF, by simp⟩
+    exact ⟨0, x, hxF, by simp [Submodule.vadd_def, vadd_eq_add]⟩
 
 end PeriodicConstantCube
 
@@ -348,7 +354,8 @@ public lemma ball_subset_vadd_coordCube_of_mem_vadd_inner {L r : ℝ} (hL : 0 < 
     ball x r ⊆ v +ᵥ coordCube (d := d) L := by
   -- translate back to the origin cell
   have hx' : (- (v : EuclideanSpace ℝ (Fin d))) +ᵥ x ∈ coordCubeInner (d := d) L r := by
-    simpa [Set.mem_vadd_set_iff_neg_vadd_mem] using hx
+    simpa [Submodule.vadd_def, vadd_eq_add] using
+      (Set.mem_vadd_set_iff_neg_vadd_mem.mp hx)
   have hball : ball ((- (v : EuclideanSpace ℝ (Fin d))) +ᵥ x) r ⊆ coordCube (d := d) L :=
     ball_subset_coordCube_of_mem_inner (d := d) (L := L) (r := r) hx'
   -- translate forward by `v`
