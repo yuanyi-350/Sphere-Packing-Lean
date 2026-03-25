@@ -529,8 +529,9 @@ public theorem bRadial_eq_laplace_psiI_main {u : ℝ} (hu : 2 < u) :
       simp [bContourIntegrandT, bContourWeight, hz, mul_assoc]
     rw [hrew]
     -- Pull out the constant `I` and convert the interval integral to a set integral.
-    simp only [intervalIntegral.integral_const_mul, mul_eq_mul_left_iff, I_ne_zero, or_false]
-    rw [intervalIntegral.integral_of_le (show (0 : ℝ) ≤ 1 by norm_num)]
+    simpa [intervalIntegral.integral_of_le (show (0 : ℝ) ≤ 1 by norm_num)] using
+      (intervalIntegral.integral_const_mul (a := (0 : ℝ)) (b := 1) (r := (I : ℂ))
+        (f := fun t : ℝ => bContourIntegrandT u ((-1 : ℂ) + I * (t : ℂ))))
   have hJ3_set :
       MagicFunction.b.RealIntegrals.J₃' u =
         (I : ℂ) *
@@ -551,8 +552,9 @@ public theorem bRadial_eq_laplace_psiI_main {u : ℝ} (hu : 2 < u) :
         simpa using (MagicFunction.Parametrisations.z₃'_eq_of_mem (t := t) ht')
       simp [bContourIntegrandT, bContourWeight, hz, mul_assoc]
     rw [hrew]
-    simp only [intervalIntegral.integral_const_mul, mul_eq_mul_left_iff, I_ne_zero, or_false]
-    rw [intervalIntegral.integral_of_le (show (0 : ℝ) ≤ 1 by norm_num)]
+    simpa [intervalIntegral.integral_of_le (show (0 : ℝ) ≤ 1 by norm_num)] using
+      (intervalIntegral.integral_const_mul (a := (0 : ℝ)) (b := 1) (r := (I : ℂ))
+        (f := fun t : ℝ => bContourIntegrandT u ((1 : ℂ) + I * (t : ℂ))))
   have hJ5_set :
       MagicFunction.b.RealIntegrals.J₅' u =
         (2 : ℂ) * (I : ℂ) *
@@ -574,11 +576,11 @@ public theorem bRadial_eq_laplace_psiI_main {u : ℝ} (hu : 2 < u) :
       simp [bContourIntegrandI, bContourWeight, hz, mul_assoc, mul_left_comm, mul_comm]
     rw [hrew]
     -- Convert the interval integral to a set integral and pull out the constants `-2` and `I`.
-    simp only
-      [neg_mul, intervalIntegral.integral_neg, intervalIntegral.integral_const_mul,
-        mul_neg, neg_neg]
+    simp only [neg_mul, intervalIntegral.integral_neg, mul_neg, neg_neg]
     rw [intervalIntegral.integral_of_le (show (0 : ℝ) ≤ 1 by norm_num)]
-    ring
+    simpa [mul_assoc] using congrArg (fun z : ℂ => (2 : ℂ) * z)
+      (MeasureTheory.integral_const_mul (μ := volume.restrict (Set.Ioc (0 : ℝ) 1))
+        (r := (I : ℂ)) (f := fun t : ℝ => bContourIntegrandI u (I * (t : ℂ))))
   have hJ6_set :
       MagicFunction.b.RealIntegrals.J₆' u =
         (-2 : ℂ) * (I : ℂ) *
@@ -599,7 +601,9 @@ public theorem bRadial_eq_laplace_psiI_main {u : ℝ} (hu : 2 < u) :
     rw [hcongr]
     -- Pull out `I` and replace `Ici 1` by `Ioi 1`.
     rw [MeasureTheory.integral_Ici_eq_integral_Ioi]
-    simp [MeasureTheory.integral_const_mul, mul_assoc]
+    simpa [mul_assoc] using congrArg (fun z : ℂ => (-2 : ℂ) * z)
+      (MeasureTheory.integral_const_mul (μ := volume.restrict (Set.Ioi (1 : ℝ)))
+        (r := (I : ℂ)) (f := fun t : ℝ => bContourIntegrandS u (I * (t : ℂ))))
   -- Pointwise translation identities on the shifted rays.
   have hLeft_point :
       ∀ t : ℝ, 0 < t →
