@@ -40,7 +40,7 @@ public lemma innerMvPoly24_pow_isHomogeneous (u : ℝ²⁴) (m : ℕ) :
 /-- Evaluating `innerMvPoly24 u` at `x` gives the inner product `⟪u,x⟫`. -/
 public lemma mvPolyEval24_innerMvPoly24 (u x : ℝ²⁴) :
     mvPolyEval24 (innerMvPoly24 u) x = (⟪u, x⟫ : ℝ) := by
-  simp [mvPolyEval24, innerMvPoly24, PiLp.inner_apply, mul_comm]
+  simp [mvPolyEval24, innerMvPoly24, inner, mul_comm]
 
 attribute [grind =] mvPolyEval24_innerMvPoly24
 
