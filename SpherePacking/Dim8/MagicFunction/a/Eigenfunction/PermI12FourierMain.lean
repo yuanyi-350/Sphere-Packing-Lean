@@ -52,14 +52,14 @@ public lemma fourier_I₁_eq_curveIntegral (w : ℝ⁸) :
         ∫ t in Ioc (0 : ℝ) 1,
           (I : ℂ) * MagicFunction.a.ComplexIntegrands.Φ₁' (‖x‖ ^ 2) (z₁line t) := by
     rw [I₁'_eq_curveIntegral_segment (r := ‖x‖ ^ 2)]
-    rw [curveIntegral_segment
-      (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' (‖x‖ ^ 2)))
-      (-1 : ℂ) ((-1 : ℂ) + I)]
-    rw [intervalIntegral.integral_of_le (μ := (volume : Measure ℝ))
-      (a := (0 : ℝ)) (b := 1) (by norm_num)]
     have hdir : (((-1 : ℂ) + I) - (-1 : ℂ)) = (I : ℂ) :=
       SpherePacking.Contour.dir_z₁line
-    simp [scalarOneForm_apply, hdir, SpherePacking.Contour.lineMap_z₁line]
+    simpa [intervalIntegral.integral_of_le (μ := (volume : Measure ℝ))
+      (a := (0 : ℝ)) (b := 1) (by norm_num), scalarOneForm_apply, hdir,
+      SpherePacking.Contour.lineMap_z₁line] using
+      (curveIntegral_segment
+        (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' (‖x‖ ^ 2)))
+        (-1 : ℂ) ((-1 : ℂ) + I))
   -- Move the `x`-dependent phase factor inside the `t` integral so we can use Fubini.
   have hmul :
       (fun x : ℝ⁸ ↦
@@ -92,12 +92,13 @@ public lemma fourier_I₁_eq_curveIntegral (w : ℝ⁸) :
       (∫ t in Ioc (0 : ℝ) 1, g t) =
         (∫ᶜ z in Path.segment (-1 : ℂ) ((-1 : ℂ) + I),
           scalarOneForm (Φ₁_fourier (‖w‖ ^ 2)) z) := by
-    rw [curveIntegral_segment (ω := scalarOneForm (Φ₁_fourier (‖w‖ ^ 2)))
-      (-1 : ℂ) ((-1 : ℂ) + I)]
     have hdir : (((-1 : ℂ) + I) - (-1 : ℂ)) = (I : ℂ) :=
       SpherePacking.Contour.dir_z₁line
-    simp [g, intervalIntegral.integral_of_le, scalarOneForm_apply, hdir,
-      SpherePacking.Contour.lineMap_z₁line]
+    symm
+    simpa [g, intervalIntegral.integral_of_le, scalarOneForm_apply, hdir,
+      SpherePacking.Contour.lineMap_z₁line] using
+      (curveIntegral_segment (ω := scalarOneForm (Φ₁_fourier (‖w‖ ^ 2)))
+        (-1 : ℂ) ((-1 : ℂ) + I))
   calc
     (∫ x : ℝ⁸,
           cexp (↑(-2 * (π * ⟪x, w⟫)) * I) * MagicFunction.a.RealIntegrals.I₁' (‖x‖ ^ 2)) =
@@ -137,13 +138,13 @@ public lemma fourier_I₂_eq_curveIntegral (w : ℝ⁸) :
         ∫ t in Ioc (0 : ℝ) 1,
           MagicFunction.a.ComplexIntegrands.Φ₁' (‖x‖ ^ 2) (z₂line t) := by
     rw [I₂'_eq_curveIntegral_segment (r := ‖x‖ ^ 2)]
-    rw [curveIntegral_segment
-      (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' (‖x‖ ^ 2)))
-      ((-1 : ℂ) + I) I]
-    rw [intervalIntegral.integral_of_le (μ := (volume : Measure ℝ))
-      (a := (0 : ℝ)) (b := 1) (by norm_num)]
     have hdir : (I - ((-1 : ℂ) + I)) = (1 : ℂ) := SpherePacking.Contour.dir_z₂line
-    simp [scalarOneForm_apply, hdir, SpherePacking.Contour.lineMap_z₂line]
+    simpa [intervalIntegral.integral_of_le (μ := (volume : Measure ℝ))
+      (a := (0 : ℝ)) (b := 1) (by norm_num), scalarOneForm_apply, hdir,
+      SpherePacking.Contour.lineMap_z₂line] using
+      (curveIntegral_segment
+        (ω := scalarOneForm (MagicFunction.a.ComplexIntegrands.Φ₁' (‖x‖ ^ 2)))
+        ((-1 : ℂ) + I) I)
   have hmul :
       (fun x : ℝ⁸ ↦
           cexp (↑(-2 * (π * ⟪x, w⟫)) * I) *
@@ -173,11 +174,12 @@ public lemma fourier_I₂_eq_curveIntegral (w : ℝ⁸) :
       (∫ t in Ioc (0 : ℝ) 1, g t) =
         (∫ᶜ z in Path.segment ((-1 : ℂ) + I) I,
           scalarOneForm (Φ₁_fourier (‖w‖ ^ 2)) z) := by
-    rw [curveIntegral_segment (ω := scalarOneForm (Φ₁_fourier (‖w‖ ^ 2)))
-      ((-1 : ℂ) + I) I]
     have hdir : (I - ((-1 : ℂ) + I)) = (1 : ℂ) := SpherePacking.Contour.dir_z₂line
-    simp [g, intervalIntegral.integral_of_le, scalarOneForm_apply, hdir,
-      SpherePacking.Contour.lineMap_z₂line]
+    symm
+    simpa [g, intervalIntegral.integral_of_le, scalarOneForm_apply, hdir,
+      SpherePacking.Contour.lineMap_z₂line] using
+      (curveIntegral_segment (ω := scalarOneForm (Φ₁_fourier (‖w‖ ^ 2)))
+        ((-1 : ℂ) + I) I)
   calc
     (∫ x : ℝ⁸,
           cexp (↑(-2 * (π * ⟪x, w⟫)) * I) * MagicFunction.a.RealIntegrals.I₂' (‖x‖ ^ 2)) =
