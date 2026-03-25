@@ -64,10 +64,9 @@ private lemma sum_X_mul_pderiv_r2_pow_mul_lin_pow_C (y : Point) (j m : ℕ) :
     (univ : Finset Var).sum (fun i => (X i : Poly) * MvPolynomial.pderiv i
         ((R2Laplacian.r2 : Poly) ^ j * (lin y : Poly) ^ m))
         = (2 * j + m) • ((R2Laplacian.r2 : Poly) ^ j * (lin y : Poly) ^ m) := hEuler
-    _ = (((2 * j + m : ℕ) : ℝ) • ((R2Laplacian.r2 : Poly) ^ j * (lin y : Poly) ^ m)) :=
-          Eq.symm (Nat.cast_smul_eq_nsmul ℝ (2 * j + m) (r2 ^ j * lin y ^ m))
-    _ = (C ((2 * j + m : ℕ) : ℝ) : Poly) * ((R2Laplacian.r2 : Poly) ^ j * (lin y : Poly) ^ m) :=
-          smul_eq_C_mul (r2 ^ j * lin y ^ m) ↑(2 * j + m)
+    _ = (C ((2 * j + m : ℕ) : ℝ) : Poly) * ((R2Laplacian.r2 : Poly) ^ j * (lin y : Poly) ^ m) := by
+          rw [nsmul_eq_mul]
+          congr 1
 
 /-- Laplacian of `r²^j * (lin y)^m` in `24` variables. -/
 public lemma laplacian_r2_pow_mul_lin_pow (y : Point) (j m : ℕ) :
