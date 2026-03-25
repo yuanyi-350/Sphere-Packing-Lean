@@ -219,11 +219,13 @@ by
       simpa using this
     have hNbdd : ∀ᶠ z in atImInfty, ‖N z‖ ≤ 3 := by
       -- `N z → 2`, so eventually `‖N z - 2‖ < 1`, hence `‖N z‖ ≤ 3`.
-      have hNear : ∀ᶠ z in atImInfty, ‖N z - (2 : ℂ)‖ < 1 := by
-        have : {w : ℂ | ‖w - (2 : ℂ)‖ < 1} ∈ 𝓝 (2 : ℂ) :=
+      have hNear : ∀ᶠ z in atImInfty, N z ∈ Metric.ball (2 : ℂ) 1 := by
+        have : Metric.ball (2 : ℂ) 1 ∈ 𝓝 (2 : ℂ) :=
           Metric.ball_mem_nhds (2 : ℂ) (by norm_num)
         exact hNlim.eventually this
       filter_upwards [hNear] with z hz
+      have hz' : ‖N z - (2 : ℂ)‖ < 1 := by
+        simpa [Metric.ball, Complex.dist_eq] using hz
       have : ‖N z‖ ≤ ‖(2 : ℂ)‖ + ‖N z - (2 : ℂ)‖ := by
         simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
           (norm_add_le (2 : ℂ) (N z - (2 : ℂ)))
@@ -748,7 +750,10 @@ public lemma bProfile_hasDerivAt_zero_two_mul_nat_of_two_lt (k : ℕ) (hk : 2 < 
       simpa [a, b, mul_assoc, add_assoc, add_left_comm, add_comm] using
         (J₂'_J₄'_J₆'_factor_smooth (u := u) hu')
     have ha : HasDerivAt a (-(expU u0 1)⁻¹ * ((Real.pi : ℂ) * Complex.I)) u0 := by
-      simpa [a] using (hasDerivAt_expU_one_inv (u0 := u0)).sub_const (1 : ℂ)
+      have hsub :
+          HasDerivAt (fun u : ℝ => (expU u 1)⁻¹ - 1) (-(expU u0 1)⁻¹ * ((Real.pi : ℂ) * Complex.I)) u0 :=
+        (hasDerivAt_expU_one_inv (u0 := u0)).sub_const (1 : ℂ)
+      simpa [a] using hsub
     have hb_diff : DifferentiableAt ℝ b u0 := by
       have hJ4 : DifferentiableAt ℝ RealIntegrals.J₄' u0 :=
         (Schwartz.J4Smooth.contDiff_J₄'.contDiffAt (x := u0)).differentiableAt (by simp)
@@ -840,10 +845,13 @@ public theorem bRadial_hasDerivAt_zero_of_two_lt (k : ℕ) (hk : 2 < k) :
     ZerosAuxB.bProfile_hasDerivAt_zero_two_mul_nat_of_two_lt (k := k) hk
   have hsq : HasDerivAt (fun r : ℝ => r ^ 2) (2 * r0) r0 := by
     simpa [pow_two, two_mul, mul_assoc] using (hasDerivAt_pow 2 r0)
-  have hbprof' : HasDerivAt bProfile 0 (r0 ^ 2) := by
+  have hbprof' : HasDerivAt bProfile (0 : ℂ) (r0 ^ 2) := by
     simpa [hr0sq] using hbprof
-  have hcomp : HasDerivAt (fun r : ℝ => bProfile (r ^ 2)) 0 r0 := by
-    simpa using (hbprof'.scomp (x := r0) (h := fun r : ℝ => r ^ 2) hsq)
+  have hcomp : HasDerivAt (fun r : ℝ => bProfile (r ^ 2)) (0 : ℂ) r0 := by
+    let inst : IsScalarTower ℝ ℝ ℂ := ⟨by intro a b z; simp [smul_eq_mul, mul_assoc]⟩
+    have hcomp' : HasDerivAt (bProfile ∘ fun r : ℝ => r ^ 2) ((2 * r0) • (0 : ℂ)) r0 :=
+      @HasDerivAt.scomp ℝ _ ℂ _ _ r0 ℝ _ _ _ inst (fun r : ℝ => r ^ 2) (2 * r0) bProfile (0 : ℂ) hbprof' hsq
+    simpa [Function.comp] using hcomp'
   simpa [hbEq] using hcomp
 
 end
