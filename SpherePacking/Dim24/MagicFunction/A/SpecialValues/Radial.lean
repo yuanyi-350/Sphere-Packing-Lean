@@ -48,7 +48,9 @@ public theorem aRadial_sqrtTwo : aRadial (Real.sqrt 2) = (725760 : ℂ) * Comple
 
 /-- Derivative of `aRadial` at `Real.sqrt 2` (paper: `a'(√2) = -4437504 √2 * i / π`). -/
 public theorem aRadial_hasDerivAt_sqrtTwo :
-    HasDerivAt aRadial (-(4437504 : ℝ) * Real.sqrt 2 * Complex.I / (π : ℂ)) (Real.sqrt 2) := by
+    @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+      (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+      aRadial (-(4437504 : ℝ) * Real.sqrt 2 * Complex.I / (π : ℂ)) (Real.sqrt 2) := by
   /- Paper: `a'(√2) = -4437504 √2 i / π`. -/
   have hx : (0 : ℝ) ≤ (2 : ℝ) := by norm_num
   have hsq : (Real.sqrt (2 : ℝ)) ^ (2 : ℕ) = (2 : ℝ) := by
@@ -56,29 +58,39 @@ public theorem aRadial_hasDerivAt_sqrtTwo :
   have hsqDeriv : HasDerivAt (fun r : ℝ => r ^ (2 : ℕ)) (2 * Real.sqrt 2) (Real.sqrt 2) := by
     simpa using (hasDerivAt_pow (n := (2 : ℕ)) (x := (Real.sqrt 2 : ℝ)))
   have haProfAt :
-      HasDerivAt aProfile (-(2218752 : ℂ) * Complex.I / (π : ℂ)) ((Real.sqrt 2) ^ (2 : ℕ)) := by
+      @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+        (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+        aProfile (-(2218752 : ℂ) * Complex.I / (π : ℂ)) ((Real.sqrt 2) ^ (2 : ℕ)) := by
     simpa [hsq] using (SpecialValuesDerivTwo.aProfile_hasDerivAt_two :
-      HasDerivAt aProfile (-(2218752 : ℂ) * Complex.I / (π : ℂ)) (2 : ℝ))
+      @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+        (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+        aProfile (-(2218752 : ℂ) * Complex.I / (π : ℂ)) (2 : ℝ))
   have hcomp :
-      HasDerivAt (fun r : ℝ => aProfile (r ^ (2 : ℕ)))
-        ((2 * Real.sqrt 2) • (-(2218752 : ℂ) * Complex.I / (π : ℂ))) (Real.sqrt 2) := by
-    simpa [Function.comp_def] using
-      (HasDerivAt.scomp (g₁ := aProfile) (h := fun r : ℝ => r ^ (2 : ℕ)) (x := Real.sqrt 2)
-        haProfAt hsqDeriv)
+      @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+        (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+        (fun r : ℝ => aProfile (r ^ (2 : ℕ)))
+        ((2 * Real.sqrt 2 : ℝ) * (-(2218752 : ℂ) * Complex.I / (π : ℂ))) (Real.sqrt 2) := by
+    let inst : IsScalarTower ℝ ℝ ℂ := ⟨by intro a b z; simp [smul_eq_mul, mul_assoc]⟩
+    have hcomp' := @HasDerivAt.scomp ℝ _ ℂ _ _ (Real.sqrt 2) ℝ _ _ _ inst
+      (fun r : ℝ => r ^ (2 : ℕ)) (2 * Real.sqrt 2) aProfile
+      (-(2218752 : ℂ) * Complex.I / (π : ℂ)) haProfAt hsqDeriv
+    convert hcomp' using 1
   -- Convert back to `aRadial` and simplify the constant.
   have hfun : aRadial = fun r : ℝ => aProfile (r ^ (2 : ℕ)) := by
     funext r
     simp [aRadial_eq_aProfile]
   -- `(2*√2) • (-(2218752) * I / π) = (-(4437504) * √2 * I / π)`.
   have hconst :
-      ((2 * Real.sqrt 2) • (-(2218752 : ℂ) * Complex.I / (π : ℂ))) =
+      ((2 * Real.sqrt 2 : ℝ) * (-(2218752 : ℂ) * Complex.I / (π : ℂ))) =
         (-(4437504 : ℝ) * Real.sqrt 2 * Complex.I / (π : ℂ)) := by
     have hpi : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
     -- `simp` turns `•` into multiplication by a real scalar; then it's just arithmetic.
-    simp [Algebra.smul_def, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm]
+    simp [div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm]
     field_simp [hpi]
     norm_num
-  lia
+  rw [hfun]
+  convert hcomp using 1
+  exact hconst.symm
 
 /-- Special value `aRadial 2 = 0` (paper: `a(2) = 0`). -/
 public theorem aRadial_two : aRadial 2 = 0 := by
@@ -88,32 +100,44 @@ public theorem aRadial_two : aRadial 2 = 0 := by
 
 /-- Derivative of `aRadial` at `2` (paper: `a'(2) = -3456 * i / π`). -/
 public theorem aRadial_hasDerivAt_two :
-    HasDerivAt aRadial ((-3456 : ℂ) * Complex.I / (π : ℂ)) 2 := by
+    @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+      (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+      aRadial ((-3456 : ℂ) * Complex.I / (π : ℂ)) 2 := by
   /- Paper: `a'(2) = -3456 i / π`. -/
   have hsq : (2 : ℝ) ^ (2 : ℕ) = (4 : ℝ) := by norm_num
   have hsqDeriv : HasDerivAt (fun r : ℝ => r ^ (2 : ℕ)) (2 * (2 : ℝ)) (2 : ℝ) := by
     simpa using (hasDerivAt_pow (n := (2 : ℕ)) (x := (2 : ℝ)))
   have haProfAt :
-      HasDerivAt aProfile ((-864 : ℂ) * Complex.I / (π : ℂ)) ((2 : ℝ) ^ (2 : ℕ)) := by
+      @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+        (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+        aProfile ((-864 : ℂ) * Complex.I / (π : ℂ)) ((2 : ℝ) ^ (2 : ℕ)) := by
     simpa [hsq] using (aProfile_hasDerivAt_four :
-      HasDerivAt aProfile ((-864 : ℂ) * Complex.I / (π : ℂ)) (4 : ℝ))
+      @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+        (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+        aProfile ((-864 : ℂ) * Complex.I / (π : ℂ)) (4 : ℝ))
   have hcomp :
-      HasDerivAt (fun r : ℝ => aProfile (r ^ (2 : ℕ)))
-        ((2 * (2 : ℝ)) • ((-864 : ℂ) * Complex.I / (π : ℂ))) (2 : ℝ) := by
-    simpa [Function.comp_def] using
-      (HasDerivAt.scomp (g₁ := aProfile) (h := fun r : ℝ => r ^ (2 : ℕ)) (x := (2 : ℝ))
-        haProfAt hsqDeriv)
+      @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+        (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+        (fun r : ℝ => aProfile (r ^ (2 : ℕ)))
+        ((2 * (2 : ℝ) : ℝ) * ((-864 : ℂ) * Complex.I / (π : ℂ))) (2 : ℝ) := by
+    let inst : IsScalarTower ℝ ℝ ℂ := ⟨by intro a b z; simp [smul_eq_mul, mul_assoc]⟩
+    have hcomp' := @HasDerivAt.scomp ℝ _ ℂ _ _ (2 : ℝ) ℝ _ _ _ inst
+      (fun r : ℝ => r ^ (2 : ℕ)) (2 * (2 : ℝ)) aProfile
+      ((-864 : ℂ) * Complex.I / (π : ℂ)) haProfAt hsqDeriv
+    convert hcomp' using 1
   have hfun : aRadial = fun r : ℝ => aProfile (r ^ (2 : ℕ)) := by
     funext r
     simp [aRadial_eq_aProfile]
   have hconst :
-      ((2 * (2 : ℝ)) • ((-864 : ℂ) * Complex.I / (π : ℂ))) =
+      ((2 * (2 : ℝ) : ℝ) * ((-864 : ℂ) * Complex.I / (π : ℂ))) =
         ((-3456 : ℂ) * Complex.I / (π : ℂ)) := by
     have hpi : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
-    simp [Algebra.smul_def, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm]
+    simp [div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm]
     field_simp [hpi]
     norm_num
-  simp_all
+  rw [hfun]
+  convert hcomp using 1
+  exact hconst.symm
 
 end
 
