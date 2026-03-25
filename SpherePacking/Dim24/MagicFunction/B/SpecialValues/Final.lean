@@ -35,8 +35,8 @@ private lemma hasDerivAt_bRadial_of_hasDerivAt_bProfile
     simpa using (hasDerivAt_pow (n := (2 : ℕ)) (x := r0))
   have hcomp :
       HasDerivAt (fun r : ℝ => bProfile (r ^ (2 : ℕ))) ((2 * r0) • d) r0 := by
-    simpa [Function.comp_def] using
-      (HasDerivAt.scomp (g₁ := bProfile) (h := fun r : ℝ => r ^ (2 : ℕ)) (x := r0) hb hsqDeriv)
+    convert (HasFDerivAt.comp_hasDerivAt (f := fun r : ℝ => r ^ (2 : ℕ)) (l := bProfile)
+      (x := r0) (hl := hb.hasFDerivAt) (hf := hsqDeriv)) using 1
   simpa [bRadial_eq_fun] using hcomp
 
 /-- The radial profile `bRadial` vanishes at the origin. -/
