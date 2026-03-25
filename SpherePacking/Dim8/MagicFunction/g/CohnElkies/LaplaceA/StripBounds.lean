@@ -697,7 +697,12 @@ public lemma I₁'_add_I₃'_add_I₅'_eq_imag_axis (u : ℝ) :
               simp [Φ₁'_shift_left (u := u) (t := t), mul_assoc]
         _ = (I : ℂ) * Complex.exp (-(((π * u : ℝ) : ℂ) * I)) *
               (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * I)) := by
-              simp [mul_assoc]
+              calc
+                ∫ t in (0 : ℝ)..1, (I : ℂ) * (Complex.exp (-(((π * u : ℝ) : ℂ) * I)) * Φ₅' u ((t : ℂ) * I)) =
+                    ∫ t in (0 : ℝ)..1, ((I : ℂ) * Complex.exp (-(((π * u : ℝ) : ℂ) * I))) * Φ₅' u ((t : ℂ) * I) := by
+                      refine intervalIntegral.integral_congr ?_; intro t ht; simp [mul_assoc]
+                _ = ((I : ℂ) * Complex.exp (-(((π * u : ℝ) : ℂ) * I))) * (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * I)) :=
+                    intervalIntegral.integral_const_mul _ _
     -- Finish by unfolding `I₁'`/`Φ₁` and rewriting `V0`.
     simpa
         [MagicFunction.a.RealIntegrals.I₁', MagicFunction.a.RealIntegrands.Φ₁, hV0, mul_assoc]
@@ -729,7 +734,12 @@ public lemma I₁'_add_I₃'_add_I₅'_eq_imag_axis (u : ℝ) :
               simp [Φ₃'_shift_right (u := u) (t := t), mul_assoc]
         _ = (I : ℂ) * Complex.exp (((π * u : ℝ) : ℂ) * I) *
               (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * I)) := by
-              simp [mul_assoc]
+              calc
+                ∫ t in (0 : ℝ)..1, (I : ℂ) * (Complex.exp (((π * u : ℝ) : ℂ) * I) * Φ₅' u ((t : ℂ) * I)) =
+                    ∫ t in (0 : ℝ)..1, ((I : ℂ) * Complex.exp (((π * u : ℝ) : ℂ) * I)) * Φ₅' u ((t : ℂ) * I) := by
+                      refine intervalIntegral.integral_congr ?_; intro t ht; simp [mul_assoc]
+                _ = ((I : ℂ) * Complex.exp (((π * u : ℝ) : ℂ) * I)) * (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * I)) :=
+                    intervalIntegral.integral_const_mul _ _
     simpa
         [MagicFunction.a.RealIntegrals.I₃', MagicFunction.a.RealIntegrands.Φ₃, hV0, mul_assoc]
       using hparam.trans hshift
@@ -746,7 +756,8 @@ public lemma I₁'_add_I₃'_add_I₅'_eq_imag_axis (u : ℝ) :
     have hI :
         (∫ t in (0 : ℝ)..1, (I : ℂ) * Φ₅' u ((t : ℂ) * I)) =
           (I : ℂ) * (∫ t in (0 : ℝ)..1, Φ₅' u ((t : ℂ) * I)) := by
-      simp
+      convert (intervalIntegral.integral_const_mul
+        (a := (0 : ℝ)) (b := 1) (I : ℂ) (fun t : ℝ => Φ₅' u ((t : ℂ) * I))) using 1
     -- Unfold `I₅'`/`Φ₅` and rewrite `V0`.
     have h' :
         MagicFunction.a.RealIntegrals.I₅' u =
