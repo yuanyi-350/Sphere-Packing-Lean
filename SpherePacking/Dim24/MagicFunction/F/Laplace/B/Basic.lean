@@ -97,9 +97,15 @@ public lemma J₁'_add_J₃'_add_J₅'_eq_imag_axis (u : ℝ) :
           _ = Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) * expU u (z₅' t) := by
                 simp [hneg]
       simp [hψ, hexp, mul_assoc, mul_left_comm, mul_comm]
-    -- Pull out constants.
-    simpa [RealIntegrals.J₁', expU, V0, hV0, mul_assoc, mul_left_comm, mul_comm,
-      intervalIntegral.integral_const_mul, intervalIntegral.integral_mul_const] using hcongr
+    have hmul : (∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * ψI' (z₅' t) *
+        (Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) * expU u (z₅' t))) =
+        (Complex.I : ℂ) * Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)) * V0 := by
+      simpa only [V0, mul_assoc, mul_left_comm, mul_comm] using
+        (intervalIntegral.integral_const_mul (μ := MeasureTheory.volume)
+          (a := (0 : ℝ)) (b := (1 : ℝ))
+          ((Complex.I : ℂ) * Complex.exp (-(((Real.pi * u : ℝ) : ℂ) * Complex.I)))
+          (fun t : ℝ => ψI' (z₅' t) * expU u (z₅' t)))
+    simpa [RealIntegrals.J₁', expU] using hcongr.trans hmul
   have hJ3 :
       J₃' u = (Complex.I : ℂ) * Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * V0 := by
     have hcongr :
@@ -129,10 +135,24 @@ public lemma J₁'_add_J₃'_add_J₅'_eq_imag_axis (u : ℝ) :
           _ = Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * expU u (z₅' t) := by
                 simp [hpos]
       simp [hψ, hexp, mul_assoc, mul_left_comm, mul_comm]
-    simpa [RealIntegrals.J₃', expU, V0, hV0, mul_assoc, mul_left_comm, mul_comm,
-      intervalIntegral.integral_const_mul, intervalIntegral.integral_mul_const] using hcongr
+    have hmul : (∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * ψI' (z₅' t) *
+        (Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * expU u (z₅' t))) =
+        (Complex.I : ℂ) * Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I) * V0 := by
+      simpa only [V0, mul_assoc, mul_left_comm, mul_comm] using
+        (intervalIntegral.integral_const_mul (μ := MeasureTheory.volume)
+          (a := (0 : ℝ)) (b := (1 : ℝ))
+          ((Complex.I : ℂ) * Complex.exp (((Real.pi * u : ℝ) : ℂ) * Complex.I))
+          (fun t : ℝ => ψI' (z₅' t) * expU u (z₅' t)))
+    simpa [RealIntegrals.J₃', expU] using hcongr.trans hmul
   have hJ5 : J₅' u = (-2 : ℂ) * (Complex.I : ℂ) * V0 := by
-    simp [RealIntegrals.J₅', expU, V0, mul_assoc, mul_left_comm, mul_comm]
+    rw [RealIntegrals.J₅']
+    have hI :
+        (∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * ψI' (z₅' t) * Complex.exp (Real.pi * Complex.I * (u : ℂ) * (z₅' t))) =
+          (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, ψI' (z₅' t) * expU u (z₅' t) := by
+      simpa only [expU, mul_assoc, mul_left_comm, mul_comm] using
+        (intervalIntegral.integral_const_mul (μ := MeasureTheory.volume)
+          (a := (0 : ℝ)) (b := (1 : ℝ)) (Complex.I : ℂ) (fun t : ℝ => ψI' (z₅' t) * expU u (z₅' t)))
+    simpa [V0, mul_assoc] using congrArg (fun z : ℂ => (-2 : ℂ) * z) hI
   grind only
 
 end
