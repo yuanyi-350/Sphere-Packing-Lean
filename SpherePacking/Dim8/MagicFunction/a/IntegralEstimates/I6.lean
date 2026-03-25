@@ -183,6 +183,10 @@ private lemma integrable_gN (n : ℕ) (r : ℝ) (hr : -1 < r) : Integrable (gN n
       have hmulpow : (π * t) ^ n = (π ^ n) * (t ^ n) := by simp [mul_pow, mul_comm]
       grind only
 
+local instance : ContinuousSMul ℝ ℂ := by
+  constructor
+  simpa [smul_eq_mul] using (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd
+
 private lemma hasDerivAt_integral_gN (n : ℕ) (r₀ : ℝ) (hr₀ : -1 < r₀) :
     HasDerivAt (fun r : ℝ ↦ ∫ t in Ici (1 : ℝ), gN n r t)
       (∫ t in Ici (1 : ℝ), gN (n + 1) r₀ t) r₀ := by
@@ -284,12 +288,12 @@ lemma iteratedDeriv_I₆'_eq_integral_gN (n : ℕ) :
           HasDerivAt (fun x : ℝ ↦ ∫ t in Ici (1 : ℝ), gN n x t)
             (∫ t in Ici (1 : ℝ), gN (n + 1) r t) r :=
         hasDerivAt_integral_gN (n := n) (r₀ := r) hr
-      simpa using (hI.const_mul (2 : ℂ)).deriv
+      exact (hI.const_mul (2 : ℂ)).deriv
     calc
       iteratedDeriv (n + 1) I₆' r = deriv (iteratedDeriv n I₆') r := by
-        simp [iteratedDeriv_succ]
+        simpa using congrFun (iteratedDeriv_succ (n := n) (f := I₆')) r
       _ = deriv (fun x : ℝ ↦ 2 * ∫ t in Ici (1 : ℝ), gN n x t) r := by
-        simpa using hEv.deriv_eq
+        exact hEv.deriv_eq
       _ = 2 * ∫ t in Ici (1 : ℝ), gN (n + 1) r t := hder_int
 
 lemma iteratedDeriv_bound (n : ℕ) :
