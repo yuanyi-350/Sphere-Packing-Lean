@@ -48,7 +48,7 @@ lemma innerLinearPoly_isHomogeneous (v : ℝ²⁴) : (innerLinearPoly v).IsHomog
 lemma mvPolyEval24_innerLinearPoly (v x : ℝ²⁴) :
     mvPolyEval24 (innerLinearPoly v) x = (⟪x, v⟫ : ℝ) := by
   -- `eval` turns `C (v i) * X i` into `v i * x i`, which is the coordinate sum for `⟪x,v⟫`.
-  simp [mvPolyEval24, innerLinearPoly, PiLp.inner_apply, mul_comm]
+  simp [mvPolyEval24, innerLinearPoly, inner, mul_comm]
 
 lemma mvPolyEval24_innerLinearPoly_pow_apply (v x : ℝ²⁴) (k : ℕ) :
     mvPolyEval24 (innerLinearPoly v ^ k) x = (⟪x, v⟫ : ℝ) ^ k := by
