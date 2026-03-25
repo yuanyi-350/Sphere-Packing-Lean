@@ -266,7 +266,10 @@ public theorem pTildeIntegral_eq_pTildeProfile_of_lt {u : ℝ} (hu : 4 < u) :
       (∫ t : ℝ, g1 t ∂μ) =
           (-(864 : ℂ) / ((π : ℂ) ^ (2 : ℕ))) *
             (∫ t : ℝ, (Real.exp (-Real.pi * (u - 4) * t) : ℂ) ∂μ) := by
-        simp [-Complex.ofReal_exp, g1, MeasureTheory.integral_const_mul]
+        simpa [g1, smul_eq_mul, -Complex.ofReal_exp] using
+          (MeasureTheory.integral_const_mul (μ := μ)
+            (r := (-(864 : ℂ) / ((π : ℂ) ^ (2 : ℕ))))
+            (f := fun t : ℝ => (Real.exp (-Real.pi * (u - 4) * t) : ℂ)))
       _ = (-(864 : ℂ) / ((π : ℂ) ^ (2 : ℕ))) * ((1 : ℂ) / ((Real.pi * (u - 4)) : ℂ)) := by
         rw [hbase]
       _ = ((-864 : ℂ) / ((π : ℂ) ^ (3 : ℕ))) / ((u - 4 : ℝ) : ℂ) := by
@@ -284,7 +287,10 @@ public theorem pTildeIntegral_eq_pTildeProfile_of_lt {u : ℝ} (hu : 4 < u) :
       (∫ t : ℝ, g3 t ∂μ) =
           (-(2218752 : ℂ) / ((π : ℂ) ^ (2 : ℕ))) *
               (∫ t : ℝ, (Real.exp (-Real.pi * (u - 2) * t) : ℂ) ∂μ) := by
-            simp [-Complex.ofReal_exp, g3, MeasureTheory.integral_const_mul]
+            simpa [g3, smul_eq_mul, -Complex.ofReal_exp] using
+              (MeasureTheory.integral_const_mul (μ := μ)
+                (r := (-(2218752 : ℂ) / ((π : ℂ) ^ (2 : ℕ))))
+                (f := fun t : ℝ => (Real.exp (-Real.pi * (u - 2) * t) : ℂ)))
       _ = (-(2218752 : ℂ) / ((π : ℂ) ^ (2 : ℕ))) * ((1 : ℂ) / ((Real.pi * (u - 2)) : ℂ)) := by
             rw [hbase]
       _ = ((-2218752 : ℂ) / ((π : ℂ) ^ (3 : ℕ))) / ((u - 2 : ℝ) : ℂ) := by
@@ -300,7 +306,10 @@ public theorem pTildeIntegral_eq_pTildeProfile_of_lt {u : ℝ} (hu : 4 < u) :
       (∫ t : ℝ, g5 t ∂μ) =
           (-(223140096 : ℂ) / ((π : ℂ) ^ (2 : ℕ))) *
               (∫ t : ℝ, (Real.exp (-Real.pi * u * t) : ℂ) ∂μ) := by
-            simp [-Complex.ofReal_exp, g5, MeasureTheory.integral_const_mul]
+            simpa [g5, smul_eq_mul, -Complex.ofReal_exp] using
+              (MeasureTheory.integral_const_mul (μ := μ)
+                (r := (-(223140096 : ℂ) / ((π : ℂ) ^ (2 : ℕ))))
+                (f := fun t : ℝ => (Real.exp (-Real.pi * u * t) : ℂ)))
       _ = (-(223140096 : ℂ) / ((π : ℂ) ^ (2 : ℕ))) * ((1 : ℂ) / ((Real.pi * u) : ℂ)) := by
             rw [hbase]
       _ = ((-223140096 : ℂ) / ((π : ℂ) ^ (3 : ℕ))) / ((u : ℝ) : ℂ) := by
@@ -317,7 +326,10 @@ public theorem pTildeIntegral_eq_pTildeProfile_of_lt {u : ℝ} (hu : 4 < u) :
       (∫ t : ℝ, g2 t ∂μ) =
           ((725760 : ℂ) / (π : ℂ)) *
               (∫ t : ℝ, (t : ℂ) * (Real.exp (-Real.pi * (u - 2) * t) : ℂ) ∂μ) := by
-            simp [-Complex.ofReal_exp, g2, mul_assoc, MeasureTheory.integral_const_mul]
+            simpa [g2, smul_eq_mul, -Complex.ofReal_exp, mul_assoc] using
+              (MeasureTheory.integral_const_mul (μ := μ)
+                (r := ((725760 : ℂ) / (π : ℂ)))
+                (f := fun t : ℝ => (t : ℂ) * (Real.exp (-Real.pi * (u - 2) * t) : ℂ)))
       _ = ((725760 : ℂ) / (π : ℂ)) * ((1 : ℂ) / ((Real.pi * (u - 2)) : ℂ) ^ (2 : ℕ)) := by
             rw [hbase]
       _ = ((725760 : ℂ) / ((π : ℂ) ^ (3 : ℕ))) / (((u - 2) ^ (2 : ℕ) : ℝ) : ℂ) := by
@@ -334,7 +346,10 @@ public theorem pTildeIntegral_eq_pTildeProfile_of_lt {u : ℝ} (hu : 4 < u) :
       (∫ t : ℝ, g4 t ∂μ) =
           ((113218560 : ℂ) / (π : ℂ)) *
               (∫ t : ℝ, (t : ℂ) * (Real.exp (-Real.pi * u * t) : ℂ) ∂μ) := by
-            simp [-Complex.ofReal_exp, g4, mul_assoc, MeasureTheory.integral_const_mul]
+            simpa [g4, smul_eq_mul, -Complex.ofReal_exp, mul_assoc] using
+              (MeasureTheory.integral_const_mul (μ := μ)
+                (r := ((113218560 : ℂ) / (π : ℂ)))
+                (f := fun t : ℝ => (t : ℂ) * (Real.exp (-Real.pi * u * t) : ℂ)))
       _ = ((113218560 : ℂ) / (π : ℂ)) * ((1 : ℂ) / ((Real.pi * u) : ℂ) ^ (2 : ℕ)) := by
             rw [hbase]
       _ = ((113218560 : ℂ) / ((π : ℂ) ^ (3 : ℕ))) / ((u ^ (2 : ℕ) : ℝ) : ℂ) := by
