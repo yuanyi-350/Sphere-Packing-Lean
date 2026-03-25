@@ -521,7 +521,8 @@ public lemma coeffQ_powQ_zero (a : List ℚ) : ∀ k : ℕ,
     BleadingCoeffs.coeffQ (BleadingCoeffs.powQ a k) 0 = (BleadingCoeffs.coeffQ a 0) ^ k
   | 0 => by
       -- `powQ a 0` is the constant series `1`.
-      simp [BleadingCoeffs.powQ, BleadingCoeffs.coeffQ]
+      have hQ : 0 < BleadingCoeffs.QN := by decide
+      simp [BleadingCoeffs.powQ, BleadingCoeffs.coeffQ, hQ]
   | Nat.succ k => by
       -- `powQ a (k+1) = mulQ a (powQ a k)`.
       simp [BleadingCoeffs.powQ, coeffQ_mulQ_zero, coeffQ_powQ_zero a k, pow_succ, mul_comm]
