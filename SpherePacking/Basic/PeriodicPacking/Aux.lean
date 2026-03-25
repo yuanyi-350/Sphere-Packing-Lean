@@ -129,8 +129,8 @@ public lemma disjoint_vadd_of_unique_covers {Λ : Submodule ℤ (EuclideanSpace 
   refine Set.disjoint_left.2 (by
     intro x hxg hxh
     exact hgh <| neg_injective <| (hD_unique_covers x).unique
-      (by simpa [Set.mem_vadd_set_iff_neg_vadd_mem] using hxg)
-      (by simpa [Set.mem_vadd_set_iff_neg_vadd_mem] using hxh))
+      ((Set.mem_vadd_set_iff_neg_vadd_mem).mp hxg)
+      ((Set.mem_vadd_set_iff_neg_vadd_mem).mp hxh))
 
 end Pointwise
 
@@ -180,6 +180,7 @@ noncomputable def PeriodicSpherePacking.addActionOrbitRelEquiv
     · apply hg'
       exact (Classical.choose_spec (hD_unique_covers x)).left
     · apply (hg' 0 ?_).symm
+      change (((0 : S.lattice) : EuclideanSpace ℝ (Fin d)) + x) ∈ D
       simpa using hx.right
 
 public noncomputable def PeriodicSpherePacking.addActionOrbitRelEquiv'
