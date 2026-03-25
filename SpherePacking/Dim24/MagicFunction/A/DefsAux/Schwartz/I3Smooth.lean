@@ -116,7 +116,9 @@ private lemma I₃'_eq (x : ℝ) :
     _ =
         (∫ t in (0 : ℝ)..1, RealIntegrals.RealIntegrands.Φ₁ x t) *
           cexp ((x : ℂ) * ((2 * Real.pi : ℂ) * Complex.I)) := by
-            simp [intervalIntegral.integral_mul_const]
+            exact intervalIntegral.integral_mul_const
+              (cexp ((x : ℂ) * ((2 * Real.pi : ℂ) * Complex.I)))
+              (RealIntegrals.RealIntegrands.Φ₁ x)
     _ = RealIntegrals.I₁' x * cexp ((x : ℂ) * ((2 * Real.pi : ℂ) * Complex.I)) := by rfl
 
 /-- Smoothness of `I₃'`. -/
