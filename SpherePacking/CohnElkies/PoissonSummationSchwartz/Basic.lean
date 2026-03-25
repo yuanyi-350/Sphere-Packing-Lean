@@ -239,6 +239,10 @@ public lemma mFourier_neg_apply_coeFunE (n : Fin d → ℤ) (x : E) :
   simp [PoissonSummation.Standard.coeFunE, UnitAddTorus.mFourier_apply_coeFun_ofLp,
     Real.fourierChar_apply, SchwartzMap.PoissonSummation.Standard.intVec, PiLp.inner_apply,
     Finset.sum_neg_distrib, mul_assoc, mul_comm]
+  congr 5
+  apply Finset.sum_congr rfl
+  intro i hi
+  norm_num [inner]
 
 @[simp] lemma intVec_neg (n : Fin d → ℤ) :
     SchwartzMap.PoissonSummation.Standard.intVec (d := d) (-n) =
