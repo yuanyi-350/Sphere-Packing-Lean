@@ -406,8 +406,8 @@ lemma ibp_gaussWeight_evalPoly24_pderiv
     (integral_mul_fderiv_eq_neg_fderiv_mul_of_integrable (μ := (volume : Measure ℝ²⁴))
       (f := fun x : ℝ²⁴ => evalPoly24 (y := x) (MvPolynomial.pderiv i p))
       (g := gaussWeight) (v := e24 i) hf'g hfg' hfg
-      (differentiable_evalPoly24 (p := MvPolynomial.pderiv i p))
-      differentiable_gaussWeight)
+      (by intro x hx; exact differentiable_evalPoly24 (p := MvPolynomial.pderiv i p) x)
+      (by intro x hx; exact differentiable_gaussWeight x))
 
 lemma gaussIntegral_evalPoly24_eq_zero_of_isHomogeneous_of_harmonic
     {k : ℕ} (hk : 1 ≤ k) {p : Poly} (hp : p.IsHomogeneous k)
@@ -574,7 +574,7 @@ lemma gaussIntegral_evalPoly24_eq_zero_of_isHomogeneous_of_harmonic
               simpa using hconst.symm
         _ = 0 := hsum0_neg
     -- Substitute the Euler-integral identity.
-    exact CancelDenoms.derive_trans (id (Eq.symm hlin)) hmul
+    simpa [hlin] using hmul
   have hki : (k : ℝ) * (∫ x : ℝ²⁴, evalPoly24 (y := x) p * gaussWeight x ∂volume) = 0 :=
     (mul_eq_zero.mp hmain).resolve_left (by norm_num)
   exact (mul_eq_zero.mp hki).resolve_left hk0
