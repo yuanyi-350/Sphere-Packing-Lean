@@ -70,8 +70,8 @@ lemma thetaProfile_iteratedDeriv (τ : ℂ) (n : ℕ) (r : ℝ) :
           _ = deriv (fun x : ℝ => c ^ n * thetaProfile τ x) r := by
                   simp [hfun]
           _ = c ^ n * deriv (thetaProfile τ) r := by
-                  simp [deriv_const_mul_field (x := r) (u := c ^ n)
-                    (v := fun x : ℝ => thetaProfile τ x)]
+                  exact
+                    (deriv_const_mul_field (x := r) (u := c ^ n) (v := fun x : ℝ => thetaProfile τ x))
           _ = c ^ n * (c * thetaProfile τ r) := by
                   have hderiv' : deriv (thetaProfile τ) r = c * thetaProfile τ r := by
                     -- change to the linearized form
