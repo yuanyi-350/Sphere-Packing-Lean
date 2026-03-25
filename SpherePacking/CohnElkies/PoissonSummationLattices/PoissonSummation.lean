@@ -234,7 +234,7 @@ public lemma dualSubmodule_standardLattice_eq :
     rcases exists_intVec_eq_of_mem_standardLattice (d := d) y hy with ⟨m, rfl⟩
     refine Submodule.mem_one.mpr ⟨∑ i : Fin d, n i * m i, ?_⟩
     simp [innerₗ_apply_apply, SchwartzMap.PoissonSummation.Standard.intVec,
-      PiLp.inner_apply, map_sum, Int.cast_mul, mul_comm]
+      inner, map_sum, Int.cast_mul, mul_comm]
 
 end SchwartzMap.PoissonSummation.Standard
 namespace SchwartzMap
@@ -299,7 +299,9 @@ public theorem isAddFundamentalDomain_iocCube :
     ⟨(⟨SchwartzMap.PoissonSummation.Standard.intVec (d := d) n,
         SchwartzMap.PoissonSummation.Standard.intVec_mem_standardLattice (d := d) n⟩), ?_, ?_⟩
   · -- membership
-    simpa [Submodule.vadd_def, vadd_eq_add, add_comm, add_left_comm, add_assoc] using hn
+    change SchwartzMap.PoissonSummation.Standard.intVec (d := d) n + x ∈
+      SchwartzMap.PoissonSummation.Standard.iocCube (d := d)
+    simpa [add_comm] using hn
   · -- uniqueness
     intro ℓ hℓ
     rcases
@@ -307,7 +309,8 @@ public theorem isAddFundamentalDomain_iocCube :
           (ℓ : E) ℓ.property with
       ⟨n', hn'⟩
     have : n' = n := hn_unique n' (by
-      simpa [Submodule.vadd_def, vadd_eq_add, add_comm, add_left_comm, add_assoc, hn'] using hℓ)
+      change (ℓ : E) + x ∈ SchwartzMap.PoissonSummation.Standard.iocCube (d := d) at hℓ
+      simpa [add_comm, hn'] using hℓ)
     apply Subtype.ext
     simp [hn', this]
 
