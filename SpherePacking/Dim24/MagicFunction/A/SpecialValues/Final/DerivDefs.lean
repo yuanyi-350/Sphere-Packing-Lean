@@ -744,10 +744,12 @@ public lemma Vtail_eq_tailRem_add_tailSing (u : ℝ) (hu : 4 < u) :
       simpa [singIntC, singInt, μ] using h
     calc
       (∫ t : ℝ in Set.Ioi (1 : ℝ), c864 * (Real.exp (-Real.pi * (u - 4) * t) : ℂ)) =
-          c864 * ∫ t : ℝ in Set.Ioi (1 : ℝ), (Real.exp (-Real.pi * (u - 4) * t) : ℂ) := by
-            simp [MeasureTheory.integral_const_mul, mul_assoc]
+        c864 * ∫ t : ℝ in Set.Ioi (1 : ℝ), (Real.exp (-Real.pi * (u - 4) * t) : ℂ) := by
+          simpa [μ] using
+            (MeasureTheory.integral_const_mul (μ := μ) c864
+              (fun t : ℝ => (Real.exp (-Real.pi * (u - 4) * t) : ℂ)))
       _ = c864 * singIntC u := by
-            simpa using congrArg (fun z : ℂ => c864 * z) hcast
+          simpa using congrArg (fun z : ℂ => c864 * z) hcast
       _ = tailSing u := by simp [tailSing]
   -- Solve for `Vtail u`.
   have hV : Vtail u = ∫ t : ℝ in Set.Ioi (1 : ℝ), Φ₅' u ((t : ℂ) * Complex.I) := rfl
