@@ -170,7 +170,10 @@ public lemma ψS_rect_integral_eq_one_add_expU_one_mul_vertical (u : ℝ) (hu0 :
     have :
         ∫ (t : ℝ) in Set.Ioi (1 : ℝ), -(fU (t * Complex.I) * (expU u 1)) =
           -((∫ (t : ℝ) in Set.Ioi (1 : ℝ), fU (t * Complex.I)) * (expU u 1)) := by
-      simp [MeasureTheory.integral_neg, MeasureTheory.integral_mul_const]
+      rw [MeasureTheory.integral_neg]
+      simpa using congrArg Neg.neg
+        (MeasureTheory.integral_mul_const (μ := MeasureTheory.volume.restrict (Set.Ioi (1 : ℝ)))
+          (r := expU u 1) (f := fun t : ℝ => fU (t * Complex.I)))
     simpa [hEqInt] using this
   have hleft :
       (∫ (t : ℝ) in Set.Ioi (1 : ℝ), fU ((0 : ℂ) + t * Complex.I)) =
