@@ -64,8 +64,11 @@ lemma E4_cubed_q_exp_one :
     simpa using (E4_sq_q_exp_zero : (qExpansion 1 (E₄.mul E₄)).coeff 0 = 1)
   have h1' : (qExpansion 1 (E₄.mul E₄)).coeff 1 = 480 := by
     simpa using (E4_sq_q_exp_one : (qExpansion 1 (E₄.mul E₄)).coeff 1 = 480)
-  simp [h0, h1, h0', h1']
-  ring
+  have h0'' : PowerSeries.constantCoeff (qExpansion 1 (⇑E₄ * ⇑E₄)) = (1 : ℂ) := by
+    simpa [PowerSeries.coeff_zero_eq_constantCoeff_apply] using h0'
+  have h1'' : (qExpansion 1 (⇑E₄ * ⇑E₄)).coeff 1 = (480 : ℂ) := by
+    simpa using h1'
+  norm_num [PowerSeries.coeff_zero_eq_constantCoeff_apply, h0, h1, h0'', h1'']
 
 lemma extremal_weight12_q_exp_one :
     (qExpansion 1 extremalWeight12).coeff 1 = 0 := by
