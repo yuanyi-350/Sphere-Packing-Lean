@@ -47,7 +47,11 @@ public lemma deriv_mobiusInv (z : ℂ) :
 /-- Real Fréchet derivative of `mobiusInv` at a nonzero point. -/
 public lemma hasFDerivAt_mobiusInv_real (z : ℂ) (hz : z ≠ 0) :
     HasFDerivAt (𝕜 := ℝ) mobiusInv (ContinuousLinearMap.mulLeftRight ℝ ℂ z⁻¹ z⁻¹) z := by
-  simpa [mobiusInv] using (hasFDerivAt_inv' (𝕜 := ℝ) (R := ℂ) hz).neg
+  convert (hasFDerivAt_inv' (𝕜 := ℝ) (R := ℂ) hz).neg using 1
+  · ext w
+    change (((ContinuousLinearMap.mulLeftRight ℝ ℂ) z⁻¹) z⁻¹) w =
+      (- -((ContinuousLinearMap.mulLeftRight ℝ ℂ) z⁻¹) z⁻¹) w
+    exact congrArg (fun g => g z⁻¹ w) (Eq.symm (neg_neg ((ContinuousLinearMap.mulLeftRight ℝ ℂ) z⁻¹)))
 
 /-- Derivative of `mobiusInv` composed with a line segment `AffineMap.lineMap a b`. -/
 public lemma hasDerivAt_mobiusInv_comp_lineMap (a b : ℂ) (t : ℝ)
