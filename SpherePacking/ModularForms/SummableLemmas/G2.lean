@@ -23,7 +23,7 @@ open ArithmeticFunction
 public lemma G_2_alt_summable_δ (z : ℍ) : Summable fun (m : Fin 2 → ℤ) =>
     (1 / (((m 0 : ℂ) * z + m 1)^2 * (m 0 * z + m 1 + 1)) + δ (m 0) (m 1)) := by
   refine (G_2_alt_summable z).add ?_
-  refine summable_of_finite_support ?_
+  refine summable_of_hasFiniteSupport ?_
   refine ((Set.finite_singleton (![0, 0] : Fin 2 → ℤ)).insert (![0, -1])).subset ?_
   intro m hm
   by_cases h00 : m 0 = 0 ∧ m 1 = 0
