@@ -55,6 +55,14 @@ section Setup
 /-- Rewrite `I₂' r` as a set integral of `g r` over `Ioo (0, 1)`. -/
 public lemma I₂'_eq_integral_g_Ioo (r : ℝ) : I₂' r = ∫ t in Ioo (0 : ℝ) 1, g r t := by
   simp [I₂'_eq, intervalIntegral_eq_integral_uIoc, zero_le_one, g, integral_Ioc_eq_integral_Ioo]
+  change (1 : ℝ) •
+      (∫ t in Ioo (0 : ℝ) 1,
+        φ₀'' (-1 / (t + I)) * (t + I) ^ 2 * cexp (-(π * I * r)) * cexp (π * I * r * t) *
+          cexp (-(π * r)) ∂volume) =
+    ∫ t in Ioo (0 : ℝ) 1,
+      φ₀'' (-1 / (t + I)) * (t + I) ^ 2 * cexp (-(π * I * r)) * cexp (π * I * r * t) *
+        cexp (-(π * r)) ∂volume
+  exact one_smul ℝ _
 
 end Setup
 
