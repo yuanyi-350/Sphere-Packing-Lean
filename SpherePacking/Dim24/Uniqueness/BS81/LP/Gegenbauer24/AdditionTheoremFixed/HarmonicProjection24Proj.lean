@@ -42,7 +42,8 @@ public lemma harmApproxPk_mem_Harm (k : ℕ) (y : ℝ²⁴) (hy : ‖y‖ = (1 :
     harmApproxPk k y ∈ (Harmonic.Harm k) := by
   refine (Harmonic.mem_Harm_iff (k := k) (p := harmApproxPk k y)).2 ?_
   ext d
-  simp [Harmonic.laplacianPk, harmApproxPk, laplacian_harmApprox_eq_zero (k := k) (y := y) hy]
+  simpa [Harmonic.laplacianPk, harmApproxPk] using
+    congrArg (coeff d) (laplacian_harmApprox_eq_zero (k := k) (y := y) hy)
 
 /-- `harmApprox` packaged as an element of the harmonic subspace (under `‖y‖=1`). -/
 @[expose] public noncomputable def harmApproxHarm (k : ℕ) (y : ℝ²⁴) (hy : ‖y‖ = (1 : ℝ)) :
@@ -174,7 +175,7 @@ lemma harmApprox_eq_leading_add_r2_mul_corr (k : ℕ) (y : ℝ²⁴) :
 
 lemma mulXPk_val (k : ℕ) (i : Var) (p : Pk k) :
     (mulXPk (k := k) i p : Pk (k + 1)).1 = (X i : Poly) * p.1 := by
-  simp [mulXPk, LinearMap.codRestrict, LinearMap.comp_apply]
+  simp [mulXPk]
 
 lemma mulR2Pk_val (k : ℕ) (p : Pk k) :
     (mulR2Pk (k := k) p : Pk (k + 2)).1 = (r2 : Poly) * p.1 := by
@@ -216,12 +217,14 @@ lemma ZscaledPk_sub_harmApproxPk_eq_mulR2_succ_succ (m : ℕ) (y : ℝ²⁴) :
   have hH : (harmApproxPk (m + 2) y).1 =
       (aCoeff (m + 2) 0) • (t y : Poly) ^ (m + 2) + (r2 : Poly) * corrPoly (m + 2) y := by
     simp [harmApproxPk, harmApprox_eq_leading_add_r2_mul_corr]
-  have hmul_pos :
-      (mulR2Pk (k := m) (corrPk (m + 2) y) : Pk (m + 2)).1 =
-        (r2 : Poly) * (corrPoly (m + 2) y) := by
-    simpa [corrPk] using (mulR2Pk_val (k := m) (p := (corrPk (m + 2) y)))
   -- Assemble.
-  simp [hZ, hH, hmul_pos, sub_eq_add_neg]
+  rw [sub_eq_add_neg]
+  change (PSD.ZonalKernel.ZscaledPk (m + 2) y : Pk (m + 2)).1 + (-(harmApproxPk (m + 2) y) : Pk (m + 2)).1 =
+    (mulR2Pk (k := m) (-(corrPk (m + 2) y)) : Pk (m + 2)).1
+  rw [show ((-(harmApproxPk (m + 2) y) : Pk (m + 2)).1) = -((harmApproxPk (m + 2) y).1) by rfl]
+  rw [mulR2Pk_val (k := m) (p := (-(corrPk (m + 2) y)))]
+  rw [show ((-(corrPk (m + 2) y) : Pk m).1) = -(corrPoly (m + 2) y) by rfl]
+  simp [hZ, hH]
 
 /-- For unit `y`, the harmonic projection `Φ k y` agrees with the explicit correction. -/
 public lemma Φ_eq_harmApproxHarm (k : ℕ) (y : ℝ²⁴) (hy : ‖y‖ = (1 : ℝ)) :
