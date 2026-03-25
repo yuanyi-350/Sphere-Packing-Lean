@@ -53,7 +53,8 @@ public theorem norm_sq_minVecDn_eq_four
   have huv : ⟪u, v⟫ = (0 : ℝ) := by
     have hij' : i ≠ j := hij
     have : (⟪eStd (n := n) i, eStd (n := n) j⟫ : ℝ) = 0 := by
-      simp [eStd, EuclideanSpace.inner_single_left, EuclideanSpace.single_apply, hij']
+      simpa [eStd, EuclideanSpace.single_apply, hij'] using
+        (EuclideanSpace.inner_single_left (𝕜 := ℝ) i (1 : ℝ) (EuclideanSpace.single j 1))
     -- reduce to the orthogonality computation above
     simp [u, v, real_inner_smul_left, real_inner_smul_right, this]
   have hnorm : ‖u + v‖ ^ 2 = ‖u‖ ^ 2 + ‖v‖ ^ 2 := by
@@ -95,7 +96,8 @@ public theorem ncard_minVecDn_eq : Set.ncard (minVecDn (n := n)) = 2 * n * (n - 
     by_cases h : a = b
     · subst h
       simp [eStd]
-    · simp [eStd, EuclideanSpace.inner_single_left, h]
+    · simpa [eStd, EuclideanSpace.single_apply, h] using
+        (EuclideanSpace.inner_single_left (𝕜 := ℝ) a (1 : ℝ) (EuclideanSpace.single b 1))
   have hrange : Set.range vecOf = minVecDn (n := n) := by
     ext x
     constructor
@@ -223,13 +225,13 @@ public theorem ncard_minVecDn_eq : Set.ncard (minVecDn (n := n)) = 2 * n * (n - 
   -- Cardinalities.
   have hPairLt : Nat.card PairLt = n.choose 2 := by
     let f : PairLt → {a : Sym2 (Fin n) // ¬a.IsDiag} := fun p =>
-      ⟨Sym2.mk p.1, by
+      ⟨Sym2.mk p.1.1 p.1.2, by
         have : (p.1.1 : Fin n) ≠ p.1.2 := ne_of_lt p.2
-        simpa [Sym2.isDiag_iff_proj_eq] using this⟩
+        simpa [Sym2.mk_isDiag_iff] using this⟩
     have hf : Function.Bijective f := by
       constructor
       · rintro ⟨p, hp⟩ ⟨q, hq⟩ hpq
-        have hpq' : Sym2.mk p = Sym2.mk q := by
+        have hpq' : Sym2.mk p.1 p.2 = Sym2.mk q.1 q.2 := by
           simpa [f] using congrArg Subtype.val hpq
         have hcases : p = q ∨ p = q.swap := (Sym2.mk_eq_mk_iff (p := p) (q := q)).1 hpq'
         rcases hcases with hcases | hcases
@@ -239,11 +241,11 @@ public theorem ncard_minVecDn_eq : Set.ncard (minVecDn (n := n)) = 2 * n * (n - 
           exact (lt_asymm hq this).elim
       · intro z
         rcases Quot.exists_rep z.1 with ⟨p, hp⟩
-        have hz : (Sym2.mk p : Sym2 (Fin n)) = z.1 := hp
+        have hz : (Sym2.mk p.1 p.2 : Sym2 (Fin n)) = z.1 := hp
         have hne : p.1 ≠ p.2 := by
           intro hEq
           apply z.2
-          have : Sym2.IsDiag (Sym2.mk p) := (Sym2.isDiag_iff_proj_eq (z := p)).2 hEq
+          have : Sym2.IsDiag (Sym2.mk p.1 p.2) := (Sym2.mk_isDiag_iff (x := p.1) (y := p.2)).2 hEq
           simpa [hz] using this
         rcases lt_or_gt_of_ne hne with hlt | hgt
         · refine ⟨⟨p, hlt⟩, ?_⟩
@@ -252,7 +254,7 @@ public theorem ncard_minVecDn_eq : Set.ncard (minVecDn (n := n)) = 2 * n * (n - 
         · refine ⟨⟨p.swap, hgt⟩, ?_⟩
           apply Subtype.ext
           -- `Sym2.mk p.swap = Sym2.mk p`
-          simpa [f, Sym2.mk_prod_swap_eq] using hz
+          simpa [f, Sym2.eq_swap] using hz
     have hcard :
         Nat.card PairLt = Nat.card {a : Sym2 (Fin n) // ¬a.IsDiag} := by
       simpa using Nat.card_congr (Equiv.ofBijective f hf)
