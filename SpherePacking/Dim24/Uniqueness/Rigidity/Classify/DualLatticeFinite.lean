@@ -131,6 +131,8 @@ public theorem finite_discriminantGroup_of_le_dual (L : Submodule ℤ ℝ²⁴)
     -- `latticeInDual` is (definitionally) `comap` along `Lstar.subtype`, hence equivalent to `L`
     -- under `hLdual`.
     have hEq : Module.finrank ℤ (latticeInDual L) = Module.finrank ℤ L := by
+      letI : Module.Free ℤ ↥(Submodule.comap (DualLattice L).subtype L) :=
+        Module.Free.of_equiv (Submodule.comapSubtypeEquivOfLe hLdual).symm
       simpa [Uniqueness.RigidityClassify.latticeInDual, Lstar] using
         (LinearEquiv.finrank_eq (Submodule.comapSubtypeEquivOfLe hLdual))
     -- both `L` and `L*` have rank `24`
