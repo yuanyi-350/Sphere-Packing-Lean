@@ -47,6 +47,11 @@ open SpherePacking.Contour
 open MagicFunction.Parametrisations
 open MagicFunction
 
+public instance instContinuousSMulRealComplex : ContinuousSMul ℝ ℂ := by
+  refine ⟨?_⟩
+  simpa [smul_eq_mul] using
+    (Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd
+
 /-- Curve-integral representation of `J₁'` along the segment from `-1` to `-1 + i`. -/
 public lemma J₁'_eq_curveIntegral_segment (r : ℝ) :
     RealIntegrals.J₁' r =
