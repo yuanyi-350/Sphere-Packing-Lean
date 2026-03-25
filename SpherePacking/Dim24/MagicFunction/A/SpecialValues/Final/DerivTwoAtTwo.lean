@@ -66,12 +66,16 @@ lemma coeffExp_two : SpecialValuesDeriv.coeffExp (2 : ℝ) = 0 := by
 
 /-- `aProfile` has derivative `-(2218752) * I / π` at `u = 2`. -/
 public theorem aProfile_hasDerivAt_two :
-    HasDerivAt aProfile (-(2218752 : ℂ) * Complex.I / (π : ℂ)) (2 : ℝ) := by
+    @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+      (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+      aProfile (-(2218752 : ℂ) * Complex.I / (π : ℂ)) (2 : ℝ) := by
   -- Strategy: compute the right-slope limit at `u=2` from the Laurent principal part in the paper.
   -- The differentiability of `aProfile` at `2` then identifies `deriv aProfile 2` with that limit.
   have hdiff : DifferentiableAt ℝ aProfile (2 : ℝ) :=
     differentiableAt_aProfile_of_lt (x := (2 : ℝ)) (by norm_num)
-  have hderiv : HasDerivAt aProfile (deriv aProfile (2 : ℝ)) (2 : ℝ) := hdiff.hasDerivAt
+  have hderiv : @HasDerivAt ℝ inferInstance ℂ inferInstance inferInstance inferInstance
+      (continuousSMul_of_algebraMap ℝ ℂ Complex.continuous_ofReal)
+      aProfile (deriv aProfile (2 : ℝ)) (2 : ℝ) := hdiff.hasDerivAt
   -- The `u=2` Laurent coefficients from `dim_24.tex` (eq. `eq:avalues` / `\tilde p`):
   -- after factoring out `I * coeffExp u`, the `B/(u-2)` coefficient is `B = (2218752)/π^3`.
   let B : ℂ := (2218752 : ℂ) / ((π : ℂ) ^ (3 : ℕ))
