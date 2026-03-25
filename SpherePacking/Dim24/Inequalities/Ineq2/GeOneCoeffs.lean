@@ -191,6 +191,8 @@ public lemma ineq2_trunc_geOne_coeffs_expected_getD (n : ℕ) (hn : n < N) :
     exact List.getElem_ofFn hnlen
   exact hgetD.trans hgetElem
 
+set_option maxHeartbeats 5000000 in
+set_option maxRecDepth 2000 in
 lemma ineq2_trunc_geOne_coeffs_eq_expected_get_0_24 (n : ℕ)
     (hn1 : n < AppendixA.ineq2_trunc_geOne_coeffs.length)
     (hn2 : n < ineq2_trunc_geOne_coeffs_expected.length) (hn : n < 25) :
