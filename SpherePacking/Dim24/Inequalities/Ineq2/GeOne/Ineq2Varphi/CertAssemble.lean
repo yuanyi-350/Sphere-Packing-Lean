@@ -63,7 +63,8 @@ lemma coeffVarphiNum_first50 :
     have hrhs :
         (List.map (fun z : ℤ => (z : ℚ)) coeffVarphiNumListZV)[n] =
           ((coeffVarphiNumListZV[n]) : ℚ) := by
-      simp [List.getElem_map]
+      exact List.getElem_map (f := fun z : ℤ => (z : ℚ)) (l := coeffVarphiNumListZV)
+        (i := n) (h := hn2)
     have hcast : (coeffVarphiNum n) = (coeffVarphiNumZV n : ℚ) := coeffVarphiNum_eq_cast n
     have hZ : coeffVarphiNumZV n = coeffVarphiNumListZV[n] := by
       have hnlen : n < coeffVarphiNumListZV.length := by simpa [hlenL, NVarphi] using hn
