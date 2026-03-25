@@ -286,7 +286,8 @@ public lemma J₂'_J₄'_J₆'_factor (u : ℝ) (hu0 : 0 ≤ u) :
     have hwconst :
         (∫ (t : ℝ) in Ioi (1 : ℝ), -(w * fU (t * Complex.I))) =
           -(w * ∫ (t : ℝ) in Ioi (1 : ℝ), fU (t * Complex.I)) := by
-      simp [MeasureTheory.integral_neg, MeasureTheory.integral_const_mul]
+      rw [MeasureTheory.integral_neg]
+      simpa using congrArg Neg.neg (MeasureTheory.integral_const_mul w (fun t : ℝ => fU (t * Complex.I)))
     simpa [hwconst] using hEqInt
   have hHS :
       HS = (1 + w) * (Complex.I • ∫ (t : ℝ) in Ioi (1 : ℝ), fU (t * Complex.I)) := by
