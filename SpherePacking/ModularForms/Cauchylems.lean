@@ -102,7 +102,9 @@ public lemma CauchySeq_Icc_iff_CauchySeq_Ico (f : ℤ → ℂ) (hs : ∀ n, f n 
     rw [Finset.sum_Icc_eq_sum_Ico_add (f := f) (by omega),
       Finset.sum_Icc_eq_sum_Ico_add (f := f) (by omega)] at H3
     refine le_trans (norm_le_add_norm_add _ (f n - f m)) ?_
-    refine add_le_add ?_ (H2 n m N hn hm)
+    have H2' : ‖f n - f m‖ ≤ a N := by
+      simpa [dist_eq_norm] using H2 n m N hn hm
+    refine add_le_add ?_ H2'
     apply le_trans ?_ H3
     apply le_of_eq
     congr
