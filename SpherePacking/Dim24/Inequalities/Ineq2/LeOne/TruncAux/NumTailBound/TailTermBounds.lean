@@ -277,7 +277,7 @@ public lemma phi2_term_norm_le (t : ℝ) (ht : 1 ≤ t) (ht0 : 0 < t) :
             (AppendixA.r t) ^ 12 ≤
           (AppendixA.eps / 4) * (AppendixA.r t) ^ 12 :=
     mul_le_mul_of_nonneg_right const_phi2_le_eps_div_4 hr12_nonneg
-  lia
+  exact le_trans (le_trans (le_trans (le_trans hstep1 hstep_pi) hstep_qtail) hscale) hconst_mul
 
 /-- Bound the `psi` tail contribution in `ineq2_num_tail` by `eps / 4 * r(t)^12`. -/
 public lemma psi_term_norm_le (t : ℝ) (ht : 1 ≤ t) (ht0 : 0 < t) :
@@ -364,6 +364,6 @@ public lemma psi_term_norm_le (t : ℝ) (ht : 1 ≤ t) (ht0 : 0 < t) :
             (AppendixA.r t) ^ (12 : ℕ) ≤
           (AppendixA.eps / 4) * (AppendixA.r t) ^ (12 : ℕ) :=
     mul_le_mul_of_nonneg_right const_psi_le_eps_div_4 hr12_nonneg
-  lia
+  exact le_trans (le_trans (le_trans (le_trans hstep1 hstep_pi) hstep_tail) hscale) hconst_mul
 
 end SpherePacking.Dim24.Ineq2LeOneTruncAux.NumTailBound
