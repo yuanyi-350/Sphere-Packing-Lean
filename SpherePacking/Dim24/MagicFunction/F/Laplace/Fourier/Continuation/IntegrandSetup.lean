@@ -250,8 +250,9 @@ lemma exists_bound_norm_resToImagAxis_Ici_one {F : ℍ → ℂ} {l : ℂ}
     ∃ C : ℝ, ∀ t : ℝ, 1 ≤ t → ‖F.resToImagAxis t‖ ≤ C := by
   have hAxis : Tendsto F.resToImagAxis atTop (𝓝 l) :=
     Function.tendsto_resToImagAxis_atImInfty (F := F) (l := l) hF
-  have hEv : ∀ᶠ t : ℝ in atTop, ‖F.resToImagAxis t - l‖ < 1 :=
-    hAxis.eventually (Metric.ball_mem_nhds _ (by norm_num : (0 : ℝ) < 1))
+  have hEv : ∀ᶠ t : ℝ in atTop, ‖F.resToImagAxis t - l‖ < 1 := by
+    simpa [Metric.mem_ball, dist_eq_norm] using
+      hAxis.eventually (Metric.ball_mem_nhds l (by norm_num : (0 : ℝ) < 1))
   rcases (eventually_atTop.1 hEv) with ⟨A0, hA0⟩
   let A : ℝ := max A0 1
   have hA1 : 1 ≤ A := le_max_right _ _
