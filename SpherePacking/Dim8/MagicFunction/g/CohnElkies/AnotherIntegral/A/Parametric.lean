@@ -251,7 +251,7 @@ public lemma aAnotherIntegralC_analyticOnNhd :
       have ht0 : 0 ≤ t := le_of_lt ht
       have htpos : 0 < t := ht
       have hzre : ε ≤ z.re := by
-        have hz' : ‖z - u‖ < ε := by simpa [Metric.mem_ball] using hz
+        have hz' : ‖z - u‖ < ε := by simpa [Metric.mem_ball, dist_eq_norm] using hz
         have habs : |(z - u).re| ≤ ‖z - u‖ := abs_re_le_norm (z - u)
         have hlt : |z.re - u.re| < ε := by
           simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using lt_of_le_of_lt habs hz'
