@@ -156,7 +156,12 @@ lemma coeff_lin_pow_of_degree (k : ℕ) (y : ℝ²⁴) (d : Var →₀ ℕ)
             ((Nat.multinomial (univ : Finset Var) g : Poly) *
               ∏ i ∈ (univ : Finset Var), (C (y i) * X i : Poly) ^ g i) := by
     -- `coeff` is additive.
-    simpa [MvPolynomial.coeff_sum] using congrArg (MvPolynomial.coeff d) hZ
+    rw [hZ]
+    simpa using (MvPolynomial.coeff_sum
+      (s := Finset.piAntidiag (univ : Finset Var) k)
+      (f := fun g => (Nat.multinomial (univ : Finset Var) g : Poly) *
+        ∏ i ∈ (univ : Finset Var), (C (y i) * X i : Poly) ^ g i)
+      (m := d))
   -- Rewrite each summand as a monomial, so `coeff` becomes an `ite`.
   have hterm (g : Var → ℕ) :
       MvPolynomial.coeff d
