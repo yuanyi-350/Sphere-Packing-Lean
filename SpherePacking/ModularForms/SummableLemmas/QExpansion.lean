@@ -402,7 +402,7 @@ theorem aut_series_ite_deriv_uexp2 (k : ℕ) (x : ℍ) :
       obtain ⟨u, hu1, hu2⟩ := aut_bound_on_comp (Set.image (Set.inclusion hK) univ) hKK2 k
       refine ⟨u, hu1, ?_⟩
       intro n s
-      apply hu2 n ⟨⟨s, by aesop⟩, by aesop⟩
+      exact hu2 n ⟨Set.inclusion hK s, by refine ⟨s, by simp, rfl⟩⟩
     intro n r
     apply diff_at_aux
 
@@ -448,13 +448,13 @@ theorem tsum_aexp_contDiffOn (k : ℕ) :
     obtain ⟨u, hu1, hu2⟩ := aut_bound_on_comp (Set.image (Set.inclusion hK1) univ) hKK2 m
     refine ⟨u, hu1, ?_⟩
     intro n s
-    have := hu2 n ⟨⟨s, by aesop⟩, by aesop⟩
+    have := hu2 n ⟨Set.inclusion hK1 s, by refine ⟨s, by simp, rfl⟩⟩
     apply le_trans _ this
     apply le_of_eq
     congr 1
     apply derivWithin_congr
     · have h21 := (iter_div_aut_add n m).symm
-      simp only [Nat.cast_le, one_div, mem_setOf_eq, coe_setOf, image_univ, Subtype.forall,
+      simp only [one_div, mem_setOf_eq, coe_setOf, image_univ, Subtype.forall,
         Int.cast_natCast] at *
       intro v hv
       have h22 := h21 hv
