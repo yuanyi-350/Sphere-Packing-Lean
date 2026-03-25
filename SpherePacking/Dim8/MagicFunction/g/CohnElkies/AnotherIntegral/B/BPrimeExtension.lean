@@ -270,7 +270,12 @@ lemma J₁'C_differentiable : Differentiable ℂ J₁'C := by
       (fun u : ℂ =>
           (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, base t * Complex.exp (u * k t)) = J₁'C := by
     funext u
-    simp [J₁'C, base, k, mul_assoc, mul_comm]
+    calc
+      (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, base t * Complex.exp (u * k t)
+          = ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * (base t * Complex.exp (u * k t)) := by
+              exact (intervalIntegral.integral_const_mul (Complex.I : ℂ)
+                (fun t => base t * Complex.exp (u * k t))).symm
+      _ = J₁'C u := by simp [J₁'C, base, k, mul_assoc, mul_comm]
   simpa [hEq] using hd
 
 lemma J₂'C_differentiable : Differentiable ℂ J₂'C := by
@@ -338,7 +343,12 @@ lemma J₃'C_differentiable : Differentiable ℂ J₃'C := by
       (fun u : ℂ =>
           (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, base t * Complex.exp (u * k t)) = J₃'C := by
     funext u
-    simp [J₃'C, base, k, mul_assoc, mul_comm]
+    calc
+      (Complex.I : ℂ) * ∫ t in (0 : ℝ)..1, base t * Complex.exp (u * k t)
+          = ∫ t in (0 : ℝ)..1, (Complex.I : ℂ) * (base t * Complex.exp (u * k t)) := by
+              exact (intervalIntegral.integral_const_mul (Complex.I : ℂ)
+                (fun t => base t * Complex.exp (u * k t))).symm
+      _ = J₃'C u := by simp [J₃'C, base, k, mul_assoc, mul_comm]
   simpa [hEq] using hd
 
 lemma J₄'C_differentiable : Differentiable ℂ J₄'C := by
@@ -429,8 +439,14 @@ lemma J₅'C_differentiable : Differentiable ℂ J₅'C := by
   have hEq :
       (fun u : ℂ => ∫ t in (0 : ℝ)..1, base t * Complex.exp (u * k t)) = J₅'C := by
     funext u
-    -- Pull the constant `(-2)` out of the integral to match the definition.
-    simp [J₅'C, base, base0, k, mul_assoc, mul_left_comm, mul_comm]
+    calc
+      ∫ t in (0 : ℝ)..1, base t * Complex.exp (u * k t)
+          = ∫ t in (0 : ℝ)..1, (-2 : ℂ) * (base0 t * Complex.exp (u * k t)) := by
+              simp [base, mul_assoc]
+      _ = (-2 : ℂ) * ∫ t in (0 : ℝ)..1, base0 t * Complex.exp (u * k t) := by
+              exact intervalIntegral.integral_const_mul (-2 : ℂ)
+                (fun t => base0 t * Complex.exp (u * k t))
+      _ = J₅'C u := by simp [J₅'C, base0, k, mul_assoc, mul_comm]
   simpa [hEq] using hd
 
 set_option maxHeartbeats 1000000 in
