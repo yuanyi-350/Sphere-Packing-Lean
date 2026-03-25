@@ -591,7 +591,8 @@ lemma integral_f0_height_one_eq_neg_I6 :
         I₆' (0 : ℝ) =
           2 * ∫ t in Set.Ici (1 : ℝ), (Complex.I : ℂ) * φ₀'' ((t : ℂ) * Complex.I)
             ∂MeasureTheory.volume := by
-      simp [h0, mul_comm]
+      rw [h0]
+      simp [mul_comm]
     -- switch to `Ioi` and pull out scalars
     calc
       I₆' (0 : ℝ)
@@ -601,32 +602,19 @@ lemma integral_f0_height_one_eq_neg_I6 :
       _ = Complex.I •
             (∫ t in Set.Ioi (1 : ℝ), (2 : ℂ) * φ₀'' ((t : ℂ) * Complex.I)
               ∂MeasureTheory.volume) := by
-            calc
-              (2 : ℂ) *
-                  (∫ t in Set.Ioi (1 : ℝ), (Complex.I : ℂ) * φ₀'' ((t : ℂ) * Complex.I)
-                    ∂MeasureTheory.volume) =
-                  (2 : ℂ) *
-                    ((Complex.I : ℂ) *
-                      (∫ t in Set.Ioi (1 : ℝ), φ₀'' ((t : ℂ) * Complex.I)
-                        ∂MeasureTheory.volume)) := by
-                    simp [MeasureTheory.integral_const_mul]
-              _ =
-                  (Complex.I : ℂ) *
-                    ((2 : ℂ) *
-                      (∫ t in Set.Ioi (1 : ℝ), φ₀'' ((t : ℂ) * Complex.I)
-                        ∂MeasureTheory.volume)) := by
-                    simp [mul_left_comm, mul_comm]
-              _ =
-                  (Complex.I : ℂ) *
-                    (∫ t in Set.Ioi (1 : ℝ), (2 : ℂ) * φ₀'' ((t : ℂ) * Complex.I)
-                      ∂MeasureTheory.volume) := by
-                    simp [MeasureTheory.integral_const_mul]
-              _ = Complex.I •
-                    (∫ t in Set.Ioi (1 : ℝ), (2 : ℂ) * φ₀'' ((t : ℂ) * Complex.I)
-                      ∂MeasureTheory.volume) := by
-                    simp [smul_eq_mul]
+              have hleft := MeasureTheory.integral_const_mul (μ := MeasureTheory.volume.restrict (Set.Ioi (1 : ℝ)))
+                (r := (Complex.I : ℂ)) (f := fun t : ℝ => φ₀'' ((t : ℂ) * Complex.I))
+              have hright := MeasureTheory.integral_const_mul (μ := MeasureTheory.volume.restrict (Set.Ioi (1 : ℝ)))
+                (r := (2 : ℂ)) (f := fun t : ℝ => φ₀'' ((t : ℂ) * Complex.I))
+              rw [show ∫ t in Set.Ioi (1 : ℝ), (Complex.I : ℂ) * φ₀'' ((t : ℂ) * Complex.I)
+                ∂MeasureTheory.volume = (Complex.I : ℂ) * ∫ t in Set.Ioi (1 : ℝ), φ₀'' ((t : ℂ) * Complex.I) ∂MeasureTheory.volume by simpa using hleft]
+              rw [show ∫ t in Set.Ioi (1 : ℝ), (2 : ℂ) * φ₀'' ((t : ℂ) * Complex.I)
+                ∂MeasureTheory.volume = (2 : ℂ) * ∫ t in Set.Ioi (1 : ℝ), φ₀'' ((t : ℂ) * Complex.I) ∂MeasureTheory.volume by simpa using hright]
+              simp [smul_eq_mul, mul_left_comm, mul_comm]
   -- Solve for `bottom`.
-  grind only
+  have hA0' : bottom + I₆' (0 : ℝ) = 0 := by
+    simpa [hI6] using hA0
+  exact eq_neg_iff_add_eq_zero.mpr (by simpa [bottom, add_assoc, add_comm] using hA0')
 
 /-! ### Evaluating the remaining `φ₂''` term. -/
 
@@ -850,7 +838,8 @@ lemma tendsto_top_phi2 :
   intro ε hε
   have hBall :
       {z : ℍ | ‖φ₂' z - (720 : ℂ)‖ < ε / 2} ∈ atImInfty :=
-    tendsto_phi2'_atImInfty (Metric.ball_mem_nhds (720 : ℂ) (half_pos hε))
+    by simpa [Metric.ball, dist_eq_norm] using
+      tendsto_phi2'_atImInfty (Metric.ball_mem_nhds (720 : ℂ) (half_pos hε))
   rcases (UpperHalfPlane.atImInfty_mem _).1 hBall with ⟨A, hA⟩
   -- Take `m` large enough so that `A ≤ m` and `1 ≤ m`.
   refine ⟨max A 1, ?_⟩
@@ -892,10 +881,20 @@ lemma tendsto_top_phi2 :
       (∫ x : ℝ in (0 : ℝ)..1, φ₂'' (x + m * Complex.I)) - (720 : ℂ) =
         ∫ x : ℝ in (0 : ℝ)..1, (φ₂'' (x + m * Complex.I) - (720 : ℂ)) := by
     -- Use `∫ f - ∫ c = ∫ (f - c)` and `∫ c = c` on `[0,1]`.
-    simpa using
-      (intervalIntegral.integral_sub (μ := MeasureTheory.volume) (a := (0 : ℝ)) (b := (1 : ℝ))
-        (f := fun x : ℝ => φ₂'' (x + m * Complex.I)) (g := fun _x : ℝ => (720 : ℂ)) hInt
-        hIntConst).symm
+    calc
+      (∫ x : ℝ in (0 : ℝ)..1, φ₂'' (x + m * Complex.I)) - (720 : ℂ)
+          = (∫ x : ℝ in (0 : ℝ)..1, φ₂'' (x + m * Complex.I)) -
+              ∫ x : ℝ in (0 : ℝ)..1, (720 : ℂ) := by
+                have hconst : (∫ x : ℝ in (0 : ℝ)..1, (720 : ℂ)) = (720 : ℂ) := by
+                  rw [intervalIntegral.integral_const]
+                  change (((1 - 0 : ℝ) : ℂ) * (720 : ℂ)) = (720 : ℂ)
+                  norm_num
+                exact congrArg (fun z : ℂ => (∫ x : ℝ in (0 : ℝ)..1, φ₂'' (x + m * Complex.I)) - z) hconst.symm
+      _ = ∫ x : ℝ in (0 : ℝ)..1, (φ₂'' (x + m * Complex.I) - (720 : ℂ)) := by
+            simpa using
+              (intervalIntegral.integral_sub (μ := MeasureTheory.volume) (a := (0 : ℝ)) (b := (1 : ℝ))
+                (f := fun x : ℝ => φ₂'' (x + m * Complex.I)) (g := fun _x : ℝ => (720 : ℂ)) hInt
+                hIntConst).symm
   have hdist :
       dist (∫ x : ℝ in (0 : ℝ)..1, φ₂'' (x + m * Complex.I)) (720 : ℂ) < ε := by
     have hnorm :
@@ -908,7 +907,7 @@ lemma tendsto_top_phi2 :
     -- `dist` is the norm of the difference.
     have : ‖(∫ x : ℝ in (0 : ℝ)..1, φ₂'' (x + m * Complex.I)) - (720 : ℂ)‖ ≤ ε / 2 := by
       simpa [hsub] using hnorm'
-    exact lt_of_le_of_lt this (half_lt_self hε)
+    simpa [dist_eq_norm] using lt_of_le_of_lt this (half_lt_self hε)
   simpa [Metric.ball, dist_eq_norm] using hdist
 
 lemma integral_phi2_height_one :
@@ -1013,7 +1012,9 @@ theorem a_zero_value : FourierEigenfunctions.a (0 : ℝ⁸) = -8640 * Complex.I 
     have hconstmul :
         (∫ x : ℝ in (0 : ℝ)..1, (12 * Complex.I) / π * φ₂'' (zI x)) =
           ((12 : ℂ) * Complex.I) / π * (∫ x : ℝ in (0 : ℝ)..1, φ₂'' (zI x)) := by
-      simp [div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm]
+      exact
+        intervalIntegral.integral_const_mul (μ := MeasureTheory.volume) (a := (0 : ℝ)) (b := (1 : ℝ))
+          (((12 : ℂ) * Complex.I) / π) (fun x : ℝ => φ₂'' (zI x))
     have hI24''' :
         I₂' (0 : ℝ) + I₄' 0 =
           (∫ x : ℝ in (0 : ℝ)..1, f0 (zI x)) -
