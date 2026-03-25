@@ -64,13 +64,14 @@ public theorem D_differentiable {F : ℍ → ℂ} (hF : MDiff F) : MDiff (D F) :
 /-- MDifferentiability of `E₂`. -/
 public theorem E₂_holo' : MDiff E₂ := by
   rw [UpperHalfPlane.mdifferentiable_iff]
-  have hη : DifferentiableOn ℂ η _ :=
+  have hη : DifferentiableOn ℂ «η» _ :=
     fun z hz => (eta_DifferentiableAt_UpperHalfPlane ⟨z, hz⟩).differentiableWithinAt
-  have hlog : DifferentiableOn ℂ (logDeriv η) {z | 0 < z.im} :=
+  have hlog : DifferentiableOn ℂ (logDeriv «η») {z | 0 < z.im} :=
     (hη.deriv isOpen_upperHalfPlaneSet).div hη fun _ hz => by
       simpa using eta_nonzero_on_UpperHalfPlane ⟨_, hz⟩
   exact (hlog.const_mul ((↑π * I / 12)⁻¹)).congr fun z hz => by
-    simp [Function.comp_apply, ofComplex_apply_of_im_pos hz, eta_logDeriv ⟨z, hz⟩]
+    rw [eta_logDeriv ⟨z, hz⟩]
+    simp [Function.comp_apply, ofComplex_apply_of_im_pos hz]
     field_simp [Real.pi_ne_zero]
 
 /-! ## Basic properties of `D` -/
@@ -594,14 +595,19 @@ public theorem deriv_resToImagAxis_eq (F : ℍ → ℂ) (hF : MDiff F) {t : ℝ}
     have him : 0 < (g s).im := by simp [g, hs]
     simp [Function.resToImagAxis_apply, ResToImagAxis, hs, Function.comp_apply, g,
       ofComplex_apply_of_im_pos him]
-  rw [h_eq.deriv_eq]
-  have hg : HasDerivAt g I t := by simpa using ofRealCLM.hasDerivAt.const_mul I
+  rw [show deriv F.resToImagAxis t = deriv (((F ∘ ofComplex) ∘ g)) t by simpa using h_eq.deriv_eq]
+  letI : ContinuousSMul ℝ ℂ :=
+    ⟨(Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd⟩
+  have hg : HasDerivAt g I t := by
+    simpa using ofRealCLM.hasDerivAt.const_mul I
   have hF' := (MDifferentiableAt_DifferentiableAt (hF z)).hasDerivAt
-  rw [(hF'.scomp t hg).deriv]
+  rw [show deriv (((F ∘ ofComplex) ∘ g)) t = deriv (F ∘ ofComplex) z * I by
+    simpa [z, g] using
+      (HasDerivAt.comp (x := t) (h := g) (h₂ := F ∘ ofComplex) hF' hg).deriv]
   have hD : deriv (F ∘ ofComplex) z = 2 * π * I * D F z := by
     simp only [D]
     field_simp
-  simp only [hD, Function.resToImagAxis_apply, ResToImagAxis, dif_pos ht, z, smul_eq_mul]
+  simp only [hD, Function.resToImagAxis_apply, ResToImagAxis, dif_pos ht, z]
   ring_nf
   simp only [I_sq]
   ring
@@ -612,6 +618,8 @@ public theorem hasDerivAt_re_resToImagAxis (F : ℍ → ℂ) (hF : MDiff F) :
         HasDerivAt (fun t => (F.resToImagAxis t).re) (-2 * π * (ResToImagAxis (D F) t).re) t :=
   fun t ht => by
     have hdiff : DifferentiableAt ℝ F.resToImagAxis t := ResToImagAxis.Differentiable F hF t ht
+    letI : ContinuousSMul ℝ ℂ :=
+      ⟨(Complex.continuous_ofReal.comp continuous_fst).mul continuous_snd⟩
     have hderivC : HasDerivAt F.resToImagAxis (-2 * π * (D F).resToImagAxis t) t :=
       hdiff.hasDerivAt.congr_deriv (deriv_resToImagAxis_eq F hF ht)
     simpa using
@@ -655,44 +663,47 @@ Logarithmic derivative of the discriminant: `D Δ = E₂ * Δ` (used in `antiSer
 public theorem D_Delta_eq_E₂_mul_Delta : D Δ = E₂ * Δ := by
   funext z
   have h_eq :
-      (fun w : ℂ => Δ (ofComplex w)) =ᶠ[nhds (z : ℂ)] fun w => (η w) ^ (24 : ℕ) := by
+      (fun w : ℂ => Δ (ofComplex w)) =ᶠ[nhds (z : ℂ)] fun w => («η» w) ^ (24 : ℕ) := by
     filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds z.im_pos] with w hw
-    simpa [ofComplex_apply_of_im_pos hw] using (Delta_eq_eta_pow (ofComplex w))
-  have hηnz : η (z : ℂ) ≠ 0 := eta_nonzero_on_UpperHalfPlane z
+    simpa [ofComplex_apply_of_im_pos hw, ModularForm.eta, «η», ModularForm.eta_q_eq_cexp,
+      Periodic.qParam] using (Delta_eq_eta_pow (ofComplex w))
+  have hηnz : «η» (z : ℂ) ≠ 0 := eta_nonzero_on_UpperHalfPlane z
   have hlog :
-      logDeriv (fun w : ℂ => (η w) ^ (24 : ℕ)) (z : ℂ) = (2 * π * I) * E₂ z := by
-    have hpowdiff : DifferentiableAt ℂ (fun x : ℂ => x ^ (24 : ℕ)) (η (z : ℂ)) := by
+      logDeriv (fun w : ℂ => («η» w) ^ (24 : ℕ)) (z : ℂ) = (2 * π * I) * E₂ z := by
+    have hpowdiff : DifferentiableAt ℂ (fun x : ℂ => x ^ (24 : ℕ)) («η» (z : ℂ)) := by
       fun_prop
     calc
-      logDeriv (fun w : ℂ => (η w) ^ (24 : ℕ)) (z : ℂ) =
-          logDeriv (fun x : ℂ => x ^ (24 : ℕ)) (η (z : ℂ)) * deriv η (z : ℂ) := by
+      logDeriv (fun w : ℂ => («η» w) ^ (24 : ℕ)) (z : ℂ) =
+          logDeriv (fun x : ℂ => x ^ (24 : ℕ)) («η» (z : ℂ)) * deriv «η» (z : ℂ) := by
             simpa [Function.comp] using
               (logDeriv_comp (x := (z : ℂ)) hpowdiff (eta_DifferentiableAt_UpperHalfPlane z))
-      _ = ((24 : ℂ) / η (z : ℂ)) * deriv η (z : ℂ) := by
+      _ = ((24 : ℂ) / «η» (z : ℂ)) * deriv «η» (z : ℂ) := by
             simp [logDeriv_pow]
-      _ = (24 : ℂ) * logDeriv η (z : ℂ) := by
+      _ = (24 : ℂ) * logDeriv «η» (z : ℂ) := by
             simp [logDeriv, div_eq_mul_inv, mul_assoc, mul_comm]
       _ = (2 * π * I) * E₂ z := by
             rw [eta_logDeriv z]
             ring
   have hderiv_eta_pow :
-      deriv (fun w : ℂ => (η w) ^ (24 : ℕ)) (z : ℂ) =
-        (2 * π * I) * E₂ z * (η (z : ℂ) ^ (24 : ℕ)) := by
+      deriv (fun w : ℂ => («η» w) ^ (24 : ℕ)) (z : ℂ) =
+        (2 * π * I) * E₂ z * («η» (z : ℂ) ^ (24 : ℕ)) := by
     have :
-        deriv (fun w : ℂ => (η w) ^ (24 : ℕ)) (z : ℂ) =
-          logDeriv (fun w : ℂ => (η w) ^ (24 : ℕ)) (z : ℂ) *
-            (η (z : ℂ) ^ (24 : ℕ)) := by
+        deriv (fun w : ℂ => («η» w) ^ (24 : ℕ)) (z : ℂ) =
+          logDeriv (fun w : ℂ => («η» w) ^ (24 : ℕ)) (z : ℂ) *
+            («η» (z : ℂ) ^ (24 : ℕ)) := by
       simp [logDeriv, div_mul_eq_mul_div, mul_div_cancel_right₀ _ (pow_ne_zero _ hηnz)]
     simpa [hlog, mul_assoc, mul_left_comm, mul_comm] using this
   have h2piI : (2 * π * I : ℂ) ≠ 0 := two_pi_I_ne_zero
-  have hηpow : η (z : ℂ) ^ (24 : ℕ) = Δ z := (Delta_eq_eta_pow z).symm
+  have hηpow : «η» (z : ℂ) ^ (24 : ℕ) = Δ z := by
+    simpa [ModularForm.eta, «η», ModularForm.eta_q_eq_cexp, Periodic.qParam] using
+      (Delta_eq_eta_pow z).symm
   calc
     D Δ z = (2 * π * I)⁻¹ * deriv (fun w : ℂ => Δ (ofComplex w)) (z : ℂ) := rfl
-    _ = (2 * π * I)⁻¹ * deriv (fun w : ℂ => (η w) ^ (24 : ℕ)) (z : ℂ) := by
+    _ = (2 * π * I)⁻¹ * deriv (fun w : ℂ => («η» w) ^ (24 : ℕ)) (z : ℂ) := by
           simp [h_eq.deriv_eq]
-    _ = (2 * π * I)⁻¹ * ((2 * π * I) * E₂ z * (η (z : ℂ) ^ (24 : ℕ))) := by
-          simp [hderiv_eta_pow]
-    _ = E₂ z * (η (z : ℂ) ^ (24 : ℕ)) := by
+    _ = (2 * π * I)⁻¹ * ((2 * π * I) * E₂ z * («η» (z : ℂ) ^ (24 : ℕ))) := by
+          rw [hderiv_eta_pow]
+    _ = E₂ z * («η» (z : ℂ) ^ (24 : ℕ)) := by
           field_simp [h2piI]
     _ = E₂ z * Δ z := by simp [hηpow]
 
