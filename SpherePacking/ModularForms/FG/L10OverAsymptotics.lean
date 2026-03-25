@@ -264,8 +264,11 @@ private lemma L₁₀_over_tendsto_atImInfty :
       have hsumm1 : Summable (fun n : ℕ => (32 : ℝ) * ((n : ℝ) ^ 5 * r ^ n)) :=
         (hsumm_pow.mul_left 32)
       have hsumm0 : Summable (fun n : ℕ => (if n = 0 then (1 : ℝ) else 0)) := by
-        refine summable_of_finite_support ((Set.finite_singleton (0 : ℕ)).subset ?_)
-        norm_num
+        classical
+        refine summable_of_hasFiniteSupport ((Set.finite_singleton (0 : ℕ)).subset ?_)
+        intro n hn
+        rw [Function.mem_support] at hn
+        by_cases h : n = 0 <;> simp [h] at hn ⊢
       have hdecomp :
           (fun n : ℕ => (if n = 0 then (1 : ℝ) else 32 * ((n : ℝ) ^ 5 * r ^ n))) =
             (fun n : ℕ => (if n = 0 then (1 : ℝ) else 0) + (32 : ℝ) * ((n : ℝ) ^ 5 * r ^ n)) := by
@@ -358,7 +361,10 @@ private lemma L₁₀_over_tendsto_atImInfty :
           _ = (cexp (π * Complex.I * (z : ℂ) / 4) * g z) ^ 4 := by simp [hΘ₂]
           _ = cexp (π * Complex.I * (z : ℂ) / 4) ^ 4 * (g z) ^ 4 := by simp [mul_pow]
           _ = cexp (π * Complex.I * (z : ℂ)) * (g z) ^ 4 := by simp [hE]
-      exact Eq.symm (CancelDenoms.cancel_factors_eq_div (id (Eq.symm hH2)) (hqπ_ne z))
+      calc
+        H₂' z = H₂ z / qπ z := by simp [hH2'_def]
+        _ = (qπ z * (g z) ^ 4) / qπ z := by simp [hH2, qπ]
+        _ = (g z) ^ 4 := mul_div_cancel_left₀ _ (hqπ_ne z)
     -- Finish.
     have h2pow : (2 : ℂ) ^ 4 = (16 : ℂ) := by norm_num
     simpa [hrewrite, h2pow] using (hg.pow 4)
