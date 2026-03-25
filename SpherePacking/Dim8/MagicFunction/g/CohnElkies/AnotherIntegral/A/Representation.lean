@@ -112,7 +112,7 @@ lemma corrIntegral_eval {u : ℝ} (hu0 : 0 < u) (hu : 2 < u)
     have hI0 : (∫ t, f0 t ∂ μ0) = ((1 / (π * u) : ℝ) : ℂ) := by
       dsimp [f0]
       simpa [μ0, μIoi0] using hIexp
-    exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hI0)) (id (Eq.symm h0)))
+    rw [h0, hI0]
   have hG1 :
       (∫ t, g1 t ∂ μ0) = (-c8640) * ((1 / (π * u) ^ (2 : ℕ) : ℝ) : ℂ) := by
     have h1 : (∫ t, g1 t ∂ μ0) = (-c8640) * ∫ t, f1 t ∂ μ0 := by
@@ -120,14 +120,14 @@ lemma corrIntegral_eval {u : ℝ} (hu0 : 0 < u) (hu : 2 < u)
     have hI1 : (∫ t, f1 t ∂ μ0) = ((1 / (π * u) ^ (2 : ℕ) : ℝ) : ℂ) := by
       dsimp [f1]
       simpa [μ0, μIoi0] using hItexp
-    exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hI1)) (id (Eq.symm h1)))
+    rw [h1, hI1]
   have hG2 : (∫ t, g2 t ∂ μ0) = c36 * ((1 / (π * (u - 2)) : ℝ) : ℂ) := by
     have h2 : (∫ t, g2 t ∂ μ0) = c36 * ∫ t, f2 t ∂ μ0 := by
       simpa [g2] using (MeasureTheory.integral_const_mul (μ := μ0) c36 f2)
     have hI2 : (∫ t, f2 t ∂ μ0) = ((1 / (π * (u - 2)) : ℝ) : ℂ) := by
       dsimp [f2]
       simpa [μ0, μIoi0] using hI2exp
-    exact Eq.symm (CancelDenoms.derive_trans (id (Eq.symm hI2)) (id (Eq.symm h2)))
+    rw [h2, hI2]
   rw [hsplitInt, hG2, hG1, hG0]
   have h36term :
       c36 * ((1 / (π * (u - 2)) : ℝ) : ℂ) = (36 : ℂ) / (π ^ (3 : ℕ) * (u - 2)) := by
