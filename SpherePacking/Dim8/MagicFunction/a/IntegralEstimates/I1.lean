@@ -89,7 +89,9 @@ lemma Changing_Variables (r : ℝ) : ∫ (s : ℝ) in f '' (Ioc (0 : ℝ) (1 : �
 
 lemma Writing_as_intervalIntegral (r : ℝ) :
     ∫ (t : ℝ) in Ioc 0 1, |f' t| • (g r (f t)) = ∫ t in (0 : ℝ)..1, |f' t| • (g r (f t)) := by
-  simp [intervalIntegral_eq_integral_uIoc]
+  have h01 : (0 : ℝ) ≤ 1 := by positivity
+  rw [intervalIntegral_eq_integral_uIoc, uIoc_of_le h01, if_pos h01]
+  exact (one_smul ℝ (∫ (x : ℝ) in Ioc 0 1, |f' x| • (g r (f x)) ∂volume)).symm
 
 lemma Reconciling_Change_of_Variables (r : ℝ) :
     I₁' r = ∫ t in Ioc 0 1, |(-1 / t ^ 2)| • (g r (1 / t)) := by
