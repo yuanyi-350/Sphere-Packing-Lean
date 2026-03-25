@@ -65,8 +65,7 @@ public lemma ResToImagAxis.Real.D_of_real {F : UpperHalfPlane → ℂ}
   intro t ht
   have hdiff : DifferentiableAt ℝ F.resToImagAxis t :=
     ResToImagAxis.Differentiable F hFholo t ht
-  have hderivC : HasDerivAt F.resToImagAxis (deriv F.resToImagAxis t) t :=
-    hdiff.hasDerivAt
+  have hderivC := hdiff.hasDerivAt
   have h_im0 : (fun u : ℝ => (F.resToImagAxis u).im) =ᶠ[nhds t] fun _ => 0 := by
     filter_upwards [lt_mem_nhds ht] with u hu
     tauto
