@@ -200,21 +200,36 @@ section ContDiffOn_Real
 
 /-- The integrand `Φ₁' r` is smooth as a real function on `upperHalfPlaneSet`. -/
 public theorem Φ₁'_contDiffOn : ContDiffOn ℝ ∞ (Φ₁' r) ℍ₀ :=
-  (Φ₁'_contDiffOn_ℂ (r := r)).restrict_scalars ℝ
+  @ContDiffOn.restrict_scalars ℝ _ ℂ _ _ ℂ _ _ ℍ₀ (Φ₁' r) ∞ ℂ _ _ _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) (Φ₁'_contDiffOn_ℂ (r := r))
 
-theorem Φ₂'_contDiffOn : ContDiffOn ℝ ∞ (Φ₂' r) ℍ₀ := Φ₂'_contDiffOn_ℂ.restrict_scalars ℝ
+theorem Φ₂'_contDiffOn : ContDiffOn ℝ ∞ (Φ₂' r) ℍ₀ :=
+  @ContDiffOn.restrict_scalars ℝ _ ℂ _ _ ℂ _ _ ℍ₀ (Φ₂' r) ∞ ℂ _ _ _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) Φ₂'_contDiffOn_ℂ
 
 /-- The integrand `Φ₃' r` is smooth as a real function on `upperHalfPlaneSet`. -/
 public theorem Φ₃'_contDiffOn : ContDiffOn ℝ ∞ (Φ₃' r) ℍ₀ :=
-  (Φ₃'_contDiffOn_ℂ (r := r)).restrict_scalars ℝ
+  @ContDiffOn.restrict_scalars ℝ _ ℂ _ _ ℂ _ _ ℍ₀ (Φ₃' r) ∞ ℂ _ _ _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) (Φ₃'_contDiffOn_ℂ (r := r))
 
-public theorem Φ₄'_contDiffOn : ContDiffOn ℝ ∞ (Φ₄' r) ℍ₀ := Φ₄'_contDiffOn_ℂ.restrict_scalars ℝ
+public theorem Φ₄'_contDiffOn : ContDiffOn ℝ ∞ (Φ₄' r) ℍ₀ :=
+  @ContDiffOn.restrict_scalars ℝ _ ℂ _ _ ℂ _ _ ℍ₀ (Φ₄' r) ∞ ℂ _ _ _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) Φ₄'_contDiffOn_ℂ
 
 /-- The integrand `Φ₅' r` is smooth as a real function on `upperHalfPlaneSet`. -/
-public theorem Φ₅'_contDiffOn : ContDiffOn ℝ ∞ (Φ₅' r) ℍ₀ := Φ₅'_contDiffOn_ℂ.restrict_scalars ℝ
+public theorem Φ₅'_contDiffOn : ContDiffOn ℝ ∞ (Φ₅' r) ℍ₀ :=
+  @ContDiffOn.restrict_scalars ℝ _ ℂ _ _ ℂ _ _ ℍ₀ (Φ₅' r) ∞ ℂ _ _ _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) Φ₅'_contDiffOn_ℂ
 
 /-- The integrand `Φ₆' r` is smooth as a real function on `upperHalfPlaneSet`. -/
 public theorem Φ₆'_contDiffOn : ContDiffOn ℝ ∞ (Φ₆' r) ℍ₀ :=
-  (Φ₆'_contDiffOn_ℂ (r := r)).restrict_scalars ℝ
+  @ContDiffOn.restrict_scalars ℝ _ ℂ _ _ ℂ _ _ ℍ₀ (Φ₆' r) ∞ ℂ _ _ _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) _
+    (show IsScalarTower ℝ ℂ ℂ from ⟨by intro x y z; simp [mul_assoc]⟩) (Φ₆'_contDiffOn_ℂ (r := r))
 
 end MagicFunction.a.ComplexIntegrands.ContDiffOn_Real
