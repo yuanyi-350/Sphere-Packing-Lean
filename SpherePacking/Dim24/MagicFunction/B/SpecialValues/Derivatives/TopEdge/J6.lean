@@ -58,7 +58,10 @@ public lemma J₆'_eq_vertical_Ioi (u : ℝ) :
   have hpull :
       (∫ t in Set.Ioi (1 : ℝ), (Complex.I : ℂ) * (ψS' (t * Complex.I) * expU u (t * Complex.I))) =
         (Complex.I : ℂ) * ∫ t in Set.Ioi (1 : ℝ), fU (t * Complex.I) := by
-    simp [fU, MeasureTheory.integral_const_mul]
+    simpa [fU, mul_assoc] using
+      (MeasureTheory.integral_const_mul (r := (Complex.I : ℂ))
+        (f := fun t : ℝ => fU (t * Complex.I))
+        (μ := MeasureTheory.volume.restrict (Set.Ioi (1 : ℝ))))
   calc
     J₆' u =
         (-2 : ℂ) *
