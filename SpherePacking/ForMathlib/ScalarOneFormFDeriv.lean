@@ -27,12 +27,10 @@ public lemma fderiv_scalarOneForm_symm {f : ℂ → ℂ} {x u v : ℂ}
   let L : ℂ →L[ℂ] (ℂ →L[ℂ] ℂ) := (ContinuousLinearMap.mul ℂ ℂ).flip
   have hEq : scalarOneForm f = fun z => L (f z) := by
     rfl
-  have hωF :
-      HasFDerivAt (𝕜 := ℝ) (scalarOneForm f)
-        ((ContinuousLinearMap.smulRight (1 : ℂ →L[ℂ] ℂ) (L (deriv f x))).restrictScalars ℝ) x := by
-    simpa [hEq] using
-      ((hasDerivAt_const x L).clm_apply hfdiff.hasDerivAt).hasFDerivAt.restrictScalars ℝ
-  rw [hωF.fderiv]
+  letI : IsScalarTower ℝ ℂ (ℂ →L[ℂ] ℂ) := by
+    refine ⟨fun r c T => by ext; change ((↑r * c) * T 1) = (↑r * (c * T 1)); ring⟩
+  have hωF := @HasFDerivAt.restrictScalars ℝ inferInstance ℂ inferInstance inferInstance ℂ inferInstance inferInstance inferInstance (inferInstance : IsScalarTower ℝ ℂ ℂ) (ℂ →L[ℂ] ℂ) inferInstance inferInstance inferInstance inferInstance (fun z => L (f z)) _ x (((hasDerivAt_const x L).clm_apply hfdiff.hasDerivAt).hasFDerivAt)
+  rw [show fderiv ℝ (scalarOneForm f) x = ContinuousLinearMap.restrictScalars ℝ (ContinuousLinearMap.toSpanSingleton ℂ (L (deriv f x))) by simpa [hEq] using hωF.fderiv]
   simp [L, mul_left_comm, mul_comm]
 
 /-- `fderivWithin`-version of `fderiv_scalarOneForm_symm` on an open set. -/
